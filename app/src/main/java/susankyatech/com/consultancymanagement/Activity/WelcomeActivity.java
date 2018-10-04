@@ -108,7 +108,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     Log.d("asd", "onClick: cour"+coursesList.size());
                 }
 
-                if (selectedImagePath.isEmpty()){
+                if (selectedImagePath == null){
                     Toast.makeText(WelcomeActivity.this, "Upload Image", Toast.LENGTH_SHORT).show();
                 }else if (TextUtils.isEmpty(location)){
                     wLocation.setError("Enter Location");
@@ -211,8 +211,8 @@ public class WelcomeActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == RESULT_LOAD_IMAGE) {
                 Uri selectedImageUri = data.getData();
-                selectedImagePath = data.getData().getPath();
-                file = new File(selectedImagePath);
+                selectedImagePath = getPath(selectedImageUri);
+//                file = new File(selectedImagePath);
                 addBanner.setImageURI(selectedImageUri);
                 Log.d("asd", "onActivityResult: "+selectedImagePath);
             }
@@ -221,11 +221,18 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+//        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        Log.d(TAG, "getPath: "+cursor);
         cursor.moveToFirst();
 
-        return cursor.getString(column_index);
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        Log.d(TAG, "getPath: "+columnIndex);
+        String filePath = cursor.getString(columnIndex);
+        cursor.close();
+
+        Log.d(TAG, "getPath: "+filePath);
+        return filePath;
     }
 
 }
