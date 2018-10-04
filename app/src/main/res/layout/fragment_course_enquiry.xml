@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.CourseEnquiryFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Course Enquiry"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/nunito_semibold"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"
+            android:textSize="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/enquiry_level_completed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/enquiry_complete_year"
+                    android:background="@color/colorTransparent"
+                    android:textColorHint="#fb494949"
+                    android:hint="Level Completed :"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/enquiry_complete_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/enquiry_apply_country"
+                    android:background="@color/colorTransparent"
+                    android:hint="Complete Year :"
+                    android:textColorHint="#fb494949"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/enquiry_apply_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/course_to_apply"
+                    android:background="@color/colorTransparent"
+                    android:hint="Apply Country :"
+                    android:textColorHint="#fb494949"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/course_to_apply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/text_attended"
+                    android:background="@color/colorTransparent"
+                    android:hint="Course to Apply :"
+                    android:textColorHint="#fb494949"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/text_attended"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/about_you"
+                    android:background="@color/colorTransparent"
+                    android:hint="Text Attended :"
+                    android:textColorHint="#fb494949"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/rounded_edittext">
+
+                <EditText
+                    android:id="@+id/about_you"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:nextFocusForward="@id/enquiry_address"
+                    android:background="@color/colorTransparent"
+                    android:hint="Say something About You  :"
+                    android:textColorHint="#fb494949"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

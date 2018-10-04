@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.WelcomeActivity">
+
+
+    <ImageView
+        android:id="@+id/add_banner"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="1dp"
+        android:elevation="3dp"
+        android:src="@drawable/ic_photo" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_banner">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/add_banner"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/welcome_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Location :"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/welcome_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Phone No :"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/welcome_courses"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:chipSpacing="5dp"
+                        app:chipTextColor="@color/colorWhite"
+                        android:layout_marginLeft="10dp"
+                        app:chipTextSize="16dp"
+                        app:chipHeight="30dp"
+                        app:chipBackground="@color/colorWhite"
+                        android:background="@drawable/rounded_edittext"
+                        android:hint="Courses :"
+                        android:textColorHint="#fb494949"
+                        app:chipVerticalSpacing="5dp"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/welcome_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:chipSpacing="5dp"
+                        app:chipTextColor="@color/colorWhite"
+                        app:chipTextSize="16dp"
+                        app:chipHeight="30dp"
+                        app:chipBackground="@color/colorWhite"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/rounded_edittext"
+                        android:hint="Countries :"
+                        android:textColorHint="#fb494949"
+                        app:chipVerticalSpacing="5dp"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/welcome_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Description :"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/welcome_established"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Established :"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/welcome_achievements"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Achievements :"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <mehdi.sakout.fancybuttons.FancyButton
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/extra_extra_large_padding"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:textAllCaps="true"
+                fancy:fb_borderColor="@color/login_btn_color"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_defaultColor="@color/colorTransparent"
+                fancy:fb_focusColor="@color/login_btn_color"
+                fancy:fb_radius="@dimen/small_margin"
+                fancy:fb_text="Save"
+                fancy:fb_textColor="@color/login_btn_color" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Profile"/>
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Search"/>
+
+    <item
+        android:id="@+id/add_gallery"
+        android:icon="@drawable/ic_photo"
+        android:title="Add Gallery"/>
+
+    <item
+        android:id="@+id/list_gallery"
+        android:icon="@drawable/ic_photo"
+        android:title="List Gallery"/>
+
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout"/>
+</menu>
