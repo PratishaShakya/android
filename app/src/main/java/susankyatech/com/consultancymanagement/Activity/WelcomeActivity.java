@@ -1,17 +1,21 @@
 package susankyatech.com.consultancymanagement.Activity;
 
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hootsuite.nachos.NachoTextView;
@@ -33,7 +37,6 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.PartMap;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Model.Detail;
@@ -41,6 +44,10 @@ import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isDownloadsDocument;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isExternalStorageDocument;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isGooglePhotosUri;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocument;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -69,6 +76,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private List<String> countryList = new ArrayList<>();
     private List<String> coursesList = new ArrayList<>();
     private File file;
+    private int FILE_SELECT_CODE = 100;
 
 
     @Override
@@ -94,48 +102,47 @@ public class WelcomeActivity extends AppCompatActivity {
                 String established = wEstablished.getText().toString();
                 String achievement = wAchievements.getText().toString();
 
-                for (com.hootsuite.nachos.chip.Chip chip: wCountry.getAllChips()) {
+                for (com.hootsuite.nachos.chip.Chip chip : wCountry.getAllChips()) {
                     // Do something with the text of each chip
                     CharSequence text = chip.getText();
                     countryList.add(String.valueOf(text));
-                    Log.d("asd", "onClick: coun"+countryList.size());
+                    Log.d("asd", "onClick: coun" + countryList.size());
                 }
 
-                for (com.hootsuite.nachos.chip.Chip chip: wCourses.getAllChips()) {
+                for (com.hootsuite.nachos.chip.Chip chip : wCourses.getAllChips()) {
                     // Do something with the text of each chip
                     CharSequence text = chip.getText();
                     coursesList.add(String.valueOf(text));
-                    Log.d("asd", "onClick: cour"+coursesList.size());
+                    Log.d("asd", "onClick: cour" + coursesList.size());
                 }
 
-                if (selectedImagePath == null){
+                if (selectedImagePath == null) {
                     Toast.makeText(WelcomeActivity.this, "Upload Image", Toast.LENGTH_SHORT).show();
-                }else if (TextUtils.isEmpty(location)){
+                } else if (TextUtils.isEmpty(location)) {
                     wLocation.setError("Enter Location");
                     wLocation.requestFocus();
-                } else if (TextUtils.isEmpty(phone)){
+                } else if (TextUtils.isEmpty(phone)) {
                     wPhone.setError("Enter Location");
                     wPhone.requestFocus();
-                } else if (coursesList.size() == 0){
+                } else if (coursesList.size() == 0) {
                     wCourses.setError("Enter course");
                     wCourses.requestFocus();
-                } else if (countryList.size() == 0){
+                } else if (countryList.size() == 0) {
                     wCountry.setError("Enter course");
                     wCountry.requestFocus();
-                } else if (TextUtils.isEmpty(description)){
+                } else if (TextUtils.isEmpty(description)) {
                     wDescription.setError("Enter Location");
                     wDescription.requestFocus();
-                } else if (TextUtils.isEmpty(established)){
+                } else if (TextUtils.isEmpty(established)) {
                     wEstablished.setError("Enter Location");
                     wEstablished.requestFocus();
-                } else if (TextUtils.isEmpty(achievement)){
+                } else if (TextUtils.isEmpty(achievement)) {
                     wAchievements.setError("Enter Location");
                     wAchievements.requestFocus();
                 } else {
                     sendClientDetail(location, phone, description, established, achievement);
-                    Log.d("asd", "onClick: else"+phone);
+                    Log.d("asd", "onClick: else" + phone);
                 }
-
 
 
             }
@@ -155,84 +162,150 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void sendClientDetail(String location, String phone, String description, String established, String achievement) {
-        Log.d("asd", "onClick: else"+phone);
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-        RequestBody achievements = RequestBody.create(MediaType.parse("text/plain"),achievement);
-        RequestBody detailId = RequestBody.create(MediaType.parse("text/plain"),"1");
-        RequestBody rLocation = RequestBody.create(MediaType.parse("text/plain"),location);
-        RequestBody rPhone = RequestBody.create(MediaType.parse("text/plain"),phone);
-//        RequestBody rDescription = RequestBody.create(MediaType.parse("text/plain"),description);
+//        Log.d("asd", "onClick: else" + phone);
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), getPath(data.getData()));
+//
+//        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("cover_photo", file.getName(), reqFile);
+        RequestBody achievements = RequestBody.create(MediaType.parse("text/plain"), achievement);
+        RequestBody detailId = RequestBody.create(MediaType.parse("text/plain"), "1");
+        RequestBody rLocation = RequestBody.create(MediaType.parse("text/plain"), location);
+        RequestBody rPhone = RequestBody.create(MediaType.parse("text/plain"), phone);
+        RequestBody rDescription = RequestBody.create(MediaType.parse("text/plain"),description);
 //        RequestBody rCountires = RequestBody.create(MediaType.parse("text/plain"),countryList);
-        final RequestBody rCourse = RequestBody.create(MediaType.parse("text/plain"),achievement);
+//        final RequestBody rCourse = RequestBody.create(MediaType.parse("text/plain"), achievement);
 
         Detail clientDetail = new Detail();
-        Map<String, RequestBody > detail = new HashMap();
+        Map<String, RequestBody> detail = new HashMap();
         detail.put("achievements", achievements);
         detail.put("detail_id", detailId);
         detail.put("location", rLocation);
         detail.put("phone", rPhone);
-//        detail.put("description", rDescription);
+        detail.put("description", rDescription);
 //        detail.put("countries", rCountires);
-        detail.put("course", rCourse);
+//        detail.put("courses", rCourse);
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         clientAPI.addClientDetail(body, detail).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        Log.d("asd", "onClick: else"+rCourse);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.d("asd", "onClick: else success" );
                         Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                    }else {
-                        try {
-                            Log.d("loginError", response.errorBody().string());
-                            MDToast mdToast = MDToast.makeText(getApplicationContext(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
-                            mdToast.show();
-                        } catch (Exception e) {
-                        }
-
                     }
+                } else {
+                    try {
+                        Log.d("loginError", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+
                 }
             }
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d(TAG, "onFailure: "+t.getMessage());
-                MDToast mdToast = MDToast.makeText(getApplicationContext(), "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                MDToast mdToast = MDToast.makeText(getApplicationContext(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
             }
         });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == RESULT_LOAD_IMAGE) {
-                Uri selectedImageUri = data.getData();
-                selectedImagePath = getPath(selectedImageUri);
-//                file = new File(selectedImagePath);
-                addBanner.setImageURI(selectedImageUri);
-                Log.d("asd", "onActivityResult: "+selectedImagePath);
-            }
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == RESULT_LOAD_IMAGE) && (resultCode == -1)) {
+            selectedImagePath = getPath(data.getData());
+            file = new File(getPath(data.getData()));
+            addBanner.setImageURI(data.getData());
+            Log.d(TAG, "onActivityResult: " + getPath(data.getData()));
         }
     }
 
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-//        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        Log.d(TAG, "getPath: "+cursor);
-        cursor.moveToFirst();
+        // DocumentProvider
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(getApplicationContext(), uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
 
-        int columnIndex = cursor.getColumnIndex(projection[0]);
-        Log.d(TAG, "getPath: "+columnIndex);
-        String filePath = cursor.getString(columnIndex);
-        cursor.close();
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-        Log.d(TAG, "getPath: "+filePath);
-        return filePath;
+                return getDataColumn(getApplicationContext(), contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[]{
+                        split[1]
+                };
+
+                return getDataColumn(getApplicationContext(), contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+            // Return the remote address
+            if (isGooglePhotosUri(uri))
+                return uri.getLastPathSegment();
+
+            return getDataColumn(getApplicationContext(), uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
     }
 
 }
