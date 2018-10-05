@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valdesekamdem.library.mdtoast.MDToast;
@@ -30,7 +29,6 @@ import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Model.Login;
-import susankyatech.com.consultancymanagement.Model.User;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -103,7 +101,8 @@ public class LoginFragment extends Fragment {
                         if(response.body().data.user.client.detail==null){
                             goToWelcomeActivity();
                         } else {
-                            goToMainActivity();
+//                            goToMainActivity();
+                            goToWelcomeActivity();
                         }
 
                     } else {
