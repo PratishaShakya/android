@@ -101,8 +101,7 @@ public class LoginFragment extends Fragment {
                         if(response.body().data.user.client.detail==null){
                             goToWelcomeActivity();
                         } else {
-//                            goToMainActivity();
-                            goToWelcomeActivity();
+                            goToMainActivity();
                         }
 
                     } else {

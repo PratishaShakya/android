@@ -50,21 +50,30 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+
     private void init() {
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
+        viewPager.setCurrentItem(0);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         EnquiryViewPagerAdapter adapter = new EnquiryViewPagerAdapter(getActivity().getSupportFragmentManager());
         adapter.addFragment(new ProfileInfoFragment(), "Info");
-        adapter.addFragment(new ProfileUniversityFragment(), "University");
         adapter.addFragment(new ProfileCountryFragment(), "Country");
-
+        adapter.addFragment(new ProfileUniversityFragment(), "Courses");
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+//        setupViewPager(viewPager);
+//        tabLayout.setupWithViewPager(viewPager);
+//
+//        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
+    }
 }

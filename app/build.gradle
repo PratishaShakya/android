@@ -53,5 +53,6 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "com.hootsuite.android:nachos:1.1.1"
+    implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'
 
 }

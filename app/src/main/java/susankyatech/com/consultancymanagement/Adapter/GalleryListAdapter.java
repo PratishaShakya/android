@@ -1,6 +1,10 @@
 package susankyatech.com.consultancymanagement.Adapter;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,15 +19,19 @@ import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import susankyatech.com.consultancymanagement.Activity.MainActivity;
+import susankyatech.com.consultancymanagement.Fragment.GalleryFullScreenFragment;
 import susankyatech.com.consultancymanagement.Model.Gallery;
 import susankyatech.com.consultancymanagement.R;
 
 public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.GalleryViewHolder> {
 
-    private List<String> galleryList;
+    private List<Gallery> galleryList;
+    private Context context;
 
-    public GalleryListAdapter(List<String> galleryList) {
+    public GalleryListAdapter(List<Gallery> galleryList, Context context) {
         this.galleryList = galleryList;
+        this.context = context;
     }
 
     @NonNull
@@ -35,12 +43,21 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
-        String image = galleryList.get(position);
-
-        Log.d("asd", "onBindViewHolder: "+image);
-        Log.d("asd", "onBindViewHolder: "+holder.galleryImage);
-
+        final String image = galleryList.get(position).image;
         Picasso.get().load(image).into(holder.galleryImage);
+
+        holder.galleryImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("image", image);
+
+                GalleryFullScreenFragment fragment = new GalleryFullScreenFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction fragmentTransaction = ((MainActivity) context ).getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_container, fragment).addToBackStack(null).commit();
+            }
+        });
 
     }
 

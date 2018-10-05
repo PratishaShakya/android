@@ -1,12 +1,19 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,17 +23,32 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.valdesekamdem.library.mdtoast.MDToast;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.GalleryAPI;
 import susankyatech.com.consultancymanagement.Adapter.ImageUploadListAdapter;
+import susankyatech.com.consultancymanagement.Application.App;
+import susankyatech.com.consultancymanagement.Model.Gallery;
+import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isDownloadsDocument;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isExternalStorageDocument;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isGooglePhotosUri;
+import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocument;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,8 +65,10 @@ public class AddGalleryFragment extends Fragment {
     private static final int RESULT_LOAD_IMAGE = 1;
 
     private List<String> fileNameList;
-    private List<String> fileDoneList;
+    private List<Uri> fileImageList;
     private ImageUploadListAdapter uploadListAdapter;
+    private File file;
+    private List<File> fileGalleryList;
 
     public AddGalleryFragment() {
         // Required empty public constructor
@@ -64,9 +88,10 @@ public class AddGalleryFragment extends Fragment {
     private void init() {
 
         fileNameList = new ArrayList<>();
-        fileDoneList = new ArrayList<>();
+        fileImageList = new ArrayList<>();
+        fileGalleryList = new ArrayList<>();
 
-        uploadListAdapter = new ImageUploadListAdapter(fileNameList, fileDoneList);
+        uploadListAdapter = new ImageUploadListAdapter(fileNameList, fileImageList);
         uploadList.setLayoutManager(new LinearLayoutManager(getContext()));
         uploadList.setAdapter(uploadListAdapter);
 
@@ -84,7 +109,43 @@ public class AddGalleryFragment extends Fragment {
         confirmUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), ""+fileNameList.size(), Toast.LENGTH_SHORT).show();
+                uploadGallery();
+            }
+        });
+    }
+
+    private void uploadGallery() {
+        Gallery gallery = new Gallery();
+        gallery.images = fileGalleryList;
+        Toast.makeText(getActivity(), ""+fileGalleryList.size(), Toast.LENGTH_SHORT).show();
+        GalleryAPI galleryAPI = App.consultancyRetrofit().create(GalleryAPI.class);
+        galleryAPI.addGalleries(gallery).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        Fragment fragment = new GalleryFragment();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main_container, fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                }else {
+                    try {
+                        Log.d("loginError", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting gallery. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                mdToast.show();
             }
         });
     }
@@ -100,17 +161,103 @@ public class AddGalleryFragment extends Fragment {
                 for (int i = 0; i < totalItemSelected; i++){
                     Uri fileUri = data.getClipData().getItemAt(i).getUri();
                     String fileName = getFileName(fileUri);
-
+                    file = new File(getPath(data.getData()));
+                    fileGalleryList.add(file);
                     fileNameList.add(fileName);
+                    fileImageList.add(data.getData());
                     uploadListAdapter.notifyDataSetChanged();
                 }
             } else if (data.getData() != null){
                 Uri fileUri = data.getData();
                 String fileName = getFileName(fileUri);
+                file = new File(getPath(data.getData()));
+                fileGalleryList.add(file);
                 fileNameList.add(fileName);
+                fileImageList.add(data.getData());
                 uploadListAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    public String getPath(Uri uri) {
+        // DocumentProvider
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(getActivity(), uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(getActivity(), contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[]{
+                        split[1]
+                };
+
+                return getDataColumn(getActivity(), contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+            // Return the remote address
+            if (isGooglePhotosUri(uri))
+                return uri.getLastPathSegment();
+
+            return getDataColumn(getActivity(), uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
     }
 
     public String getFileName(Uri uri) {

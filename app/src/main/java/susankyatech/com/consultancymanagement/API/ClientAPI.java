@@ -20,9 +20,8 @@ public interface ClientAPI {
     @GET("client/")
     Call<Login> getClient();
 
-   @Multipart
-    @POST("client/detail")
-    Call<Login> addClientDetail(@Part MultipartBody.Part cover_photo,
-                                @PartMap Map<String, RequestBody> detail);
+
+   @POST("client/detail")
+    Call<Login> addClient (@Body Detail detail);
 
 }

@@ -9,8 +9,8 @@
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:src="@drawable/banner"
-        android:layout_marginRight="0dp"
-        android:scaleType="fitXY"
+        android:layout_margin="5dp"
+        android:scaleType="centerInside"
         android:layout_weight="1"/>
 
 </LinearLayout>

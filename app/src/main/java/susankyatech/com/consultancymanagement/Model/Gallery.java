@@ -1,9 +1,11 @@
 package susankyatech.com.consultancymanagement.Model;
 
-public class Gallery {
-    public String image;
+import java.io.File;
+import java.util.List;
 
-    public Gallery(String image) {
-        this.image = image;
-    }
+public class Gallery {
+    public int id;
+    public int client_id;
+    public String image;
+    public List<File> images;
 }

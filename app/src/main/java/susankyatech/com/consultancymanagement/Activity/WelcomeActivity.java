@@ -1,8 +1,10 @@
 package susankyatech.com.consultancymanagement.Activity;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -140,7 +143,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     wAchievements.setError("Enter Location");
                     wAchievements.requestFocus();
                 } else {
-                    sendClientDetail(location, phone, description, established, achievement);
+                    addClientDetail(location, phone, description, established, achievement);
+//                    sendClientDetail(location, phone, description, established, achievement);
                     Log.d("asd", "onClick: else" + phone);
                 }
 
@@ -151,43 +155,39 @@ public class WelcomeActivity extends AppCompatActivity {
         addBanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+                try {
+                    if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
 
     }
 
-    private void sendClientDetail(String location, String phone, String description, String established, String achievement) {
-//        Log.d("asd", "onClick: else" + phone);
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), getPath(data.getData()));
-//
-//        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-        RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("cover_photo", file.getName(), reqFile);
-        RequestBody achievements = RequestBody.create(MediaType.parse("text/plain"), achievement);
-        RequestBody detailId = RequestBody.create(MediaType.parse("text/plain"), "1");
-        RequestBody rLocation = RequestBody.create(MediaType.parse("text/plain"), location);
-        RequestBody rPhone = RequestBody.create(MediaType.parse("text/plain"), phone);
-        RequestBody rDescription = RequestBody.create(MediaType.parse("text/plain"),description);
-//        RequestBody rCountires = RequestBody.create(MediaType.parse("text/plain"),countryList);
-//        final RequestBody rCourse = RequestBody.create(MediaType.parse("text/plain"), achievement);
-
+    private void addClientDetail(String location, String phone, String description, String established, String achievement) {
         Detail clientDetail = new Detail();
-        Map<String, RequestBody> detail = new HashMap();
-        detail.put("achievements", achievements);
-        detail.put("detail_id", detailId);
-        detail.put("location", rLocation);
-        detail.put("phone", rPhone);
-        detail.put("description", rDescription);
-//        detail.put("countries", rCountires);
-//        detail.put("courses", rCourse);
+        clientDetail.cover_photo = file;
+        clientDetail.detail_id = 1;
+        clientDetail.courses = coursesList;
+        clientDetail.countries = countryList;
+        clientDetail.description = description;
+        clientDetail.phone = phone;
+        clientDetail.location = location;
+        clientDetail.achievements = achievement;
+        clientDetail.established = established;
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.addClientDetail(body, detail).enqueue(new Callback<Login>() {
+        clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()) {
@@ -200,7 +200,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 } else {
                     try {
                         Log.d("loginError", response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {
                     }
@@ -215,6 +215,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 mdToast.show();
             }
         });
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

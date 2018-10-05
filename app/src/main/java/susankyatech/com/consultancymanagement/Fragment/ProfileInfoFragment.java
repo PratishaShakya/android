@@ -23,6 +23,7 @@ import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Application.MySpannable;
 import susankyatech.com.consultancymanagement.Model.Client;
+import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -47,6 +48,7 @@ public class ProfileInfoFragment extends Fragment {
     TextView description;
 
     private Client client;
+    private Detail detail;
 
 
     public ProfileInfoFragment() {
@@ -79,10 +81,12 @@ public class ProfileInfoFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         client = response.body().data.client;
+                        detail = response.body().data.client.detail;
                         profileName.setText(client.client_name);
-                        establishedDate.setText(client.created_at);
-                        phoneNo.setText(client.contact);
-//                        location.setText(client.address);
+                        establishedDate.setText(detail.established);
+                        phoneNo.setText(detail.phone);
+                        location.setText(detail.location);
+                        description.setText(detail.description);
 
                     }
                 } else {

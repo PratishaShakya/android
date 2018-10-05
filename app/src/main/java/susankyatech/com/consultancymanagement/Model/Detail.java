@@ -1,10 +1,11 @@
 package susankyatech.com.consultancymanagement.Model;
 
+import java.io.File;
 import java.util.List;
 
 public class Detail {
     public String client_id;
-    public String cover_photo;
+    public File cover_photo;
     public String location;
     public String phone;
     public List<String> courses;

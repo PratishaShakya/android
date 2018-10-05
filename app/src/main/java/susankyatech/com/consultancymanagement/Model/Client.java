@@ -1,7 +1,10 @@
 package susankyatech.com.consultancymanagement.Model;
 
+import java.util.List;
+
 public class Client {
     public int id;
+    public List<Gallery> galleries;
     public String client_name;
     public String logo;
     public String created_at;
