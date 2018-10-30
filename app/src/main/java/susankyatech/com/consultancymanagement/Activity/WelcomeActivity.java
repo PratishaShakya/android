@@ -42,6 +42,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Application.App;
+import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
+import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
@@ -79,7 +81,9 @@ public class WelcomeActivity extends AppCompatActivity {
     private List<String> countryList = new ArrayList<>();
     private List<String> coursesList = new ArrayList<>();
     private File file;
-    private int FILE_SELECT_CODE = 100;
+    private int FILE_SELECT_CODE = 100, detail_id;
+
+    private Client client;
 
 
     @Override
@@ -175,9 +179,10 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void addClientDetail(String location, String phone, String description, String established, String achievement) {
+        client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
+        detail_id = client.detail.detail_id;
         Detail clientDetail = new Detail();
-        clientDetail.cover_photo = file;
-        clientDetail.detail_id = 1;
+        clientDetail.detail_id = detail_id;
         clientDetail.courses = coursesList;
         clientDetail.countries = countryList;
         clientDetail.description = description;
@@ -193,9 +198,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Log.d("asd", "onClick: else success" );
-                        Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                        uploadCoverPic();
                     }
                 } else {
                     try {
@@ -216,6 +219,39 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void uploadCoverPic() {
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        Detail detail = new Detail();
+        detail.coverPhoto = file;
+        clientAPI.addCoverPicture(detail).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.d("asd", "onClick: else success" );
+
+                        Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    try {
+                        Log.d("loginError", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

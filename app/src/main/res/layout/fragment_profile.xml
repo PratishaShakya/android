@@ -4,21 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.ProfileFragment">
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".Fragment.ConsultancyProfileFragment">
+
+    <RelativeLayout
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/profile_banner"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:elevation="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/banner" />
+
+    </RelativeLayout>
 
     <ImageView
-        android:id="@+id/profile_banner"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:elevation="4dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/banner" />
+        android:id="@+id/interest"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="end"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/ic_interest" />
+
+
 
     <android.support.design.widget.TabLayout
         android:id="@+id/profile_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profile_banner"
+        android:layout_below="@id/banner"
         app:tabGravity="fill"
         app:tabMode="fixed" />
 
@@ -27,7 +49,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/profile_tabs"
+        android:layout_above="@id/btn_edit"
+        android:layout_marginBottom="@dimen/medium_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
 
 
 </RelativeLayout>

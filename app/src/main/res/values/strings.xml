@@ -10,17 +10,34 @@
 
     //sign up
     <string name="register">New User ! Sign Up</string>
+    <string name="admin_login">Consultancy Login</string>
     <string name="login">Login</string>
+    <string name="admin">Admin</string>
+    <string name="student">Student</string>
     <string name="email">Email Address</string>
     <string name="password">Password</string>
+    <string name="phone">Phone</string>
+    <string name="gender">Gender</string>
+    <string name="address">Address</string>
     <string name="p_email">Email</string>
-    <string name="first_name">First Name</string>
-    <string name="last_name">Last Name</string>
-    <string name="repeat_password">Re-enter Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="Username">Username</string>
+    <string name="repeat_password">Confirm Password</string>
     <string name="signUp">Sign Up</string>
-    <string name="here">&#160;here!</string>
+    <string name="here">&#160;here</string>
     <string name="already_have_an_account">Already have an account?&#160;</string>
     <string name="dont_have_an_account">Don\'t have an account? Please&#160;</string>
+    <string name="are_you_a_consultancy">Are you a consultancy? Please&#160;</string>
+
+    //Message
+    <string name="profile_message">Your profile details act as your inquiry details</string>
+    <string name="recommended_message">This shows the list of consultancy matched with your profile</string>
+
+    //TEST
+    <string name="ielts">IELTS</string>
+    <string name="tofel">TOFEL</string>
+    <string name="pte">PTE</string>
+    <string name="gre">GRE</string>
 
 
 </resources>

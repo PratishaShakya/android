@@ -2,6 +2,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.valdesekamdem.library.mdtoast.MDToast;
@@ -37,7 +39,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends Fragment {
+public class AdminLoginFragment extends Fragment {
 
     @BindView(R.id.btn_login)
     FancyButton btnLogin;
@@ -46,7 +48,9 @@ public class LoginFragment extends Fragment {
     @BindView(R.id.password)
     EditText password;
 
-    public LoginFragment() {
+    private ProgressDialog progressDialog;
+
+    public AdminLoginFragment() {
         // Required empty public constructor
     }
 
@@ -62,6 +66,9 @@ public class LoginFragment extends Fragment {
     }
 
     private void init() {
+        progressDialog = new ProgressDialog(getContext());
+
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -72,17 +79,21 @@ public class LoginFragment extends Fragment {
                 if (uEmail.isEmpty() || pw.isEmpty()) {
                     MDToast mdToast = MDToast.makeText(getActivity(), "Please enter both username and password!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                     mdToast.show();
-                } else login(uEmail, pw);
+                } else {
+                    progressDialog.setTitle("Logging in");
+                    progressDialog.setMessage("Please wait, while we are logging in your account");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
+                    login(uEmail, pw);
+                }
             }
         });
 
     }
 
     private void login(String uEmail, String pw) {
-        Log.d(TAG, "login: "+uEmail + " " + pw);
-        Log.d(TAG, "login: "+ App.BASE_URL);
         LoginAPI loginAPI = App.consultancyRetrofit().create(LoginAPI.class);
-        retrofit2.Call<Login> call = loginAPI.userLogin(uEmail, pw);
+        retrofit2.Call<Login> call = loginAPI.adminLogin(uEmail, pw);
         call.enqueue(new Callback<Login>() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -99,13 +110,17 @@ public class LoginFragment extends Fragment {
                         App.db().putObject(FragmentKeys.CLIENT, response.body().data.user.client);
                         Log.d(TAG, "onResponse: check"+response.body().data.user.client.detail);
                         if(response.body().data.user.client.detail==null){
+                            progressDialog.dismiss();
                             goToWelcomeActivity();
+
                         } else {
+                            progressDialog.dismiss();
                             goToMainActivity();
                         }
 
                     } else {
                         try {
+                            progressDialog.dismiss();
                             MDToast mdToast = MDToast.makeText(getActivity(), "There was something wrong with your login. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                             mdToast.show();
                         } catch (Exception e) {
@@ -113,6 +128,7 @@ public class LoginFragment extends Fragment {
                     }
                 } else {
                     try {
+                        progressDialog.dismiss();
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();

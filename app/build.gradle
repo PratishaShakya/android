@@ -53,6 +53,14 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "com.hootsuite.android:nachos:1.1.1"
+
+    //Flag
     implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'
+
+    //Material Dialogue
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
+    //MultipleSpinner
+    compile 'com.github.pratikbutani:MultiSelectSpinner:08d324c987'
 
 }

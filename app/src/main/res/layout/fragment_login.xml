@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:fancy="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragment.LoginFragment">
+    tools:context=".Fragment.AdminLoginFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:fontFamily="@font/nunito_semibold"
-            android:text="@string/login"
+            android:text="@string/admin_login"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="24dp"
             android:textStyle="normal" />
@@ -40,7 +40,7 @@
             android:gravity="center_vertical"
             android:hint="@string/email"
             android:imeOptions="actionNext"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:nextFocusForward="@id/password"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"

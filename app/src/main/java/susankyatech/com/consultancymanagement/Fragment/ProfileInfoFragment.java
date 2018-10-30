@@ -6,28 +6,38 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.valdesekamdem.library.mdtoast.MDToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Application.MySpannable;
+import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
+import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,16 +49,29 @@ public class ProfileInfoFragment extends Fragment {
     @BindView(R.id.profile_established_date)
     TextView establishedDate;
     @BindView(R.id.location)
-    TextView location;
+    TextView locationTV;
     @BindView(R.id.phone_number)
-    TextView phoneNo;
+    TextView phoneNoTV;
     @BindView(R.id.email_id)
-    TextView emailId;
+    TextView emailIdTV;
     @BindView(R.id.description)
-    TextView description;
+    TextView descriptionTV;
+    @BindView(R.id.progressBarLayout)
+    View progressLayout;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.progressTV)
+    TextView progressTextView;
+    @BindView(R.id.whole_layout)
+    RelativeLayout wholeLayout;
+    @BindView(R.id.btn_edit)
+    FancyButton editInfo;
 
     private Client client;
     private Detail detail;
+    private int clientId, detail_id;
+
+    private EditText established, location, phoneNo, emailId, description;
 
 
     public ProfileInfoFragment() {
@@ -68,9 +91,175 @@ public class ProfileInfoFragment extends Fragment {
     }
 
     private void init() {
-        getProfileInfo();
+        progressLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        wholeLayout.setVisibility(View.GONE);
+        if (getArguments()!=null){
+            clientId = getArguments().getInt("clientId", 0);
+        }
+        Log.d("initHERE1",clientId+"");
+        
+        if (clientId == 0){
+            getProfileInfo();
+        } else{
+            editInfo.setVisibility(View.GONE);
+            getClientProfileInfo();
+        }
 
-        makeTextViewResizable(description, 3, "View More", true);
+        editInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
+                        .title("Edit Your Info")
+                        .customView(R.layout.edit_client_info, true)
+                        .positiveText("Save Details")
+                        .negativeText("Close")
+                        .positiveColor(getResources().getColor(R.color.green))
+                        .negativeColor(getResources().getColor(R.color.red))
+                        .show();
+
+                established = materialDialog.getCustomView().findViewById(R.id.established_date);
+                location = materialDialog.getCustomView().findViewById(R.id.location);
+                phoneNo = materialDialog.getCustomView().findViewById(R.id.phone_number);
+                emailId = materialDialog.getCustomView().findViewById(R.id.email_address);
+                description = materialDialog.getCustomView().findViewById(R.id.description);
+
+                established.setText(detail.established);
+                location.setText(detail.location);
+                phoneNo.setText(detail.phone);
+//                emailId.setText(client);
+                description.setText(detail.description);
+
+                materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editDetails(materialDialog);
+                    }
+                });
+                materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        materialDialog.dismiss();
+                    }
+                });
+            }
+        });
+    }
+
+    private void editDetails(MaterialDialog materialDialog) {
+        String clientEstablished = established.getText().toString();
+        String clientLocation = location.getText().toString();
+        String clientPhone = phoneNo.getText().toString();
+        String clientEmail = emailId.getText().toString();
+        String clientDescription = description.getText().toString();
+
+        if (TextUtils.isEmpty(clientEstablished)){
+            established.setError("Enter Established Date");
+            established.requestFocus();
+        } else if (TextUtils.isEmpty(clientLocation)){
+            location.setError("Enter Location");
+            location.requestFocus();
+        } else if (TextUtils.isEmpty(clientPhone)){
+            phoneNo.setError("Enter Phone Number");
+            phoneNo.requestFocus();
+        }
+//        else if (TextUtils.isEmpty(clientEmail)){
+//            emailId.setError("Enter Email Address");
+//            emailId.requestFocus();
+//        }
+        else if (TextUtils.isEmpty(clientDescription)){
+            description.setError("Enter Description");
+            description.requestFocus();
+        } else {
+            saveDetails(clientEstablished, clientLocation, clientPhone, clientEmail, clientDescription);
+            materialDialog.dismiss();
+        }
+
+    }
+
+    private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientEmail, String clientDescription) {
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        detail_id = client.detail.detail_id;
+        Log.d("asd", "saveDetails: "+ detail_id);
+        Detail clientDetail = new Detail();
+        clientDetail.detail_id = detail_id;
+        clientDetail.description = clientDescription;
+        clientDetail.phone = clientPhone;
+        clientDetail.location = clientLocation;
+        clientDetail.established = clientEstablished;
+
+        Log.d("asd", "saveDetails: "+clientDetail.detail_id + clientDetail.description + clientDetail.phone + clientDetail.location + clientDetail.established);
+
+        clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if(response.isSuccessful()){
+                    if (response.body() != null){
+                        Log.d("asd", "onResponse: "+response.body().data.location);
+                        MDToast mdToast = MDToast.makeText(getActivity(), "Successfully!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                        getProfileInfo();
+                    }
+                }else {
+                    try {
+                        Log.d("coverPic", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+                Log.d("client", "onFailure:tala "+t);
+            }
+        });
+    }
+
+    private void getClientProfileInfo() {
+        final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        Log.d("OOPS",clientId+"");
+        clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        wholeLayout.setVisibility(View.VISIBLE);
+                        client = response.body().data.client;
+                        detail = response.body().data.client.detail;
+                        profileName.setText(client.client_name);
+                        if (detail == null){
+                            establishedDate.setText("Established Date not inserted yet");
+                            phoneNoTV.setText("Phone Number not inserted yet");
+                            locationTV.setText("Location  not inserted yet");
+                            descriptionTV.setText("Description not inserted yet");
+                        }else{
+                            establishedDate.setText(detail.established);
+                            phoneNoTV.setText(detail.phone);
+                            locationTV.setText(detail.location);
+                            descriptionTV.setText(detail.description);
+                            makeTextViewResizable(descriptionTV, 3, "View More", true);
+                        }
+                    }
+                }else {
+                    try {
+                        Log.d("coverPic", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+                Log.d("client", "onFailure:tala "+t);
+            }
+        });
     }
 
     private void getProfileInfo() {
@@ -80,13 +269,18 @@ public class ProfileInfoFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        wholeLayout.setVisibility(View.VISIBLE);
+                        editInfo.setVisibility(View.VISIBLE);
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
                         profileName.setText(client.client_name);
                         establishedDate.setText(detail.established);
-                        phoneNo.setText(detail.phone);
-                        location.setText(detail.location);
-                        description.setText(detail.description);
+                        phoneNoTV.setText(detail.phone);
+                        locationTV.setText(detail.location);
+                        descriptionTV.setText(detail.description);
+                        makeTextViewResizable(descriptionTV, 3, "View More", true);
 
                     }
                 } else {
@@ -121,13 +315,13 @@ public class ProfileInfoFragment extends Fragment {
                 obs.removeGlobalOnLayoutListener(this);
                 if (maxLine == 0) {
                     lineEndIndex = tv.getLayout().getLineEnd(0);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
                 } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
                     lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
                     text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
                 } else {
                     lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
+                    text = tv.getText().subSequence(0, lineEndIndex) + " ";
                 }
                 tv.setText(text);
                 tv.setMovementMethod(LinkMovementMethod.getInstance());

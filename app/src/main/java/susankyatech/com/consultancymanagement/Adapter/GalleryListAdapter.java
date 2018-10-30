@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
@@ -28,9 +29,11 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
 
     private List<Gallery> galleryList;
     private Context context;
+    private ArrayList<String> stringList = new ArrayList<>();
 
-    public GalleryListAdapter(List<Gallery> galleryList, Context context) {
+    public GalleryListAdapter(List<Gallery> galleryList, ArrayList<String> images, Context context) {
         this.galleryList = galleryList;
+        this.stringList = images;
         this.context = context;
     }
 
@@ -42,8 +45,9 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GalleryViewHolder holder, final int position) {
         final String image = galleryList.get(position).image;
+
         Picasso.get().load(image).into(holder.galleryImage);
 
         holder.galleryImage.setOnClickListener(new View.OnClickListener() {
@@ -51,11 +55,14 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString("image", image);
+                bundle.putStringArrayList("imageList", stringList);
+                bundle.putInt("position", position);
 
                 GalleryFullScreenFragment fragment = new GalleryFullScreenFragment();
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = ((MainActivity) context ).getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.main_container, fragment).addToBackStack(null).commit();
+
             }
         });
 

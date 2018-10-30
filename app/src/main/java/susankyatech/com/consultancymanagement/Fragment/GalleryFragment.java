@@ -1,14 +1,18 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valdesekamdem.library.mdtoast.MDToast;
@@ -18,12 +22,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
+import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.GalleryListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
+import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Gallery;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
@@ -37,9 +44,20 @@ public class GalleryFragment extends Fragment {
 
     @BindView(R.id.gallery_list)
     RecyclerView galleryList;
+    @BindView(R.id.btn_add_gallery)
+    FancyButton addGallery;
+    @BindView(R.id.progressBarLayout)
+    View progressLayout;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.progressTV)
+    TextView progressTextView;
 
     GalleryListAdapter galleryListAdapter;
     List<Gallery> allGallery = new ArrayList<>();
+    ArrayList<String> images;
+
+    private int clientId;
 
 
 
@@ -54,16 +72,37 @@ public class GalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
         ButterKnife.bind(this,view);
+        ((MainActivity)getActivity()).getSupportActionBar().show();
         init();
         return view;
     }
 
     private void init() {
+        progressLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        galleryList.setVisibility(View.GONE);
+        if (getArguments()!=null){
+            clientId = getArguments().getInt("clientId", 0);
+        }
+
+        if (clientId != 0){
+            addGallery.setVisibility(View.GONE);
+        }
         allGallery = new ArrayList<>();
 
-        galleryList.setLayoutManager(new GridLayoutManager(getContext(),2));
+        addGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.putExtra(FragmentKeys.FRAGMENTNAME, "AddGallery");
+                startActivity(intent);
+            }
+        });
 
+
+        galleryList.setLayoutManager(new GridLayoutManager(getContext(),2));
         listGallery();
+
     }
 
     private void listGallery() {
@@ -74,9 +113,18 @@ public class GalleryFragment extends Fragment {
                 if (response.isSuccessful()){
                     if (response.body() != null){
                         Log.d("asd", "onResponse: "+response.body().data);
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        galleryList.setVisibility(View.VISIBLE);
+                        addGallery.setVisibility(View.VISIBLE);
+
                         allGallery = response.body().data.client.galleries;
+                        images = new ArrayList<>();
+                        for(int i=0;i<allGallery.size();i++)
+                        images.add(allGallery.get(i).image);
+
                         Log.d("asd", "onResponse: "+allGallery.size());
-                        galleryListAdapter = new GalleryListAdapter(allGallery, getContext());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
                         galleryList.setAdapter(galleryListAdapter);
                     }
                 }else {

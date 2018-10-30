@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:padding="5dp">
+
+            <com.hootsuite.nachos.NachoTextView
+                android:id="@+id/course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:chipSpacing="5dp"
+                app:chipTextColor="@color/colorWhite"
+                app:chipTextSize="16dp"
+                app:chipHeight="30dp"
+                app:chipBackground="@color/colorWhite"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="Courses"
+                android:textColorHint="#fb494949"
+                app:chipVerticalSpacing="5dp"/>
+        </android.support.design.widget.TextInputLayout>
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

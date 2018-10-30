@@ -10,5 +10,18 @@ import susankyatech.com.consultancymanagement.Model.User;
 public interface LoginAPI {
     @FormUrlEncoded
     @POST("login")
-    Call<Login> userLogin(@Field("email")String username, @Field("password")String password);
+    Call<Login> adminLogin(@Field("email")String userEmail, @Field("password")String password);
+
+    @FormUrlEncoded
+    @POST("students/login")
+    Call<Login> studentLogin(@Field("email")String userEmail, @Field("password")String password);
+
+    @FormUrlEncoded
+    @POST("students/register")
+    Call<Login> studentRegister(@Field("name")String username,
+                                @Field("email")String userEmail,
+                                @Field("phone")String userPhone,
+                                @Field("password")String password,
+                                @Field("address")String userAddress,
+                                @Field("gender")String userGender);
 }

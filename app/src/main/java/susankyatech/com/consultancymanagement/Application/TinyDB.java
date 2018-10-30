@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 public class TinyDB {
@@ -490,15 +491,15 @@ public class TinyDB {
     	putString(key, gson.toJson(obj));
     }
 
-//    public void putListObject(String key, ArrayList<Stream> objArray){
-//    	checkForNullKey(key);
-//    	Gson gson = new Gson();
-//    	ArrayList<String> objStrings = new ArrayList<String>();
-//    	for(Object obj : objArray){
-//    		objStrings.add(gson.toJson(obj));
-//    	}
-//    	putListString(key, objStrings);
-//    }
+    public void putListObject(String key, ArrayList<Stream> objArray){
+    	checkForNullKey(key);
+    	Gson gson = new Gson();
+    	ArrayList<String> objStrings = new ArrayList<String>();
+    	for(Object obj : objArray){
+    		objStrings.add(gson.toJson(obj));
+    	}
+    	putListString(key, objStrings);
+    }
     
     /**
      * Remove SharedPreferences item with 'key'

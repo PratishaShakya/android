@@ -13,6 +13,7 @@ public class Client {
     public String parent_id;
     public String address;
     public String contact;
+    public boolean interested;
     public int mobile;
     public Detail detail;
 

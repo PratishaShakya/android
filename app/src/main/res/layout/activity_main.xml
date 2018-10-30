@@ -32,7 +32,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:layout_marginBottom="3dp"
-        app:menu="@menu/navigation_menu">
+       >
 
     </android.support.design.widget.NavigationView>
 

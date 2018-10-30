@@ -12,10 +12,20 @@
         android:id="@+id/add_banner"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginLeft="2dp"
         android:layout_marginTop="1dp"
+        android:layout_below="@id/cv"
         android:elevation="3dp"
         android:src="@drawable/ic_photo" />
+
+    <TextView
+        android:id="@+id/cv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="17sp"
+        android:textColor="@color/primary_text"
+        android:padding="10dp"
+        android:text="Choose Cover Picture"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -48,7 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Location :"
+                        android:hint="Location"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@id/enquiry_address"
                         android:padding="5dp"
@@ -78,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Phone No :"
+                        android:hint="Phone No"
                         android:imeOptions="actionNext"
                         android:inputType="number"
                         android:nextFocusForward="@id/enquiry_address"
@@ -114,7 +124,7 @@
                         app:chipHeight="30dp"
                         app:chipBackground="@color/colorWhite"
                         android:background="@drawable/rounded_edittext"
-                        android:hint="Courses :"
+                        android:hint="Courses"
                         android:textColorHint="#fb494949"
                         app:chipVerticalSpacing="5dp"/>
                 </android.support.design.widget.TextInputLayout>
@@ -145,7 +155,7 @@
                         app:chipBackground="@color/colorWhite"
                         android:layout_marginLeft="10dp"
                         android:background="@drawable/rounded_edittext"
-                        android:hint="Countries :"
+                        android:hint="Countries"
                         android:textColorHint="#fb494949"
                         app:chipVerticalSpacing="5dp"/>
                 </android.support.design.widget.TextInputLayout>
@@ -168,10 +178,12 @@
                     <EditText
                         android:id="@+id/welcome_description"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="150dp"
+                        android:inputType="text|textMultiLine"
+                        android:gravity="top"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Description :"
+                        android:hint="Description"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@id/enquiry_address"
                         android:padding="5dp"
@@ -202,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Established :"
+                        android:hint="Established"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@id/enquiry_address"
                         android:padding="5dp"
@@ -232,7 +244,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Achievements :"
+                        android:hint="Achievements"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@id/enquiry_address"
                         android:padding="5dp"
@@ -251,6 +263,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/extra_extra_large_padding"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/extra_extra_large_padding"
                 android:gravity="center"
                 android:textAllCaps="true"
                 fancy:fb_borderColor="@color/login_btn_color"

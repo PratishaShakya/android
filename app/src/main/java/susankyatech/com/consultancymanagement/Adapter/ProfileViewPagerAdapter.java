@@ -8,17 +8,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileViewPager  extends FragmentPagerAdapter {
+public class ProfileViewPagerAdapter extends FragmentPagerAdapter {
+
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public ProfileViewPager(FragmentManager manager){
-        super(manager);
+    public ProfileViewPagerAdapter(FragmentManager fm) {
+        super(fm);
     }
 
     @Override
-    public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+    public Fragment getItem(int i) {
+        return mFragmentList.get(i);
     }
 
     @Override

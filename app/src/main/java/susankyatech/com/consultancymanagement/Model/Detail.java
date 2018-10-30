@@ -1,11 +1,14 @@
 package susankyatech.com.consultancymanagement.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.File;
 import java.util.List;
 
 public class Detail {
-    public String client_id;
-    public File cover_photo;
+    public int client_id;
+    public File coverPhoto;
+    public String cover_photo;
     public String location;
     public String phone;
     public List<String> courses;
@@ -13,5 +16,6 @@ public class Detail {
     public String description;
     public String established;
     public String achievements;
+    @SerializedName("id")
     public int detail_id;
 }

@@ -4,6 +4,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -12,8 +13,10 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,12 +40,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
+import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ImageUploadListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Model.Gallery;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
+import static android.Manifest.permission_group.CAMERA;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isDownloadsDocument;
@@ -63,6 +68,7 @@ public class AddGalleryFragment extends Fragment {
     FancyButton confirmUpload;
 
     private static final int RESULT_LOAD_IMAGE = 1;
+    private static final int REQUEST_WRITE_PERMISSION = 786;
 
     private List<String> fileNameList;
     private List<Uri> fileImageList;
@@ -81,6 +87,7 @@ public class AddGalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_gallery, container, false);
         ButterKnife.bind(this,view);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Add Gallery");
         init();
         return view;
     }
@@ -98,11 +105,7 @@ public class AddGalleryFragment extends Fragment {
         mSelectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
+                selectImage();
             }
         });
 
@@ -114,9 +117,33 @@ public class AddGalleryFragment extends Fragment {
         });
     }
 
+    private void selectImage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
+        } else {
+            openFilePicker();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openFilePicker();
+        }
+    }
+
+    private void openFilePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
+    }
+
     private void uploadGallery() {
         Gallery gallery = new Gallery();
-        gallery.images = fileGalleryList;
+        gallery.galleries = fileGalleryList;
         Toast.makeText(getActivity(), ""+fileGalleryList.size(), Toast.LENGTH_SHORT).show();
         GalleryAPI galleryAPI = App.consultancyRetrofit().create(GalleryAPI.class);
         galleryAPI.addGalleries(gallery).enqueue(new Callback<ResponseBody>() {
