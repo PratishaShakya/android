@@ -49,7 +49,6 @@ import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Data;
-import susankyatech.com.consultancymanagement.Model.EnquiryDetails;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -124,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("poi", "init: "+data);
             userName.setText(data.name);
             if (data.enquiry_details == null){
-
                 getStudentFurtherDetails();
             }
         }
