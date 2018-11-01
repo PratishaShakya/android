@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -27,16 +28,11 @@ import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mehdi.sakout.fancybuttons.FancyButton;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,19 +79,20 @@ public class WelcomeActivity extends AppCompatActivity {
     private List<String> coursesList = new ArrayList<>();
     private File file;
     private int FILE_SELECT_CODE = 100, detail_id;
-
     private Client client;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
         ButterKnife.bind(this);
         init();
+
     }
 
     private void init() {
+
         wCountry.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
         wCountry.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL);
         wCourses.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
@@ -104,6 +101,7 @@ public class WelcomeActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String location = wLocation.getText().toString();
                 String phone = wPhone.getText().toString();
                 String description = wDescription.getText().toString();
@@ -111,17 +109,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 String achievement = wAchievements.getText().toString();
 
                 for (com.hootsuite.nachos.chip.Chip chip : wCountry.getAllChips()) {
-                    // Do something with the text of each chip
                     CharSequence text = chip.getText();
                     countryList.add(String.valueOf(text));
-                    Log.d("asd", "onClick: coun" + countryList.size());
                 }
 
                 for (com.hootsuite.nachos.chip.Chip chip : wCourses.getAllChips()) {
-                    // Do something with the text of each chip
                     CharSequence text = chip.getText();
                     coursesList.add(String.valueOf(text));
-                    Log.d("asd", "onClick: cour" + coursesList.size());
                 }
 
                 if (selectedImagePath == null) {
@@ -149,17 +143,14 @@ public class WelcomeActivity extends AppCompatActivity {
                     wAchievements.requestFocus();
                 } else {
                     addClientDetail(location, phone, description, established, achievement);
-//                    sendClientDetail(location, phone, description, established, achievement);
-                    Log.d("asd", "onClick: else" + phone);
                 }
-
-
             }
         });
 
         addBanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 try {
                     if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
@@ -172,14 +163,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
-
-
     }
 
     private void addClientDetail(String location, String phone, String description, String established, String achievement) {
+
         client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
         detail_id = client.detail.detail_id;
         ProfileInfo clientDetail = new ProfileInfo();
@@ -195,10 +184,11 @@ public class WelcomeActivity extends AppCompatActivity {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
             @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
+            public void onResponse(@NonNull Call<Login> call, @NonNull Response<Login> response) {
+
                 if (response.isSuccessful()) {
+
                     if (response.body() != null) {
-                        Log.d("asd", "onClick: else success" );
                         uploadCoverPic();
                     }
                 } else {
@@ -206,50 +196,45 @@ public class WelcomeActivity extends AppCompatActivity {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
-                    } catch (Exception e) {
-                    }
-
+                    } catch (Exception e) {}
                 }
             }
 
             @Override
-            public void onFailure(Call<Login> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.getMessage());
+            public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
                 MDToast mdToast = MDToast.makeText(getApplicationContext(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
             }
         });
-
     }
 
     private void uploadCoverPic() {
+
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         Detail detail = new Detail();
         detail.coverPhoto = file;
+
         clientAPI.addCoverPicture(detail).enqueue(new Callback<Login>() {
             @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Log.d("asd", "onClick: else success" );
+            public void onResponse(@NonNull Call<Login> call, @NonNull Response<Login> response) {
 
+                if (response.isSuccessful()) {
+
+                    if (response.body() != null) {
                         Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     }
                 } else {
                     try {
-                        Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
-                    } catch (Exception e) {
-                    }
-
+                    } catch (Exception e) {}
                 }
             }
 
             @Override
-            public void onFailure(Call<Login> call, Throwable t) {
+            public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
 
             }
         });
@@ -257,18 +242,18 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if ((requestCode == RESULT_LOAD_IMAGE) && (resultCode == -1)) {
             selectedImagePath = getPath(data.getData());
             file = new File(getPath(data.getData()));
             addBanner.setImageURI(data.getData());
-            Log.d(TAG, "onActivityResult: " + getPath(data.getData()));
         }
     }
 
     public String getPath(Uri uri) {
-        // DocumentProvider
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(getApplicationContext(), uri)) {
-            // ExternalStorageProvider
+
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
@@ -278,7 +263,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
             }
-            // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
