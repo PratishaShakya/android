@@ -309,72 +309,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     }
 
-    private void inquiryStudentDetails(){
-        final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
-                .title("Tell us Your Requirement")
-                .customView(R.layout.fragment_enquiry, true)
-                .positiveText("Send Details")
-                .negativeText("Edit Profile")
-                .positiveColor(context.getResources().getColor(R.color.green))
-                .negativeColor(context.getResources().getColor(R.color.blue))
-                .show();
-
-
-        qualificationTv = materialDialog.getCustomView().findViewById(R.id.qualification);
-        completeYearTv = materialDialog.getCustomView().findViewById(R.id.complete_year);
-        interestCourseTv = materialDialog.getCustomView().findViewById(R.id.destination);
-        destination = materialDialog.getCustomView().findViewById(R.id.interested_course);
-        testAttendedTv = materialDialog.getCustomView().findViewById(R.id.test_attended);
-        summaryTv = materialDialog.getCustomView().findViewById(R.id.summary);
-        messageTv = materialDialog.getCustomView().findViewById(R.id.message);
-
-        messageTv.setVisibility(View.VISIBLE);
-
-        getStudentInfo();
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendInquiry();
-                materialDialog.dismiss();
-            }
-        });
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editStudentDetails();
-                materialDialog.dismiss();
-            }
-        });
-    }
-
-    private void sendInquiry() {
-        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.interestedOnClient(0, 0,0,1).enqueue(new Callback<Login>() {
-            @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        MDToast mdToast = MDToast.makeText(getContext(), "Inquiry is sent successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
-                        mdToast.show();
-                    }
-                }else {
-                    try {
-                        Log.d("client", "onResponse: error" + response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getContext(), "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
-                        mdToast.show();
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Login> call, Throwable t) {
-
-            }
-        });
-    }
-
     private void editStudentDetails() {
         final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
                 .title("Edit Your Profile")
@@ -391,15 +325,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-//        ieltsCB = materialDialog.getContentView().findViewById(R.id.cv_ielts);
-//        tofelCB = materialDialog.getContentView().findViewById(R.id.cv_tofel);
-//        satCB = materialDialog.getContentView().findViewById(R.id.cv_sat);
-//        greCB = materialDialog.getContentView().findViewById(R.id.cv_gre);
-//        pteCB = materialDialog.getContentView().findViewById(R.id.cv_pte);
-//
-//        if (ieltsCB.isChecked()){
-//            Toast.makeText(context, "asd", Toast.LENGTH_SHORT).show();
-//        }
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);

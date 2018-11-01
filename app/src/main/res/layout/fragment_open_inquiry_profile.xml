@@ -107,19 +107,39 @@
                     android:layout_height="1dp"
                     android:background="#44111111" />
 
-                <mehdi.sakout.fancybuttons.FancyButton
-                    android:id="@+id/btn_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
-                    android:layout_marginTop="@dimen/extra_large_padding"
-                    android:textAllCaps="true"
-                    fancy:fb_borderColor="@color/login_btn_color"
-                    fancy:fb_borderWidth="1dp"
-                    fancy:fb_defaultColor="@color/colorTransparent"
-                    fancy:fb_focusColor="@color/login_btn_color"
-                    fancy:fb_radius="@dimen/small_margin"
-                    fancy:fb_text="Edit Info"
-                    fancy:fb_textColor="@color/login_btn_color" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <mehdi.sakout.fancybuttons.FancyButton
+                        android:id="@+id/btn_edit"
+                        android:layout_width="90dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="@dimen/extra_large_padding"
+                        android:textAllCaps="true"
+                        fancy:fb_borderColor="@color/login_btn_color"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="@color/colorTransparent"
+                        fancy:fb_focusColor="@color/login_btn_color"
+                        fancy:fb_radius="@dimen/small_margin"
+                        fancy:fb_text="Back"
+                        fancy:fb_textColor="@color/login_btn_color" />
+
+                    <mehdi.sakout.fancybuttons.FancyButton
+                        android:id="@+id/btn_send"
+                        android:layout_width="90dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="@dimen/extra_large_padding"
+                        android:textAllCaps="true"
+                        android:layout_alignParentEnd="true"
+                        fancy:fb_borderColor="@color/login_btn_color"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="@color/colorTransparent"
+                        fancy:fb_focusColor="@color/login_btn_color"
+                        fancy:fb_radius="@dimen/small_margin"
+                        fancy:fb_text="Send"
+                        fancy:fb_textColor="@color/login_btn_color" />
+                </RelativeLayout>
 
             </LinearLayout>
 

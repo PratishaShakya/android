@@ -2,7 +2,7 @@ package susankyatech.com.consultancymanagement.Model;
 
 public class CountryList {
 
-    private String countyList [] = {
+    public String countyList [] = {
             "India",
             "Bangladesh",
             "Australia",
