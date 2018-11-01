@@ -18,13 +18,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Level Completed"/>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_edittext"
-                    android:padding="10dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/medium_padding"
+                        android:text="Level"/>
+
+                    <Spinner
+                        android:id="@+id/qualification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_edittext"
+                        android:padding="10dp">
 
                     <EditText
                         android:id="@+id/enquiry_level_completed"
@@ -32,7 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Level Completed"
+                        android:hint="Stream"
                         android:textAllCaps="true"
                         android:gravity="top"
                         android:imeOptions="actionNext"
@@ -41,8 +66,9 @@
                         android:singleLine="true"
                         android:textColorHint="#fb494949"
                         android:textSize="14dp" />
+                    </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -145,7 +171,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/rounded_edittext"
                 android:padding="10dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -159,7 +185,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginLeft="@dimen/medium_padding">
+                    android:layout_marginLeft="@dimen/small_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -177,6 +203,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/tofel" />
+
+                        <CheckBox
+                            android:id="@+id/cv_sat"
+                            android:layout_width="70dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sat" />
                     </LinearLayout>
 
                     <LinearLayout

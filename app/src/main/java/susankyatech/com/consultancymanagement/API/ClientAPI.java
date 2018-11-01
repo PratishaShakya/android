@@ -14,8 +14,8 @@ public interface ClientAPI {
     @GET("client/")
     Call<Login> getClient();
 
-   @POST("client/detail")
-    Call<Login> addClient (@Body ProfileInfo detail);
+    @POST("client/detail")
+    Call<Login> addClient(@Body ProfileInfo detail);
 
     @GET("students/clients/")
     Call<Login> getAllClients();
@@ -29,8 +29,8 @@ public interface ClientAPI {
     @GET("students/matching-clients")
     Call<Login> getMatchingClient();
 
- @GET("students/interested-clients")
- Call<Login> getInterestedClient();
+    @GET("students/interested-clients")
+    Call<Login> getInterestedClient();
 
     @GET("students/clients")
     Call<Login> searchByCourse(@Query("courses") String course);

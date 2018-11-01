@@ -72,7 +72,7 @@ public class ProfileInfoFragment extends Fragment {
     private Detail detail;
     private int clientId, detail_id;
 
-    private EditText established, location, phoneNo, emailId, description;
+    private EditText established, location, phoneNo, description;
 
 
     public ProfileInfoFragment() {
@@ -122,7 +122,6 @@ public class ProfileInfoFragment extends Fragment {
                 established = materialDialog.getCustomView().findViewById(R.id.established_date);
                 location = materialDialog.getCustomView().findViewById(R.id.location);
                 phoneNo = materialDialog.getCustomView().findViewById(R.id.phone_number);
-                emailId = materialDialog.getCustomView().findViewById(R.id.email_address);
                 description = materialDialog.getCustomView().findViewById(R.id.description);
 
                 established.setText(detail.established);
@@ -151,7 +150,6 @@ public class ProfileInfoFragment extends Fragment {
         String clientEstablished = established.getText().toString();
         String clientLocation = location.getText().toString();
         String clientPhone = phoneNo.getText().toString();
-        String clientEmail = emailId.getText().toString();
         String clientDescription = description.getText().toString();
 
         if (TextUtils.isEmpty(clientEstablished)){
@@ -169,25 +167,17 @@ public class ProfileInfoFragment extends Fragment {
         } else if (clientPhone.length() > 10){
             phoneNo.setError("Enter Valid Phone Number");
             phoneNo.requestFocus();
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(clientEmail).matches()){
-            emailId.setError("Enter Valid Email Address");
-            emailId.requestFocus();
-        }
-        else if (TextUtils.isEmpty(clientEmail)){
-            emailId.setError("Enter Email Address");
-            emailId.requestFocus();
-        }
-        else if (TextUtils.isEmpty(clientDescription)){
+        } else if (TextUtils.isEmpty(clientDescription)){
             description.setError("Enter Description");
             description.requestFocus();
         } else {
-            saveDetails(clientEstablished, clientLocation, clientPhone, clientEmail, clientDescription);
+            saveDetails(clientEstablished, clientLocation, clientPhone, clientDescription);
             materialDialog.dismiss();
         }
 
     }
 
-    private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientEmail, String clientDescription) {
+    private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientDescription) {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         Client client1 = App.db().getObject(FragmentKeys.CLIENT, Client.class);
         detail_id = client1.detail.id;

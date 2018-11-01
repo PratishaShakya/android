@@ -41,8 +41,6 @@ import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
-import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
-import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Model.Client;
@@ -110,7 +108,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.bind(this,view);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Home");
         init();
         return view;
     }
@@ -360,7 +358,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addFurtherDetails();
+                addFurtherDetails(materialDialog);
 //
             }
         });
@@ -417,8 +415,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addFurtherDetails();
-                materialDialog.dismiss();
+                addFurtherDetails(materialDialog);
+
             }
         });
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -429,7 +427,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         });
     }
 
-    private void addFurtherDetails() {
+
+    private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
         String studentInterestedCountry = interestedCountry.getText().toString();
         String studentInterestedCourse = interestedCourse.getText().toString();
@@ -455,13 +454,15 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
+                                    materialDialog.dismiss();
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                                     mdToast.show();
                                 }
                             }else {
                                 try {
                                     Log.d("client", "onResponse: error" + response.errorBody().string());
+                                    materialDialog.dismiss();
                                     MDToast mdToast = MDToast.makeText(getContext(), "There was something wrong while saving your info. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                                     mdToast.show();
                                 } catch (Exception e) {

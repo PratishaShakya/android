@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,6 +55,8 @@ public class GalleryFragment extends Fragment {
     ProgressBar progressBar;
     @BindView(R.id.progressTV)
     TextView progressTextView;
+    @BindView(R.id.message)
+    TextView cardView;
 
     GalleryListAdapter galleryListAdapter;
     List<Gallery> allGallery = new ArrayList<>();
@@ -104,9 +107,7 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-
         galleryList.setLayoutManager(new GridLayoutManager(getContext(),2));
-
 
     }
 
@@ -123,6 +124,12 @@ public class GalleryFragment extends Fragment {
                         galleryList.setVisibility(View.VISIBLE);
 
                         allGallery = response.body().data.client.galleries;
+                        if (allGallery.size() == 0){
+                            cardView.setVisibility(View.VISIBLE);
+                            cardView.setText("No Gallery Found");
+                        }else{
+                            cardView.setVisibility(View.GONE);
+                        }
                         images = new ArrayList<>();
                         for(int i=0;i<allGallery.size();i++)
                             images.add(allGallery.get(i).image);
@@ -155,12 +162,19 @@ public class GalleryFragment extends Fragment {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         galleryList.setVisibility(View.VISIBLE);
-                        addGallery.setVisibility(View.VISIBLE);
+
 
                         allGallery = response.body().data.client.galleries;
                         images = new ArrayList<>();
                         for(int i=0;i<allGallery.size();i++)
                         images.add(allGallery.get(i).image);
+
+                        if (allGallery.size() == 0){
+                            addGallery.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.VISIBLE);
+                        }else{
+                            cardView.setVisibility(View.GONE);
+                        }
 
                         Log.d("asd", "onResponse: "+allGallery.size());
                         galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());

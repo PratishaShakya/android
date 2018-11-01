@@ -65,7 +65,7 @@ public class ProfileCountryFragment extends Fragment {
     NachoTextView wCountry;
 
     private List<String> countries = new ArrayList<>();
-    private List<String> countryLists = new ArrayList<>();
+    private List<String> countryLists;
 
 
     public ProfileCountryFragment() {
@@ -124,6 +124,7 @@ public class ProfileCountryFragment extends Fragment {
                 materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        countryLists = new ArrayList<>();
                         countryAdd(materialDialog);
                     }
                 });

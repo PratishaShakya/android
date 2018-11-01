@@ -60,7 +60,7 @@ public class ProfileUniversityFragment extends Fragment {
     private int clientId, detail_id;
     private CourseListAdapter courseListAdapter;
     private List<String> courses = new ArrayList<>();
-    private List<String> coursesList = new ArrayList<>();
+    private List<String> coursesList;
 
     ClientAPI clientAPI;
     NachoTextView wCourse;
@@ -117,6 +117,7 @@ public class ProfileUniversityFragment extends Fragment {
                 materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        coursesList = new ArrayList<>();
                         courseAdd(materialDialog);
                     }
                 });

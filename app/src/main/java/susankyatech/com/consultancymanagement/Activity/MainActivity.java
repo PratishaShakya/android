@@ -1,5 +1,6 @@
 package susankyatech.com.consultancymanagement.Activity;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -211,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                                    MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                                     mdToast.show();
                                 }
                             }else {
