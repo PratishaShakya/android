@@ -4,6 +4,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -29,6 +32,7 @@ import com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,6 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
+import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
@@ -84,13 +89,17 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
     private TextView qualificationTv, completeYearTv, interestCourseTv, destination, testAttendedTv, summaryTv, messageTv;
-    private Spinner completedYear;
+    private Spinner completedYear, qualificationSpinner, countryList;
+    private CheckBox ieltsCB, satCB, tofelCB, pteCB, greCB;
 
     private int selectedYear;
-    List<Integer> dates = new ArrayList<>();
+    private String selected_options, selectedLevel;
 
+    List<Integer> dates = new ArrayList<>();
+    String[] qualificationList = {"+2", "Bachelors", "Masters"};
     String[] options = { "Consultancy", "Course", "Country"};
-    private String selected_options;
+
+    ArrayAdapter dateAdapter, optionsAdapter, levelAdapter;
 
     ConsultancyListAdapter consultancyListAdapter;
 
@@ -121,10 +130,24 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
 
-        ArrayAdapter aa = new ArrayAdapter(context,android.R.layout.simple_spinner_item, options);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        for (int i = todayYear; i > 1969; i--){
+            dates.add(i);
+        }
+
+        optionsAdapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, options);
+        dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
+        levelAdapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, qualificationList);
+
+        optionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         //Setting the ArrayAdapter data on the Spinner
-        spinner.setAdapter(aa);
+        spinner.setAdapter(optionsAdapter);
+
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -280,6 +303,13 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     }
 
     private void getEnquiry() {
+        FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
+        OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+        fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+
+    }
+
+    private void inquiryStudentDetails(){
         final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
                 .title("Tell us Your Requirement")
                 .customView(R.layout.fragment_enquiry, true)
@@ -305,6 +335,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sendInquiry();
                 materialDialog.dismiss();
             }
         });
@@ -315,7 +346,33 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                 materialDialog.dismiss();
             }
         });
+    }
 
+    private void sendInquiry() {
+        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
+        clientInterestAPI.interestedOnClient(0, 0,0,1).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        MDToast mdToast = MDToast.makeText(getContext(), "Inquiry is sent successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                        mdToast.show();
+                    }
+                }else {
+                    try {
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getContext(), "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
     }
 
     private void editStudentDetails() {
@@ -333,14 +390,36 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+//        ieltsCB = materialDialog.getContentView().findViewById(R.id.cv_ielts);
+//        tofelCB = materialDialog.getContentView().findViewById(R.id.cv_tofel);
+//        satCB = materialDialog.getContentView().findViewById(R.id.cv_sat);
+//        greCB = materialDialog.getContentView().findViewById(R.id.cv_gre);
+//        pteCB = materialDialog.getContentView().findViewById(R.id.cv_pte);
+//
+//        if (ieltsCB.isChecked()){
+//            Toast.makeText(context, "asd", Toast.LENGTH_SHORT).show();
+//        }
 
-        ArrayAdapter aa = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        completedYear.setAdapter(aa);
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
             }
 
             @Override
@@ -396,14 +475,34 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        ieltsCB = materialDialog.getContentView().findViewById(R.id.cv_ielts);
+        tofelCB = materialDialog.getContentView().findViewById(R.id.cv_tofel);
+        satCB = materialDialog.getContentView().findViewById(R.id.cv_sat);
+        greCB = materialDialog.getContentView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getContentView().findViewById(R.id.cv_pte);
 
-        ArrayAdapter aa = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        completedYear.setAdapter(aa);
+
+        if (ieltsCB.isChecked()){
+            Toast.makeText(context, "asd", Toast.LENGTH_SHORT).show();
+        }
+
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
             }
 
             @Override
@@ -447,8 +546,9 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
+            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID))
+            enquiryAPI.saveDetails(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

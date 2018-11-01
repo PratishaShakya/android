@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -63,11 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
 
-    private Spinner completedYear;
-    private String fragmentName;
-
+    private Spinner completedYear, qualificationSpinner;
+    private String fragmentName, selectedLevel;
     private int selectedYear;
+
+    private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
+
     List<Integer> dates = new ArrayList<>();
+    List<String> qualificationList = new ArrayList<>();
 
     private Data data;
     private Client client;
@@ -93,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        qualificationList.add("+2");
+        qualificationList.add("Bachelors");
+        qualificationList.add("Masters");
 
         for (int i = todayYear; i > 1969; i--){
             dates.add(i);
@@ -134,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new AddGalleryFragment()).commit();
                 }
             }
-
-
         }
     }
 
@@ -154,14 +160,38 @@ public class MainActivity extends AppCompatActivity {
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
-        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,dates);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        completedYear.setAdapter(aa);
+        ArrayAdapter dateAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, dates);
+        ArrayAdapter levelAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, qualificationList);
+
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList.get(i);
             }
 
             @Override
@@ -185,11 +215,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private String getTestsString()
+    {
+        String tests="";
+        if (toeflCB.isChecked())
+            tests+="TOEFL, ";
+        if (satCB.isChecked())
+            tests+="SAT, ";
+        if (greCB.isChecked())
+            tests+="GRE, ";
+        if (ieltsCB.isChecked())
+            tests+="IELTS, ";
+        if (pteCB.isChecked())
+            tests+="PTE";
+
+        return tests;
+    }
     private void addFurtherDetails() {
+
+
+
         String studentQualification = qualification.getText().toString();
         String studentInterestedCountry = interestedCountry.getText().toString();
         String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
+        String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
@@ -204,8 +254,9 @@ public class MainActivity extends AppCompatActivity {
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
+            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID))
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear,testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

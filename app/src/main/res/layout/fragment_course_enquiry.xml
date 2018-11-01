@@ -35,13 +35,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/medium_padding"
+                        android:layout_marginLeft="10dp"
                         android:text="Level"/>
 
                     <Spinner
-                        android:id="@+id/qualification"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:id="@+id/qualification_spinner"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="textEnd">
 
                     </Spinner>
 
@@ -55,7 +56,6 @@
                         android:id="@+id/enquiry_level_completed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
                         android:hint="Stream"
                         android:textAllCaps="true"
@@ -90,15 +90,13 @@
 
                     <Spinner
                         android:id="@+id/enquiry_complete_year"
-                        android:layout_width="80dp"
+                        android:layout_width="85dp"
                         android:layout_height="40dp"
                         android:layout_marginLeft="10dp"
-                        android:gravity="top"
                         android:hint="Complete Year"
                         android:imeOptions="actionNext"
                         android:nextFocusForward="@id/enquiry_apply_country"
-                        android:padding="5dp"
-                        android:singleLine="true"
+                        android:padding="10dp"
                         android:textSize="14dp" />
 
             </LinearLayout>
@@ -186,6 +184,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginLeft="@dimen/small_margin">
+
 
                     <LinearLayout
                         android:layout_width="match_parent"

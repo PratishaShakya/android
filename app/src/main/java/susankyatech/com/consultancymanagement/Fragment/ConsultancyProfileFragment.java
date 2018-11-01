@@ -218,7 +218,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
     private void setInterestInConsultancy() {
         ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.interestedOnClient(clientId).enqueue(new Callback<Login>() {
+        clientInterestAPI.interestedOnClient(clientId, 1,0,0).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){

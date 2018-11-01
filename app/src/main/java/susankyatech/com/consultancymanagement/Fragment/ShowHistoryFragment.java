@@ -20,7 +20,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
-import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
@@ -33,7 +32,7 @@ import susankyatech.com.consultancymanagement.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InterestedClientsFragment extends Fragment {
+public class ShowHistoryFragment extends Fragment {
 
     @BindView(R.id.matched_consultancy_list)
     RecyclerView recyclerView;
@@ -51,7 +50,7 @@ public class InterestedClientsFragment extends Fragment {
     private List<Client> clientList;
     Data data;
 
-    public InterestedClientsFragment() {
+    public ShowHistoryFragment() {
         // Required empty public constructor
     }
 
@@ -60,9 +59,8 @@ public class InterestedClientsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_interested_clients, container, false);
+        View view = inflater.inflate(R.layout.fragment_show_history, container, false);
         ButterKnife.bind(this, view);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Starred");
         init();
         return view;
     }
@@ -77,7 +75,7 @@ public class InterestedClientsFragment extends Fragment {
 
     private void getInterestedClients() {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.getInterestedClient("is_interested").enqueue(new Callback<Login>() {
+        clientAPI.getInterestedClient("is_enquiring").enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){

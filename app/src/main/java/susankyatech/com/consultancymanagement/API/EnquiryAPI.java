@@ -13,5 +13,16 @@ public interface EnquiryAPI {
                             @Field("interested_country") String interested_country,
                             @Field("interested_course") String interested_course,
                             @Field("summary") String summary,
-                            @Field("student_id") int student_id);
+                            @Field("student_id") int student_id,
+                            @Field("completed_year") int completed_year);
+
+    @FormUrlEncoded
+    @POST("students/detail")
+    Call<Login> saveDetailsNew(@Field("qualification") String qualification,
+                            @Field("interested_country") String interested_country,
+                            @Field("interested_course") String interested_course,
+                            @Field("summary") String summary,
+                            @Field("student_id") int student_id,
+                            @Field("completed_year") int completed_year,
+                               @Field("test_attended") String tests);
 }

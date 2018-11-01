@@ -36,6 +36,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
@@ -59,13 +60,17 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     private Data data;
     private EnquiryDetails enquiryDetails;
     private int selectedYear;
+    private String selectedLevel;
 
     List<Integer> dates = new ArrayList<>();
+    String[] qualificationList = {"+2", "Bachelors", "Masters"};
+
+    ArrayAdapter dateAdapter, levelAdapter;
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
     private TextView qualificationTv, completeYearTv, interestCourseTv, destination, testAttendedTv, summaryTv;
 
-    private Spinner completedYear;
+    private Spinner completedYear, qualificationSpinner;
 
     public ConsultancyListAdapter(List<Client> clientList, Context context) {
         this.clientList = clientList;
@@ -73,6 +78,12 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         this.arrayList = new ArrayList<Client>();
         this.arrayList.addAll(SearchFragment.clientList);
         this.data = App.db().getObject(FragmentKeys.DATA, Data.class);
+
+        dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
+        levelAdapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, qualificationList);
+
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
@@ -100,7 +111,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
             }
         });
 
-        Picasso.get().load(clientList.get(i).detail.cover_photo).into(holder.consultancyLogo);
+        Picasso.get().load(clientList.get(i).logo).into(holder.consultancyLogo);
         holder.btnEnquiry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,6 +156,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sendInquiry(id, client_name);
                 materialDialog.dismiss();
             }
         });
@@ -156,6 +168,33 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
             }
         });
 
+    }
+
+    private void sendInquiry(int id, final String client_name) {
+        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
+        clientInterestAPI.interestedOnClient(id, 0,1,0).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        MDToast mdToast = MDToast.makeText(context, "Inquiry sent to "+ client_name +" successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                        mdToast.show();
+                    }
+                }else {
+                    try {
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(context, "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
     }
 
     private void editStudentDetails(final int id, final String client_name) {
@@ -173,14 +212,27 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
 
-        ArrayAdapter aa = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        completedYear.setAdapter(aa);
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
             }
 
             @Override
@@ -270,8 +322,9 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
+            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID))
+            enquiryAPI.saveDetails(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

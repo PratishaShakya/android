@@ -30,7 +30,7 @@ public interface ClientAPI {
     Call<Login> getMatchingClient();
 
     @GET("students/interested-clients")
-    Call<Login> getInterestedClient();
+    Call<Login> getInterestedClient(@Query("status") String type);
 
     @GET("students/clients")
     Call<Login> searchByCourse(@Query("courses") String course);

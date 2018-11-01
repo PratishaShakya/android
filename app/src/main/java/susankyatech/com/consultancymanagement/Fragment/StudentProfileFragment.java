@@ -120,6 +120,7 @@ public class StudentProfileFragment extends Fragment {
         interestCourseTv.setText(enquiryDetails.interested_course);
         destination.setText(enquiryDetails.interested_country);
         summaryTv.setText(enquiryDetails.summary);
+//        completeYear.setText(enquiryDetails.);
     }
 
     private void getStudentFurtherDetails() {
@@ -225,7 +226,7 @@ public class StudentProfileFragment extends Fragment {
             summary.requestFocus();
         } else {
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID))
+            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
