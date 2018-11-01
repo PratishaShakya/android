@@ -36,6 +36,7 @@ import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -100,15 +101,15 @@ public class ProfileUniversityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
-                        .title("Edit/Add Countries")
-                        .customView(R.layout.add_country_layout, true)
-                        .positiveText("Add")
+                        .title("Edit/Add Course")
+                        .customView(R.layout.add_course_layout, true)
+                        .positiveText("Save")
                         .negativeText("Close")
                         .positiveColor(getResources().getColor(R.color.green))
                         .negativeColor(getResources().getColor(R.color.red))
                         .show();
 
-                wCourse = materialDialog.getCustomView().findViewById(R.id.country);
+                wCourse = materialDialog.getCustomView().findViewById(R.id.course);
                 wCourse.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
                 wCourse.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL);
                 wCourse.setText(courses);
@@ -137,10 +138,10 @@ public class ProfileUniversityFragment extends Fragment {
             Log.d("asd", "onClick: coun" + coursesList.size());
 
             Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-            detail_id = client.detail.detail_id;
-            Detail clientDetail = new Detail();
+            detail_id = client.detail.id;
+            ProfileInfo clientDetail = new ProfileInfo();
             clientDetail.detail_id = detail_id;
-            clientDetail.countries = coursesList;
+            clientDetail.courses = coursesList;
 
             clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
                 @Override

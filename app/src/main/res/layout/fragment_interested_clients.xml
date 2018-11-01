@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/medium_padding"
                 android:layout_toRightOf="@id/alert"
-                android:text="@string/recommended_message"
+                android:text="@string/starred_message"
                 android:textAlignment="center" />
 
         </RelativeLayout>
@@ -98,6 +98,6 @@
         android:gravity="center"
         android:textSize="18sp"
         android:text="You haven't had interest on any Consultancy"
-        android:visibility="gone    "/>
+        android:visibility="gone"/>
 
 </RelativeLayout>

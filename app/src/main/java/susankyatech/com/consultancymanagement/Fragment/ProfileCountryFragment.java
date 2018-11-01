@@ -36,6 +36,7 @@ import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -109,7 +110,7 @@ public class ProfileCountryFragment extends Fragment {
                 final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
                         .title("Edit/Add Countries")
                         .customView(R.layout.add_country_layout, true)
-                        .positiveText("Add")
+                        .positiveText("Save")
                         .negativeText("Close")
                         .positiveColor(getResources().getColor(R.color.green))
                         .negativeColor(getResources().getColor(R.color.red))
@@ -145,8 +146,8 @@ public class ProfileCountryFragment extends Fragment {
             Log.d("asd", "onClick: coun" + countryLists.size());
 
             Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-            detail_id = client.detail.detail_id;
-            Detail clientDetail = new Detail();
+            detail_id = client.detail.id;
+            ProfileInfo clientDetail = new ProfileInfo();
             clientDetail.detail_id = detail_id;
             clientDetail.countries = countryLists;
 

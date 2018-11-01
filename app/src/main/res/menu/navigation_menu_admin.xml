@@ -7,16 +7,6 @@
         android:title="Profile"/>
 
     <item
-        android:id="@+id/add_gallery"
-        android:icon="@drawable/ic_photo"
-        android:title="Add Gallery"/>
-
-    <item
-        android:id="@+id/list_gallery"
-        android:icon="@drawable/ic_photo"
-        android:title="List Gallery"/>
-
-    <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_logout"
         android:title="Logout"/>

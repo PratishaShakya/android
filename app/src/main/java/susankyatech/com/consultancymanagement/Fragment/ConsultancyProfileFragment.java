@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,6 +56,12 @@ public class ConsultancyProfileFragment extends Fragment {
     ImageView interest;
     @BindView(R.id.profile_banner)
     ImageView profileBanner;
+    @BindView(R.id.progressBarLayout)
+    View progressLayout;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.progressTV)
+    TextView progressTextView;
 
 
     private int clientId;
@@ -78,6 +86,10 @@ public class ConsultancyProfileFragment extends Fragment {
 
 
     private void init() {
+        progressLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        profileBanner.setVisibility(View.GONE);
+
         if (getArguments() != null){
             clientId = getArguments().getInt("client_id", 0);
             clientName = getArguments().getString("client_name");
@@ -93,8 +105,6 @@ public class ConsultancyProfileFragment extends Fragment {
             interest.setVisibility(View.GONE);
             getProfileInfo();
         }else {
-            interest.setVisibility(View.VISIBLE);
-
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(clientName + "'s Profile");
             getClientProfileInfo();
         }
@@ -120,6 +130,10 @@ public class ConsultancyProfileFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        profileBanner.setVisibility(View.VISIBLE);
+
                         String imageUrl = response.body().data.client.detail.cover_photo;
                         Picasso.get().load(imageUrl).into(profileBanner);
                     }
@@ -147,7 +161,12 @@ public class ConsultancyProfileFragment extends Fragment {
                 if (response.isSuccessful()){
                     if (response.body() != null){
                         App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        profileBanner.setVisibility(View.VISIBLE);
+                        interest.setVisibility(View.VISIBLE);
                         if (response.body().data.client.detail!=null){
+
                             String imageUrl = response.body().data.client.detail.cover_photo;
                             Picasso.get().load(imageUrl).into(profileBanner);
                         }else{
@@ -241,9 +260,9 @@ public class ConsultancyProfileFragment extends Fragment {
         galleryFragment.setArguments(bundle);
 
         adapter.addFragment(profileInfoFragment, "Info");
-        adapter.addFragment(profileCountryFragment, "Country");
+        adapter.addFragment(profileCountryFragment, "Countries");
         adapter.addFragment(profileUniversityFragment, "Courses");
-        adapter.addFragment(galleryFragment, "Galleries");
+        adapter.addFragment(galleryFragment, "Gallery");
         viewPager.setAdapter(adapter);
     }
 

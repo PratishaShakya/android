@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Application.MySpannable;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
-import susankyatech.com.consultancymanagement.Generic.Keys;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -162,11 +163,20 @@ public class ProfileInfoFragment extends Fragment {
         } else if (TextUtils.isEmpty(clientPhone)){
             phoneNo.setError("Enter Phone Number");
             phoneNo.requestFocus();
+        } else if (clientPhone.length() < 10){
+            phoneNo.setError("Enter Valid Phone Number");
+            phoneNo.requestFocus();
+        } else if (clientPhone.length() > 10){
+            phoneNo.setError("Enter Valid Phone Number");
+            phoneNo.requestFocus();
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(clientEmail).matches()){
+            emailId.setError("Enter Valid Email Address");
+            emailId.requestFocus();
         }
-//        else if (TextUtils.isEmpty(clientEmail)){
-//            emailId.setError("Enter Email Address");
-//            emailId.requestFocus();
-//        }
+        else if (TextUtils.isEmpty(clientEmail)){
+            emailId.setError("Enter Email Address");
+            emailId.requestFocus();
+        }
         else if (TextUtils.isEmpty(clientDescription)){
             description.setError("Enter Description");
             description.requestFocus();
@@ -179,9 +189,10 @@ public class ProfileInfoFragment extends Fragment {
 
     private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientEmail, String clientDescription) {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        detail_id = client.detail.detail_id;
+        Client client1 = App.db().getObject(FragmentKeys.CLIENT, Client.class);
+        detail_id = client1.detail.id;
         Log.d("asd", "saveDetails: "+ detail_id);
-        Detail clientDetail = new Detail();
+        ProfileInfo clientDetail = new ProfileInfo();
         clientDetail.detail_id = detail_id;
         clientDetail.description = clientDescription;
         clientDetail.phone = clientPhone;
@@ -195,14 +206,17 @@ public class ProfileInfoFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if(response.isSuccessful()){
                     if (response.body() != null){
-                        Log.d("asd", "onResponse: "+response.body().data.location);
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Successfully!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        progressLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        wholeLayout.setVisibility(View.GONE);
+                        Log.d("asd", "onResponse: "+response.body().data.location +response.body().message);
+                        MDToast mdToast = MDToast.makeText(getActivity(), ""+response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                         getProfileInfo();
                     }
                 }else {
                     try {
-                        Log.d("coverPic", response.errorBody().string());
+                        Log.d("asd", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {

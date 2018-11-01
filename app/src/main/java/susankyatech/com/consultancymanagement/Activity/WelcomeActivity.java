@@ -46,6 +46,7 @@ import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -181,7 +182,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private void addClientDetail(String location, String phone, String description, String established, String achievement) {
         client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
         detail_id = client.detail.detail_id;
-        Detail clientDetail = new Detail();
+        ProfileInfo clientDetail = new ProfileInfo();
         clientDetail.detail_id = detail_id;
         clientDetail.courses = coursesList;
         clientDetail.countries = countryList;

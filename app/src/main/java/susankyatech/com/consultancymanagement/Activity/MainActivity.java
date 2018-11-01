@@ -16,11 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.valdesekamdem.library.mdtoast.MDToast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +45,7 @@ import susankyatech.com.consultancymanagement.Fragment.SearchFragment;
 import susankyatech.com.consultancymanagement.Fragment.StudentProfileFragment;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
+import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.EnquiryDetails;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> dates = new ArrayList<>();
 
     private Data data;
+    private Client client;
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -92,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
             dates.add(i);
         }
 
-//        View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
-
+        View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
+        TextView userName = navView.findViewById(R.id.user_name);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -107,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
             navigationView.inflateMenu(R.menu.navigation_menu_student);
             getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
             data = App.db().getObject(FragmentKeys.DATA,Data.class);
-            getSupportActionBar().setTitle("Hi "+data.name + ",");
             Log.d("poi", "init: "+data);
+            userName.setText(data.name);
             if (data.enquiry_details == null){
 
                 getStudentFurtherDetails();
@@ -116,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             navigationView.inflateMenu(R.menu.navigation_menu_admin);
+
+            client = App.db().getObject(FragmentKeys.CLIENT,Client.class);
+
+            userName.setText(client.client_name);
             if (getIntent() != null){
                 fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
                 if (fragmentName == null){
@@ -185,13 +194,13 @@ public class MainActivity extends AppCompatActivity {
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
         } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your qualification");
+            interestedCountry.setError("Enter your Destination");
             interestedCountry.requestFocus();
         } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your qualification");
+            interestedCourse.setError("Enter your Interested Course");
             interestedCourse.requestFocus();
         }  else if (TextUtils.isEmpty(studentSummary)){
-            summary.setError("Enter your qualification");
+            summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
@@ -263,16 +272,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.stared:
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new InterestedClientsFragment()).commit();
-
-                break;
-
-            case R.id.add_gallery:
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new AddGalleryFragment()).commit();
-
-                break;
-
-            case R.id.list_gallery:
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new GalleryFragment()).commit();
 
                 break;
 

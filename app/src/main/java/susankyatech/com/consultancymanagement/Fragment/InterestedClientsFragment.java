@@ -26,6 +26,7 @@ import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Model.Client;
+import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -48,6 +49,7 @@ public class InterestedClientsFragment extends Fragment {
     TextView message;
 
     private List<Client> clientList;
+    Data data;
 
     public InterestedClientsFragment() {
         // Required empty public constructor

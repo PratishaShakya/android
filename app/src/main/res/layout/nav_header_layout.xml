@@ -2,11 +2,35 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="100dp"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/nav_background"
+        android:scaleType="fitXY"/>
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:background="#fff"
+        android:padding="@dimen/small_margin"
+        android:src="@drawable/ic_college" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="hi"/>
+        android:layout_centerVertical="true"
+        android:textColor="#fff"
+        android:layout_toRightOf="@id/icon"
+        android:textSize="20sp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="Client Name"/>
 
 </RelativeLayout>

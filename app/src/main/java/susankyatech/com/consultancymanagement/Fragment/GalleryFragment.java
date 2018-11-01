@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.GalleryListAdapter;
@@ -87,6 +89,9 @@ public class GalleryFragment extends Fragment {
 
         if (clientId != 0){
             addGallery.setVisibility(View.GONE);
+            listClientGallery();
+        }else {
+            listGallery();
         }
         allGallery = new ArrayList<>();
 
@@ -101,8 +106,42 @@ public class GalleryFragment extends Fragment {
 
 
         galleryList.setLayoutManager(new GridLayoutManager(getContext(),2));
-        listGallery();
 
+
+    }
+
+    private void listClientGallery() {
+        final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.getSingleClient(clientId).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        galleryList.setVisibility(View.VISIBLE);
+
+                        allGallery = response.body().data.client.galleries;
+                        images = new ArrayList<>();
+                        for(int i=0;i<allGallery.size();i++)
+                            images.add(allGallery.get(i).image);
+
+                        Log.d("asd", "onResponse: "+allGallery.size());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
+                        galleryList.setAdapter(galleryListAdapter);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+                Log.d(TAG, "onFailure: "+t.getMessage());
+                MDToast mdToast = MDToast.makeText(getActivity(), "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                mdToast.show();
+            }
+        });
     }
 
     private void listGallery() {

@@ -151,9 +151,10 @@
             android:layout_below="@id/search_layout"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp">
+            android:background="#fff">
 
         </android.support.v7.widget.RecyclerView>
+
 
         <!--<TextView-->
         <!--android:id="@+id/enquiry_btn"-->
@@ -168,6 +169,46 @@
         <!--android:padding="10dp"-->
         <!--android:text="Open Enquiry"-->
         <!--android:textColor="@android:color/background_dark" />-->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/open_inquiry"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:layout_marginBottom="@dimen/medium_padding"
+        android:background="@drawable/circle_layout"
+        android:visibility="gone"
+        android:elevation="3dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-6dp">
+
+            <ImageView
+                android:id="@+id/new_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_new_file" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/new_post"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_centerHorizontal="true"
+                android:text="Post"
+                android:textColor="#fff" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
