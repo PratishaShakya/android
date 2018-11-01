@@ -31,10 +31,14 @@ import com.valdesekamdem.library.mdtoast.MDToast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +48,7 @@ import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ImageUploadListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Model.Gallery;
+import susankyatech.com.consultancymanagement.Model.GalleryAdmin;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -142,14 +147,33 @@ public class AddGalleryFragment extends Fragment {
     }
 
     private void uploadGallery() {
-        Gallery gallery = new Gallery();
-        gallery.galleries = fileGalleryList;
-        Toast.makeText(getActivity(), ""+fileGalleryList.size(), Toast.LENGTH_SHORT).show();
+
+        MultipartBody.Part[]  files=new MultipartBody.Part [fileGalleryList.size()];
+        for (int i=0;i<fileGalleryList.size();i++)
+      {
+          RequestBody fileBody =
+                  RequestBody.create( MediaType.parse("multipart/form-data"), fileGalleryList.get(i));
+          files[i]  = MultipartBody.Part.createFormData("images["+i+"]", file.getName(), fileBody);
+
+      }
+
+        //Setting the file name as an empty string here causes the same issue, which is sending the request successfully without saving the files in the backend, so don't neglect the file name parameter.
+
+        Log.d("loginError1","filelength"+files.length);
         GalleryAPI galleryAPI = App.consultancyRetrofit().create(GalleryAPI.class);
-        galleryAPI.addGalleries(gallery).enqueue(new Callback<ResponseBody>() {
+        galleryAPI.addGalleries(files).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()){
+                    try
+                    {
+                        Log.d("loginError1",response.body().string()+"");
+
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                     if (response.body() != null){
                         Fragment fragment = new GalleryFragment();
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -201,7 +225,7 @@ public class AddGalleryFragment extends Fragment {
                 fileGalleryList.add(file);
                 fileNameList.add(fileName);
                 fileImageList.add(data.getData());
-                uploadListAdapter.notifyDataSetChanged();
+                 uploadListAdapter.notifyDataSetChanged();
             }
         }
     }

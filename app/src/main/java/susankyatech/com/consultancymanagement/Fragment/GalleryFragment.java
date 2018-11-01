@@ -173,6 +173,7 @@ public class GalleryFragment extends Fragment {
                             addGallery.setVisibility(View.VISIBLE);
                             cardView.setVisibility(View.VISIBLE);
                         }else{
+                            addGallery.setVisibility(View.VISIBLE);
                             cardView.setVisibility(View.GONE);
                         }
 
