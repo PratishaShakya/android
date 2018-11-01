@@ -3,7 +3,6 @@ package susankyatech.com.consultancymanagement.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Fragment.StudentLoginFragment;
@@ -18,32 +17,34 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         init();
     }
 
     private void init() {
-        if (isAccountLoggedIn()){
 
-            if (!App.db().getBoolean(Keys.IS_STUDENT)){
+        if (isAccountLoggedIn()) {
+
+            if (!App.db().getBoolean(Keys.IS_STUDENT)) {
+
                 Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-                if (client.detail == null){
-                    Log.d("poi", "init: "+client.detail);
+
+                if (client.detail == null) {
                     Intent i = new Intent(LoginActivity.this, WelcomeActivity.class);
                     startActivity(i);
                     finish();
-                }else {
+                } else {
                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(i);
                     finish();
                 }
-            }else{
+            } else {
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }
-
-
         }
+
         getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new StudentLoginFragment()).commit();
     }
 
