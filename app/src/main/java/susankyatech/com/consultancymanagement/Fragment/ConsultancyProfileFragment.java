@@ -438,6 +438,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
         Bundle bundle = new Bundle();
         bundle.putInt("clientId", clientId);
+        bundle.putString("clientName", clientName);
 
         ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
         profileInfoFragment.setArguments(bundle);

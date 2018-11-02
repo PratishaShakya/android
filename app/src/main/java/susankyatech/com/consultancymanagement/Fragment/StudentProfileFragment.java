@@ -31,6 +31,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
@@ -52,10 +53,14 @@ public class StudentProfileFragment extends Fragment {
     TextView qualificationTv;
     @BindView(R.id.complete_year)
     TextView completeYear;
-    @BindView(R.id.interested_course)
-    TextView interestCourseTv;
-    @BindView(R.id.destination)
-    TextView destination;
+    @BindView(R.id.address)
+    TextView addressTv;
+    @BindView(R.id.contact)
+    TextView contactTv;
+    @BindView(R.id.name)
+    TextView nameTv;
+    @BindView(R.id.email)
+    TextView emailIdTv;
     @BindView(R.id.test_attended)
     TextView testAttendedTv;
     @BindView(R.id.summary)
@@ -64,7 +69,7 @@ public class StudentProfileFragment extends Fragment {
     FancyButton editInfo;
 
 
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -121,9 +126,10 @@ public class StudentProfileFragment extends Fragment {
         data = App.db().getObject(FragmentKeys.DATA,Data.class);
         enquiryDetails = data.enquiry_details;
         qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
-
-        interestCourseTv.setText(enquiryDetails.interested_course);
-        destination.setText(enquiryDetails.interested_country);
+        nameTv.setText(data.name);
+        addressTv.setText(data.address);
+        contactTv.setText(data.phone);
+        emailIdTv.setText(data.email);
         summaryTv.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
@@ -141,8 +147,6 @@ public class StudentProfileFragment extends Fragment {
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
@@ -176,10 +180,12 @@ public class StudentProfileFragment extends Fragment {
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
@@ -228,11 +234,13 @@ public class StudentProfileFragment extends Fragment {
         enquiryDetails = data.enquiry_details;
         Log.d(TAG, "editStudentDetails: "+enquiryDetails.qualification.get(0));
         qualification.setText(enquiryDetails.qualification.get(1));
-        interestedCourse.setText(enquiryDetails.interested_course);
-        interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
 
         String[] testsSplit=enquiryDetails.test_attended.split(",");
 
@@ -293,37 +301,29 @@ public class StudentProfileFragment extends Fragment {
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
-        String testsAttended=getTestsString();
+        final String studentName = userName.getText().toString();
+        final String studentEmail = userEmail.getText().toString();
+        final String studentAddress = userAddress.getText().toString();
+        final String studentPhone = userPhone.getText().toString();
+        String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your qualification");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your qualification");
-            interestedCourse.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
-            String userQualification = selectedLevel + ", " + studentQualification;
+            String userQualification = selectedLevel + "," + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(userQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+            enquiryAPI.saveDetailsNew(userQualification, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
-                                    App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
-                                    mdToast.show();
-                                    getStudentInfo();
-                                    materialDialog.dismiss();
+                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
                                 }
                             }else {
                                 try {
@@ -343,6 +343,32 @@ public class StudentProfileFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog) {
+
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone)
+                .enqueue(new Callback<Login>() {
+                    @Override
+                    public void onResponse(Call<Login> call, Response<Login> response) {
+                        if (response.isSuccessful()){
+                            if (response.body() != null){
+                                App.db().putObject(FragmentKeys.DATA, response.body().data);
+                                materialDialog.dismiss();
+                                MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                                mdToast.show();
+                                Log.d(TAG, "onResponse: "+response.body().data.name);
+                                getStudentInfo();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Login> call, Throwable t) {
+
+                    }
+                });
     }
 
 }

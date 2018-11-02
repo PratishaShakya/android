@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valdesekamdem.library.mdtoast.MDToast;
@@ -50,6 +51,11 @@ public class OpenInquirySelectCountryFragment extends Fragment {
     AutoCompleteTextView courseName;
     @BindView(R.id.btn_next)
     FancyButton btnNext;
+    @BindView(R.id.best_consultancy)
+    TextView bestConsultancy;
+
+    private int clientId;
+    private String clientName;
 
     CountryList countryList= new CountryList();
     private List<String> courseList = new ArrayList<>();
@@ -72,6 +78,17 @@ public class OpenInquirySelectCountryFragment extends Fragment {
     }
 
     private void init() {
+        if (getArguments() != null){
+            clientId = getArguments().getInt("client_id");
+            clientName = getArguments().getString("client_name");
+        }
+
+        if (clientId == 0){
+            bestConsultancy.setVisibility(View.VISIBLE);
+        } else {
+            bestConsultancy.setVisibility(View.GONE);
+        }
+
         countryName.requestFocus();
 
         getCourseList();
@@ -100,10 +117,15 @@ public class OpenInquirySelectCountryFragment extends Fragment {
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("client_id",clientId);
+                                    bundle.putString("client_name", clientName);
+
                                     Log.d("nbv", "onResponse: "+response.body().message);
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
                                     FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
                                     OpenInquiryProfileFragment openInquirySelectCountryFragment = new OpenInquiryProfileFragment();
+                                    openInquirySelectCountryFragment.setArguments(bundle);
                                     fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
                                 }
                             }else {

@@ -255,4 +255,23 @@
         fancy:fb_text="Edit Info"
         fancy:fb_textColor="@color/login_btn_color" />
 
+    <RelativeLayout
+        android:id="@+id/sendInquiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_padding"
+        android:layout_alignParentBottom="true"
+        android:background="#008577">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:fontFamily="@font/nunito_semibold"
+            android:textSize="17sp"
+            android:text="Send Inquiry"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

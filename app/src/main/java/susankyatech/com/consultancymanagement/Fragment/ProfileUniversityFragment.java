@@ -58,13 +58,14 @@ public class ProfileUniversityFragment extends Fragment {
     FancyButton addCourse;
 
     private int clientId, detail_id;
-    private CourseListAdapter courseListAdapter;
-    private List<String> courses = new ArrayList<>();
-    private List<String> coursesList;
 
+    private CourseListAdapter courseListAdapter;
     ClientAPI clientAPI;
+
     NachoTextView wCourse;
 
+    private List<String> courses = new ArrayList<>();
+    private List<String> coursesList;
 
     public ProfileUniversityFragment() {
         // Required empty public constructor
@@ -174,8 +175,8 @@ public class ProfileUniversityFragment extends Fragment {
     }
 
     private void getClientCourseList() {
+        clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
-
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){
@@ -215,7 +216,6 @@ public class ProfileUniversityFragment extends Fragment {
                     if (response.body() != null){
                         courses = response.body().data.client.detail.courses;
 
-
                         courseListAdapter = new CourseListAdapter(courses);
                         courseList.setAdapter(courseListAdapter);
                         progressLayout.setVisibility(View.GONE);
@@ -235,7 +235,9 @@ public class ProfileUniversityFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                mdToast.show();
             }
         });
     }

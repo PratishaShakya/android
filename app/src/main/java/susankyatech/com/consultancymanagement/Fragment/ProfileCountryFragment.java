@@ -67,11 +67,9 @@ public class ProfileCountryFragment extends Fragment {
     private List<String> countries = new ArrayList<>();
     private List<String> countryLists;
 
-
     public ProfileCountryFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,17 +86,13 @@ public class ProfileCountryFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         countryList.setVisibility(View.GONE);
         if (getArguments()!=null){
-            clientId = getArguments().getInt("clientId");
+            clientId = getArguments().getInt("clientId", 0);
         }
-
-        Log.d(TAG, "initHERE: "+clientId);
-
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-
         countryList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         if (clientId == 0){
             getCountryList();
-
         } else{
             getClientCountryList();
             addCountry.setVisibility(View.GONE);
@@ -136,7 +130,6 @@ public class ProfileCountryFragment extends Fragment {
                 });
             }
         });
-
     }
 
     private void countryAdd(final MaterialDialog materialDialog) {
@@ -182,9 +175,7 @@ public class ProfileCountryFragment extends Fragment {
     }
 
     private void getClientCountryList() {
-
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Log.d(TAG, "getClientCountryList: "+ConsultancyProfileFragment.clientStaticID);
         clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
 
             @Override
@@ -225,7 +216,6 @@ public class ProfileCountryFragment extends Fragment {
                 if (response.isSuccessful()){
                     if (response.body() != null){
                         countries = response.body().data.client.detail.countries;
-
 
                         countryListAdapter = new CountryListAdapter(countries);
                         countryList.setAdapter(countryListAdapter);

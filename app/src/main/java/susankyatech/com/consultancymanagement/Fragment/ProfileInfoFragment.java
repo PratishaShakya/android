@@ -3,6 +3,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -31,6 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
+import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Application.MySpannable;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
@@ -67,10 +69,13 @@ public class ProfileInfoFragment extends Fragment {
     RelativeLayout wholeLayout;
     @BindView(R.id.btn_edit)
     FancyButton editInfo;
+    @BindView(R.id.sendInquiry)
+    RelativeLayout sendInquiry;
 
     private Client client;
     private Detail detail;
     private int clientId, detail_id;
+    private String clientName;
 
     private EditText established, location, phoneNo, description;
 
@@ -97,15 +102,33 @@ public class ProfileInfoFragment extends Fragment {
         wholeLayout.setVisibility(View.GONE);
         if (getArguments()!=null){
             clientId = getArguments().getInt("clientId", 0);
+            clientName = getArguments().getString("clientName");
         }
         Log.d("initHERE1",clientId+"");
         
         if (clientId == 0){
             getProfileInfo();
+            sendInquiry.setVisibility(View.GONE);
         } else{
             editInfo.setVisibility(View.GONE);
             getClientProfileInfo();
         }
+
+        sendInquiry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("client_id", clientId);
+                bundle.putString("client_name", clientName);
+
+                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+                openInquirySelectCountryFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
+            }
+        });
 
         editInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,7 +222,7 @@ public class ProfileInfoFragment extends Fragment {
                         progressLayout.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.VISIBLE);
                         wholeLayout.setVisibility(View.GONE);
-                        Log.d("asd", "onResponse: "+response.body().data.location +response.body().message);
+                        Log.d("asd", "onResponse: "+response.body().data.address +response.body().message);
                         MDToast mdToast = MDToast.makeText(getActivity(), ""+response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                         getProfileInfo();
@@ -233,6 +256,8 @@ public class ProfileInfoFragment extends Fragment {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
+                        sendInquiry.setVisibility(View.VISIBLE);
+
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
                         profileName.setText(client.client_name);

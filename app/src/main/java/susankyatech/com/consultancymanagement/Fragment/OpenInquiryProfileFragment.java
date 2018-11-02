@@ -32,6 +32,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
@@ -50,28 +51,37 @@ import static android.content.ContentValues.TAG;
  */
 public class OpenInquiryProfileFragment extends Fragment {
 
-    @BindView(R.id.interested_course)
-    TextView interestedCourseTv;
-    @BindView(R.id.destination)
-    TextView destination;
     @BindView(R.id.qualification)
     TextView qualificationTv;
     @BindView(R.id.complete_year)
     TextView completeYear;
+    @BindView(R.id.address)
+    TextView addressTv;
+    @BindView(R.id.contact)
+    TextView contactTv;
+    @BindView(R.id.name)
+    TextView nameTv;
+    @BindView(R.id.email)
+    TextView emailIdTv;
     @BindView(R.id.test_attended)
     TextView testAttendedTv;
     @BindView(R.id.summary)
     TextView summaryTv;
     @BindView(R.id.btn_edit)
     FancyButton btnEdit;
+    @BindView(R.id.btn_back)
+    FancyButton btnBack;
     @BindView(R.id.btn_send)
     FancyButton btnSend;
+
+    private int clientId;
+    private String clientName;
 
     private Data data;
     private EnquiryDetails enquiryDetails;
 
     private int selectedYear;
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -98,6 +108,10 @@ public class OpenInquiryProfileFragment extends Fragment {
     }
 
     private void init() {
+        if (getArguments() != null){
+            clientId = getArguments().getInt("client_id");
+            clientName = getArguments().getString("client_name");
+        }
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
         for (int i = todayYear; i > 1969; i--){
@@ -105,6 +119,26 @@ public class OpenInquiryProfileFragment extends Fragment {
         }
 
         getStudentInfo();
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clientId == 0){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("client_id",clientId);
+                    bundle.putString("client_name", clientName);
+
+                    FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                    OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+                    openInquirySelectCountryFragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+                }else {
+                    FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                    OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+                    fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+                }
+            }
+        });
 
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +150,12 @@ public class OpenInquiryProfileFragment extends Fragment {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendInquiry();
+                if (clientId == 0){
+                    sendInquiry();
+                } else {
+                    sendInquiryToClient();
+                }
+
             }
         });
     }
@@ -133,10 +172,12 @@ public class OpenInquiryProfileFragment extends Fragment {
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
@@ -185,11 +226,13 @@ public class OpenInquiryProfileFragment extends Fragment {
         enquiryDetails = data.enquiry_details;
         Log.d(TAG, "editStudentDetails: "+enquiryDetails.qualification.get(0));
         qualification.setText(enquiryDetails.qualification.get(1));
-        interestedCourse.setText(enquiryDetails.interested_course);
-        interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
 
         String[] testsSplit=enquiryDetails.test_attended.split(",");
 
@@ -249,37 +292,29 @@ public class OpenInquiryProfileFragment extends Fragment {
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
-        String testsAttended=getTestsString();
+        final String studentName = userName.getText().toString();
+        final String studentEmail = userEmail.getText().toString();
+        final String studentAddress = userAddress.getText().toString();
+        final String studentPhone = userPhone.getText().toString();
+        String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your qualification");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your qualification");
-            interestedCourse.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
             String userQualification = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(userQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+            enquiryAPI.saveDetailsNew(userQualification, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
-                                    App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
-                                    mdToast.show();
-                                    getStudentInfo();
-                                    materialDialog.dismiss();
+                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
                                 }
                             }else {
                                 try {
@@ -299,6 +334,63 @@ public class OpenInquiryProfileFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog) {
+
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone)
+                .enqueue(new Callback<Login>() {
+                    @Override
+                    public void onResponse(Call<Login> call, Response<Login> response) {
+                        if (response.isSuccessful()){
+                            if (response.body() != null){
+                                App.db().putObject(FragmentKeys.DATA, response.body().data);
+                                materialDialog.dismiss();
+                                MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                                mdToast.show();
+                                Log.d(TAG, "onResponse: "+response.body().data.name);
+                                getStudentInfo();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Login> call, Throwable t) {
+
+                    }
+                });
+    }
+
+    private void sendInquiryToClient() {
+        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
+        clientInterestAPI.interestedOnClient(clientId, 0, 1, 0).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                        SearchFragment searchFragment = new SearchFragment();
+                        fragmentTransaction.replace(R.id.main_container, searchFragment).addToBackStack(null).commit();
+
+                        MDToast mdToast = MDToast.makeText(getContext(), "Inquiry is successfully sent to " + clientName, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                        mdToast.show();
+                    }
+                }else {
+                    try {
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getContext(), "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
     }
 
     private void sendInquiry() {
@@ -335,13 +427,14 @@ public class OpenInquiryProfileFragment extends Fragment {
     private void getStudentInfo() {
         data = App.db().getObject(FragmentKeys.DATA,Data.class);
         enquiryDetails = data.enquiry_details;
-        Log.d(TAG, "getStudentInfo: "+ enquiryDetails.interested_course);
-        interestedCourseTv.setText(enquiryDetails.interested_course);
-        destination.setText(enquiryDetails.interested_country);
         qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+        nameTv.setText(data.name);
+        addressTv.setText(data.address);
+        contactTv.setText(data.phone);
+        emailIdTv.setText(data.email);
+        summaryTv.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
-        summaryTv.setText(enquiryDetails.summary);
     }
 
 }

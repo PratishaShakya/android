@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_app_bar)
     Toolbar mToolbar;
 
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary;
 
     private Spinner completedYear, qualificationSpinner;
     private String fragmentName, selectedLevel;
@@ -100,7 +100,11 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
     List<Integer> dates = new ArrayList<>();
-    List<String> qualificationList = new ArrayList<>();
+    private String[] qualificationList = {
+            "+2",
+            "Bachelors",
+            "Masters"
+    };
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_WRITE_PERMISSION = 786;
@@ -129,10 +133,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        qualificationList.add("+2");
-        qualificationList.add("Bachelors");
-        qualificationList.add("Masters");
 
         for (int i = todayYear; i > 1969; i--){
             dates.add(i);
@@ -400,8 +400,6 @@ public class MainActivity extends AppCompatActivity {
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
@@ -434,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedLevel = qualificationList.get(i);
+                selectedLevel = qualificationList[i];
             }
 
             @Override
@@ -487,27 +485,19 @@ public class MainActivity extends AppCompatActivity {
     private void addFurtherDetails() {
 
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
         String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your Destination");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your Interested Course");
-            interestedCourse.requestFocus();
         }  else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear,testsAttended)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear,testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

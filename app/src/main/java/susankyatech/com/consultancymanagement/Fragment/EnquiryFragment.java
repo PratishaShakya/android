@@ -74,7 +74,7 @@ public class EnquiryFragment extends Fragment {
     private Data data;
     private EnquiryDetails enquiryDetails;
 
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -138,8 +138,6 @@ public class EnquiryFragment extends Fragment {
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
@@ -190,8 +188,6 @@ public class EnquiryFragment extends Fragment {
         enquiryDetails = data.enquiry_details;
         Log.d(TAG, "editStudentDetails: "+enquiryDetails.qualification.get(0));
         qualification.setText(enquiryDetails.qualification.get(1));
-        interestedCourse.setText(enquiryDetails.interested_course);
-        interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
@@ -255,27 +251,19 @@ public class EnquiryFragment extends Fragment {
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
         String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your qualification");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your qualification");
-            interestedCourse.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
             String userQualification = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(userQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+            enquiryAPI.saveDetailsNew(userQualification, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

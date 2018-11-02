@@ -87,7 +87,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     private Context context;
 
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary;
     private Spinner completedYear, qualificationSpinner, countryList;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -319,8 +319,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
         ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
@@ -371,27 +369,19 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
         String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)){
-            interestedCountry.setError("Enter your Destination");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)){
-            interestedCourse.setError("Enter your Interested Course");
-            interestedCourse.requestFocus();
-        }  else if (TextUtils.isEmpty(studentSummary)){
+        } else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {

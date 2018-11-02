@@ -44,6 +44,7 @@ import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Fragment.ConsultancyProfileFragment;
 import susankyatech.com.consultancymanagement.Fragment.EnquiryFragment;
+import susankyatech.com.consultancymanagement.Fragment.OpenInquirySelectCountryFragment;
 import susankyatech.com.consultancymanagement.Fragment.SearchFragment;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
@@ -71,7 +72,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
     ArrayAdapter dateAdapter, levelAdapter;
 
-    private EditText qualification, interestedCountry, interestedCourse, summary;
+    private EditText qualification, summary;
     private TextView qualificationTv, completeYearTv, interestCourseTv, destination, testAttendedTv, summaryTv;
     private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
@@ -130,9 +131,9 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                 } else {
 
                     FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
-                    EnquiryFragment enquiryFragment = new EnquiryFragment();
-                    enquiryFragment.setArguments(bundle);
-                    fragmentTransaction.replace(R.id.main_container, enquiryFragment).addToBackStack(null).commit();
+                    OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+                    openInquirySelectCountryFragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
 //                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
                 }
 
@@ -215,8 +216,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
@@ -263,8 +262,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
             }
         }
 
-        interestedCourse.setText(enquiryDetails.interested_course);
-        interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
         completeYearTv.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
@@ -326,8 +323,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
         ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
@@ -335,6 +330,33 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
+        completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -352,27 +374,19 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
     private void addFurtherDetails(final MaterialDialog materialDialog, final int id, final String client_name) {
         String studentQualification = qualification.getText().toString();
-        String studentInterestedCountry = interestedCountry.getText().toString();
-        String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
         String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)) {
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCountry)) {
-            interestedCountry.setError("Enter your Destination");
-            interestedCountry.requestFocus();
-        } else if (TextUtils.isEmpty(studentInterestedCourse)) {
-            interestedCourse.setError("Enter your Interested Course");
-            interestedCourse.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)) {
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
@@ -381,9 +395,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
                                     MDToast mdToast = MDToast.makeText(context, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                                     mdToast.show();
-                                    getEnquiry(id, client_name);
                                     materialDialog.dismiss();
-
                                 }
                             } else {
                                 try {

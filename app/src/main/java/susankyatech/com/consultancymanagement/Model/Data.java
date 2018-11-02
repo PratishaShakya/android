@@ -12,7 +12,7 @@ public class Data {
     public List<String> courses;
     public List<String> countries;
     public List<Client> clients;
-    public String location;
+    public String address;
     public String phone;
     public String description;
     public String established;
