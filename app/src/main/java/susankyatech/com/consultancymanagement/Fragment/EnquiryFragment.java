@@ -3,6 +3,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -31,6 +33,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
@@ -46,23 +49,30 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StudentProfileFragment extends Fragment {
+public class EnquiryFragment extends Fragment {
 
+    @BindView(R.id.interested_course)
+    TextView interestedCourseTv;
+    @BindView(R.id.destination)
+    TextView destination;
     @BindView(R.id.qualification)
     TextView qualificationTv;
     @BindView(R.id.complete_year)
     TextView completeYear;
-    @BindView(R.id.interested_course)
-    TextView interestCourseTv;
-    @BindView(R.id.destination)
-    TextView destination;
     @BindView(R.id.test_attended)
     TextView testAttendedTv;
     @BindView(R.id.summary)
     TextView summaryTv;
     @BindView(R.id.btn_edit)
-    FancyButton editInfo;
+    FancyButton btnEdit;
+    @BindView(R.id.btn_send)
+    FancyButton btnSend;
 
+    private int clientId, selectedYear;
+    private String clientName;
+
+    private Data data;
+    private EnquiryDetails enquiryDetails;
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
     private Spinner completedYear, qualificationSpinner;
@@ -70,15 +80,11 @@ public class StudentProfileFragment extends Fragment {
 
     List<Integer> dates = new ArrayList<>();
     String[] qualificationList = {"+2", "Bachelors", "Masters"};
+    List<String> testsAttendedList=new ArrayList<>();
+
     private String testAttended, selectedLevel;
 
-    List<String> testsAttendedList=new ArrayList<>();
-    private int selectedYear;
-
-    private EnquiryDetails enquiryDetails;
-    private Data data;
-
-    public StudentProfileFragment() {
+    public EnquiryFragment() {
         // Required empty public constructor
     }
 
@@ -86,21 +92,16 @@ public class StudentProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_student_profile, container, false);
+        View view = inflater.inflate(R.layout.send_enquiry_fragment, container, false);
         ButterKnife.bind(this, view);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
         init();
         return view;
     }
 
     private void init() {
-
-        data = App.db().getObject(FragmentKeys.DATA,Data.class);
-        if (data.enquiry_details == null){
-            getStudentFurtherDetails();
-        }else{
-            getStudentInfo();
+        if (getArguments() != null){
+            clientId = getArguments().getInt("client_id");
+            clientName = getArguments().getString("client_name");
         }
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -109,57 +110,18 @@ public class StudentProfileFragment extends Fragment {
             dates.add(i);
         }
 
-        editInfo.setOnClickListener(new View.OnClickListener() {
+        getStudentInfo();
+        btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editStudentDetails();
             }
         });
-    }
 
-    private void getStudentInfo() {
-        data = App.db().getObject(FragmentKeys.DATA,Data.class);
-        enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
-
-        interestCourseTv.setText(enquiryDetails.interested_course);
-        destination.setText(enquiryDetails.interested_country);
-        summaryTv.setText(enquiryDetails.summary);
-        completeYear.setText(enquiryDetails.completed_year);
-        testAttendedTv.setText(enquiryDetails.test_attended);
-    }
-
-    private void getStudentFurtherDetails() {
-        final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
-                .title("Complete Your Profile")
-                .customView(R.layout.fragment_course_enquiry, true)
-                .positiveText("Save")
-                .negativeText("Close")
-                .positiveColor(getResources().getColor(R.color.green))
-                .negativeColor(getResources().getColor(R.color.red))
-                .show();
-
-        qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
-        completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
-        summary = materialDialog.getCustomView().findViewById(R.id.about_you);
-        satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
-        ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
-        greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
-        pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
-        toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+        btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addFurtherDetails(materialDialog);
-            }
-        });
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
+                sendInquiry();
             }
         });
     }
@@ -284,7 +246,7 @@ public class StudentProfileFragment extends Fragment {
         {
             String test=chosenTests.get(i);
             if (i==chosenTests.size()-1)
-            tests+=test;
+                tests+=test;
             else tests+=test+", ";
         }
 
@@ -343,6 +305,49 @@ public class StudentProfileFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    private void sendInquiry() {
+        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
+        clientInterestAPI.interestedOnClient(clientId, 0,1,0).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                        SearchFragment searchFragment = new SearchFragment();
+                        fragmentTransaction.replace(R.id.main_container, searchFragment).addToBackStack(null).commit();
+
+                        MDToast mdToast = MDToast.makeText(getContext(), "Inquiry sent to " + clientName + " successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                        mdToast.show();
+                    }
+                }else {
+                    try {
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getContext(), "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                        mdToast.show();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getStudentInfo() {
+        data = App.db().getObject(FragmentKeys.DATA,Data.class);
+        enquiryDetails = data.enquiry_details;
+        interestedCourseTv.setText(enquiryDetails.interested_course);
+        destination.setText(enquiryDetails.interested_country);
+        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+        completeYear.setText(enquiryDetails.completed_year);
+        testAttendedTv.setText(enquiryDetails.test_attended);
+        summaryTv.setText(enquiryDetails.summary);
+
     }
 
 }

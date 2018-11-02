@@ -43,6 +43,7 @@ import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Fragment.ConsultancyProfileFragment;
+import susankyatech.com.consultancymanagement.Fragment.EnquiryFragment;
 import susankyatech.com.consultancymanagement.Fragment.SearchFragment;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
@@ -127,7 +128,12 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                 if (data.enquiry_details == null) {
                     getStudentFurtherDetails(clientList.get(i).id, clientList.get(i).client_name);
                 } else {
-                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
+
+                    FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
+                    EnquiryFragment enquiryFragment = new EnquiryFragment();
+                    enquiryFragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.main_container, enquiryFragment).addToBackStack(null).commit();
+//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
                 }
 
             }

@@ -460,17 +460,26 @@ public class MainActivity extends AppCompatActivity {
 
     private String getTestsString()
     {
+        List<String> chosenTests=new ArrayList<>();
         String tests="";
         if (toeflCB.isChecked())
-            tests+="TOEFL, ";
+            chosenTests.add("TOEFL");
         if (satCB.isChecked())
-            tests+="SAT, ";
+            chosenTests.add("SAT");
         if (greCB.isChecked())
-            tests+="GRE, ";
+            chosenTests.add("GRE");
         if (ieltsCB.isChecked())
-            tests+="IELTS, ";
+            chosenTests.add("IELTS");
         if (pteCB.isChecked())
-            tests+="PTE";
+            chosenTests.add("PTE");
+
+        for (int i=0;i<chosenTests.size();i++)
+        {
+            String test=chosenTests.get(i);
+            if (i==chosenTests.size()-1)
+                tests+=test;
+            else tests+=test+", ";
+        }
 
         return tests;
     }
