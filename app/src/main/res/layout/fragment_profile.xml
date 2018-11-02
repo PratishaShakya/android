@@ -67,6 +67,16 @@
         android:layout_marginRight="5dp"
         android:src="@drawable/ic_interest" />
 
+    <ImageView
+        android:id="@+id/edit_coverPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/banner"
+        android:layout_alignParentEnd="true"
+        android:visibility="visible"
+        android:layout_marginRight="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:src="@drawable/ic_photo_camera" />
 
 
     <android.support.design.widget.TabLayout
@@ -85,8 +95,5 @@
         android:layout_above="@id/btn_edit"
         android:layout_marginBottom="@dimen/medium_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-
-
 
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -27,6 +28,7 @@ import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +63,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     private EnquiryDetails enquiryDetails;
     private int selectedYear;
     private String selectedLevel;
+    List<String> testsAttendedList=new ArrayList<>();
 
     List<Integer> dates = new ArrayList<>();
     String[] qualificationList = {"+2", "Bachelors", "Masters"};
@@ -69,6 +72,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
     private TextView qualificationTv, completeYearTv, interestCourseTv, destination, testAttendedTv, summaryTv;
+    private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
     private Spinner completedYear, qualificationSpinner;
 
@@ -80,7 +84,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         this.data = App.db().getObject(FragmentKeys.DATA, Data.class);
 
         dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
-        levelAdapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, qualificationList);
+        levelAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, qualificationList);
 
         dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -119,15 +123,11 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                 Bundle bundle = new Bundle();
                 bundle.putInt("client_id", clientList.get(i).id);
                 bundle.putString("client_name", clientList.get(i).client_name);
-//                bundle.putString("client_location", clientList.get(i).detail.location);
 
                 if (data.enquiry_details == null) {
                     getStudentFurtherDetails(clientList.get(i).id, clientList.get(i).client_name);
                 } else {
                     getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
-//                    EnquiryFragment enquiryFragment = new EnquiryFragment();
-//                    enquiryFragment.setArguments(bundle);
-//                    ((MainActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.main_container, enquiryFragment).addToBackStack(null).commit();
                 }
 
             }
@@ -172,15 +172,15 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
     private void sendInquiry(int id, final String client_name) {
         ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.interestedOnClient(id, 0,1,0).enqueue(new Callback<Login>() {
+        clientInterestAPI.interestedOnClient(id, 0, 1, 0).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        MDToast mdToast = MDToast.makeText(context, "Inquiry sent to "+ client_name +" successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        MDToast mdToast = MDToast.makeText(context, "Inquiry sent to " + client_name + " successfully", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
                     }
-                }else {
+                } else {
                     try {
                         Log.d("client", "onResponse: error" + response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(context, "Something went wrong. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
@@ -213,6 +213,11 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
@@ -242,10 +247,38 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         });
 
         enquiryDetails = data.enquiry_details;
-        qualification.setText(enquiryDetails.qualification);
+
+        qualification.setText(enquiryDetails.qualification.get(1));
+
+        String datafromApi = enquiryDetails.qualification.get(0);
+        for (int i = 0; i < qualificationList.length; i++) {
+            if (qualificationList[i].equals(datafromApi)) {
+                qualificationSpinner.setSelection(i);
+            }
+        }
+
         interestedCourse.setText(enquiryDetails.interested_course);
         interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
+        completeYearTv.setText(enquiryDetails.completed_year);
+        testAttendedTv.setText(enquiryDetails.test_attended);
+
+        String[] testsSplit=enquiryDetails.test_attended.split(",");
+
+        for (int i=0;i<testsSplit.length;i++)
+        {
+            testsSplit[i]=testsSplit[i].trim();
+        }
+
+        Collections.addAll(testsAttendedList,testsSplit);
+
+        CheckBox[] checkBoxes=new CheckBox[]{ieltsCB,toeflCB,satCB,pteCB,greCB};
+
+        for (int i=0;i<checkBoxes.length;i++)
+        {
+            if (testsAttendedList.contains(checkBoxes[i].getText().toString()))
+                checkBoxes[i].setChecked(true);
+        }
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,15 +300,17 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     private void getStudentInfo() {
         data = App.db().getObject(FragmentKeys.DATA, Data.class);
         enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification);
+        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
         interestCourseTv.setText(enquiryDetails.interested_course);
         destination.setText(enquiryDetails.interested_country);
         summaryTv.setText(enquiryDetails.summary);
+        testAttendedTv.setText(enquiryDetails.test_attended);
+        completeYearTv.setText(enquiryDetails.completed_year);
     }
 
     private void getStudentFurtherDetails(final int id, final String client_name) {
         final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
-                .title("Complete Your Profile")
+                .title("Complete your Profile")
                 .customView(R.layout.fragment_course_enquiry, true)
                 .positiveText("Save Details")
                 .negativeText("Close")
@@ -288,6 +323,12 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,23 +349,24 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         String studentInterestedCountry = interestedCountry.getText().toString();
         String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
+        String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)) {
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
         } else if (TextUtils.isEmpty(studentInterestedCountry)) {
-            interestedCountry.setError("Enter your qualification");
+            interestedCountry.setError("Enter your Destination");
             interestedCountry.requestFocus();
         } else if (TextUtils.isEmpty(studentInterestedCourse)) {
-            interestedCourse.setError("Enter your qualification");
+            interestedCourse.setError("Enter your Interested Course");
             interestedCourse.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)) {
-            summary.setError("Enter your qualification");
+            summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
@@ -355,6 +397,22 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                         }
                     });
         }
+    }
+
+    private String getTestsString() {
+        String tests = "";
+        if (toeflCB.isChecked())
+            tests += "TOEFL, ";
+        if (satCB.isChecked())
+            tests += "SAT, ";
+        if (greCB.isChecked())
+            tests += "GRE, ";
+        if (ieltsCB.isChecked())
+            tests += "IELTS, ";
+        if (pteCB.isChecked())
+            tests += "PTE";
+
+        return tests;
     }
 
     // Filter Class

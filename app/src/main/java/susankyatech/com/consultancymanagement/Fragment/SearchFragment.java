@@ -88,9 +88,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     private Context context;
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
-    private TextView qualificationTv, completeYearTv, interestCourseTv, destination, testAttendedTv, summaryTv, messageTv;
     private Spinner completedYear, qualificationSpinner, countryList;
-    private CheckBox ieltsCB, satCB, tofelCB, pteCB, greCB;
+    private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
     private int selectedYear;
     private String selected_options, selectedLevel;
@@ -146,7 +145,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
         //Setting the ArrayAdapter data on the Spinner
         spinner.setAdapter(optionsAdapter);
-
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -309,82 +307,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     }
 
-    private void editStudentDetails() {
-        final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
-                .title("Edit Your Profile")
-                .customView(R.layout.fragment_course_enquiry, true)
-                .positiveText("Save Details")
-                .negativeText("Close")
-                .positiveColor(context.getResources().getColor(R.color.green))
-                .negativeColor(context.getResources().getColor(R.color.red))
-                .show();
-
-        qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
-        completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
-        interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
-        summary = materialDialog.getCustomView().findViewById(R.id.about_you);
-        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-
-        completedYear.setAdapter(dateAdapter);
-        qualificationSpinner.setAdapter(levelAdapter);
-
-        completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedYear = dates.get(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedLevel = qualificationList[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        enquiryDetails = data.enquiry_details;
-        qualification.setText(enquiryDetails.qualification);
-        interestedCourse.setText(enquiryDetails.interested_course);
-        interestedCountry.setText(enquiryDetails.interested_country);
-        summary.setText(enquiryDetails.summary);
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addFurtherDetails(materialDialog);
-//
-            }
-        });
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getEnquiry();
-                materialDialog.dismiss();
-            }
-        });
-
-    }
-
-    private void getStudentInfo() {
-        data = App.db().getObject(FragmentKeys.DATA, Data.class);
-        enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification);
-        interestCourseTv.setText(enquiryDetails.interested_course);
-        destination.setText(enquiryDetails.interested_country);
-        summaryTv.setText(enquiryDetails.summary);
-    }
-
     private void getStudentFurtherDetails() {
         final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
                 .title("Complete your Profile")
@@ -401,16 +323,11 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-        ieltsCB = materialDialog.getContentView().findViewById(R.id.cv_ielts);
-        tofelCB = materialDialog.getContentView().findViewById(R.id.cv_tofel);
-        satCB = materialDialog.getContentView().findViewById(R.id.cv_sat);
-        greCB = materialDialog.getContentView().findViewById(R.id.cv_gre);
-        pteCB = materialDialog.getContentView().findViewById(R.id.cv_pte);
-
-
-        if (ieltsCB.isChecked()){
-            Toast.makeText(context, "asd", Toast.LENGTH_SHORT).show();
-        }
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
 
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -457,6 +374,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         String studentInterestedCountry = interestedCountry.getText().toString();
         String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
+        String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
@@ -473,7 +391,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
@@ -501,6 +419,23 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         }
                     });
         }
+    }
+
+    private String getTestsString()
+    {
+        String tests="";
+        if (toeflCB.isChecked())
+            tests+="TOEFL, ";
+        if (satCB.isChecked())
+            tests+="SAT, ";
+        if (greCB.isChecked())
+            tests+="GRE, ";
+        if (ieltsCB.isChecked())
+            tests+="IELTS, ";
+        if (pteCB.isChecked())
+            tests+="PTE";
+
+        return tests;
     }
 
     private void resetSearch() {

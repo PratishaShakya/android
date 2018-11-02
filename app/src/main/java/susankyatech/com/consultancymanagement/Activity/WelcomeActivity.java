@@ -33,6 +33,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -209,12 +212,13 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void uploadCoverPic() {
+        RequestBody fileBody =
+                RequestBody.create( MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("cover_photo", file.getName(), fileBody);
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Detail detail = new Detail();
-        detail.coverPhoto = file;
 
-        clientAPI.addCoverPicture(detail).enqueue(new Callback<Login>() {
+        clientAPI.addCoverPicture(fileToUpload).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(@NonNull Call<Login> call, @NonNull Response<Login> response) {
 

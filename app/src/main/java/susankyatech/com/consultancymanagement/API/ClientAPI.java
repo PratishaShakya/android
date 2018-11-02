@@ -1,9 +1,13 @@
 package susankyatech.com.consultancymanagement.API;
 
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import susankyatech.com.consultancymanagement.Model.ProfileInfo;
@@ -20,8 +24,9 @@ public interface ClientAPI {
     @GET("students/clients/")
     Call<Login> getAllClients();
 
+    @Multipart
     @POST("client/cover-photo/")
-    Call<Login> addCoverPicture(@Body Detail detail);
+    Call<Login> addCoverPicture(@Part MultipartBody.Part cover_photo);
 
     @GET("students/client/{id}")
     Call<Login> getSingleClient(@Path("id") int id);
@@ -37,5 +42,9 @@ public interface ClientAPI {
 
     @GET("students/clients")
     Call<Login> searchByCountry(@Query("countries") String country);
+
+    @Multipart
+    @POST("client/add-logo")
+    Call<ResponseBody> addLogo(@Part MultipartBody.Part logo);
 
 }

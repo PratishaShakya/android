@@ -320,12 +320,17 @@ public class ProfileInfoFragment extends Fragment {
                 if (maxLine == 0) {
                     lineEndIndex = tv.getLayout().getLineEnd(0);
                     text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
-                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
+                } else if (maxLine > 0 && maxLine < 3){
+                    lineEndIndex = tv.getLayout().getLineEnd(0);
+                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
+                }
+
+                else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
                     lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
                     text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
                 } else {
                     lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    text = tv.getText().subSequence(0, lineEndIndex) + " ";
+                    text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
                 }
                 tv.setText(text);
                 tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -343,7 +348,6 @@ public class ProfileInfoFragment extends Fragment {
         SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
 
         if (str.contains(spanableText)) {
-
 
             ssb.setSpan(new MySpannable(false) {
                 @Override

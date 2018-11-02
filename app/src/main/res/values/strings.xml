@@ -41,7 +41,7 @@
     //TEST
     <string name="ielts">IELTS</string>
     <string name="sat">SAT</string>
-    <string name="tofel">TOFEL</string>
+    <string name="tofel">TOEFL</string>
     <string name="pte">PTE</string>
     <string name="gre">GRE</string>
 

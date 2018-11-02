@@ -22,6 +22,7 @@ import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,11 +65,13 @@ public class StudentProfileFragment extends Fragment {
 
 
     private EditText qualification, interestedCountry, interestedCourse, summary;
-    private Spinner completedYear;
-    private CheckBox ielts, tofel, pte, gre;
+    private Spinner completedYear, qualificationSpinner;
+    private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
     List<Integer> dates = new ArrayList<>();
-    private String testAttended;
+    String[] qualificationList = {"+2", "Bachelors", "Masters"};
+    private String testAttended, selectedLevel;
+    List<String> testsAttendedList=new ArrayList<>();
     private int selectedYear;
 
     private EnquiryDetails enquiryDetails;
@@ -116,11 +119,13 @@ public class StudentProfileFragment extends Fragment {
     private void getStudentInfo() {
         data = App.db().getObject(FragmentKeys.DATA,Data.class);
         enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification);
+        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+
         interestCourseTv.setText(enquiryDetails.interested_course);
         destination.setText(enquiryDetails.interested_country);
         summaryTv.setText(enquiryDetails.summary);
-//        completeYear.setText(enquiryDetails.);
+        completeYear.setText(enquiryDetails.completed_year);
+        testAttendedTv.setText(enquiryDetails.test_attended);
     }
 
     private void getStudentFurtherDetails() {
@@ -138,6 +143,11 @@ public class StudentProfileFragment extends Fragment {
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,10 +178,22 @@ public class StudentProfileFragment extends Fragment {
         interestedCountry = materialDialog.getCustomView().findViewById(R.id.enquiry_apply_country);
         interestedCourse = materialDialog.getCustomView().findViewById(R.id.course_to_apply);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
-        ArrayAdapter aa = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        completedYear.setAdapter(aa);
+        ArrayAdapter dateAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
+        ArrayAdapter levelAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,qualificationList);
+
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -184,17 +206,53 @@ public class StudentProfileFragment extends Fragment {
             }
         });
 
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        String datafromApi = enquiryDetails.qualification.get(0);
+        for(int i=0; i < qualificationList.length; i++){
+            if (qualificationList[i].equals(datafromApi)){
+                qualificationSpinner.setSelection(i);
+            }
+        }
+
         enquiryDetails = data.enquiry_details;
-        qualification.setText(enquiryDetails.qualification);
+        Log.d(TAG, "editStudentDetails: "+enquiryDetails.qualification.get(0));
+        qualification.setText(enquiryDetails.qualification.get(1));
         interestedCourse.setText(enquiryDetails.interested_course);
         interestedCountry.setText(enquiryDetails.interested_country);
         summary.setText(enquiryDetails.summary);
+        completeYear.setText(enquiryDetails.completed_year);
+        testAttendedTv.setText(enquiryDetails.test_attended);
 
+        String[] testsSplit=enquiryDetails.test_attended.split(",");
+
+        for (int i=0;i<testsSplit.length;i++)
+        {
+            testsSplit[i]=testsSplit[i].trim();
+        }
+
+        Collections.addAll(testsAttendedList,testsSplit);
+
+        CheckBox[] checkBoxes=new CheckBox[]{ieltsCB,toeflCB,satCB,pteCB,greCB};
+
+        for (int i=0;i<checkBoxes.length;i++)
+        {
+            if (testsAttendedList.contains(checkBoxes[i].getText().toString()))
+                checkBoxes[i].setChecked(true);
+        }
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addFurtherDetails(materialDialog);
-//
             }
         });
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -206,11 +264,38 @@ public class StudentProfileFragment extends Fragment {
 
     }
 
+    private String getTestsString()
+    {
+        List<String> chosenTests=new ArrayList<>();
+        String tests="";
+        if (toeflCB.isChecked())
+            chosenTests.add("TOEFL");
+        if (satCB.isChecked())
+            chosenTests.add("SAT");
+        if (greCB.isChecked())
+            chosenTests.add("GRE");
+        if (ieltsCB.isChecked())
+            chosenTests.add("IELTS");
+        if (pteCB.isChecked())
+            chosenTests.add("PTE");
+
+        for (int i=0;i<chosenTests.size();i++)
+        {
+            String test=chosenTests.get(i);
+            if (i==chosenTests.size()-1)
+            tests+=test;
+            else tests+=test+", ";
+        }
+
+        return tests;
+    }
+
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
         String studentInterestedCountry = interestedCountry.getText().toString();
         String studentInterestedCourse = interestedCourse.getText().toString();
         String studentSummary = summary.getText().toString();
+        String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
@@ -225,15 +310,16 @@ public class StudentProfileFragment extends Fragment {
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
+            String userQualification = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetails(studentQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear)
+            enquiryAPI.saveDetailsNew(userQualification, studentInterestedCountry, studentInterestedCourse, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                                     mdToast.show();
                                     getStudentInfo();
                                     materialDialog.dismiss();
