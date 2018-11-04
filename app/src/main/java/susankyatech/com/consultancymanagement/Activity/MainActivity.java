@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private File file;
     private Data data;
     private Client client;
-
+    CircleImageView userLogo;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             client = App.db().getObject(FragmentKeys.CLIENT,Client.class);
             View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
             TextView userName = navView.findViewById(R.id.user_name);
-            CircleImageView userLogo = navView.findViewById(R.id.client_logo);
+             userLogo = navView.findViewById(R.id.client_logo);
             ImageView editLogo = navView.findViewById(R.id.add_logo);
 
             editLogo.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +209,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void updateViews()
+    {
+        client=App.db().getObject(FragmentKeys.CLIENT,Client.class);
+        Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
+    }
+
     private void openFilePicker() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -229,6 +235,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void uploadLogo() {
+        progressDialog.setTitle("Uploading Logo");
+        progressDialog.setMessage("Please wait, while we are uploading your logo.");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         RequestBody fileBody =
                 RequestBody.create( MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("logo", file.getName(), fileBody);
@@ -239,15 +249,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
-                        progressDialog.setTitle("Uploading Logo");
-                        progressDialog.setMessage("Please wait, while we are uploading your logo.");
-                        progressDialog.setCanceledOnTouchOutside(false);
-                        progressDialog.show();
                         Log.d("loginError1", response.body().string() + "");
                         getProfileInfo();
-                        startActivity(new Intent(MainActivity.this, MainActivity.class));
                         MDToast mdToast = MDToast.makeText(MainActivity.this, "Logo Successfully uploaded!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
+                        progressDialog.dismiss();
 
 
                     } catch (Exception e) {
@@ -284,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     if (response.body() != null){
                         App.db().putObject(FragmentKeys.CLIENT, response.body().data.client);
+                        updateViews();
+
                     }
                 }
             }

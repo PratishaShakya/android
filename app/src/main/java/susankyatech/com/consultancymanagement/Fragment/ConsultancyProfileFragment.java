@@ -2,6 +2,7 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -94,6 +95,7 @@ public class ConsultancyProfileFragment extends Fragment {
     public static int clientStaticID;
 
     private File file;
+    private ProgressDialog progressDialog;
 
     public ConsultancyProfileFragment() {
         // Required empty public constructor
@@ -118,6 +120,7 @@ public class ConsultancyProfileFragment extends Fragment {
         profileBanner.setVisibility(View.GONE);
         editCoverPic.setVisibility(View.GONE);
 
+        progressDialog = new ProgressDialog(getContext());
 
         if (getArguments() != null){
             clientId = getArguments().getInt("client_id", 0);
@@ -187,6 +190,10 @@ public class ConsultancyProfileFragment extends Fragment {
     }
 
     private void uploadCoverPic() {
+        progressDialog.setTitle("Uploading Cover Image");
+        progressDialog.setMessage("Please wait, while we are uploading your cover image.");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         RequestBody fileBody =
                 RequestBody.create( MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("cover_photo", file.getName(), fileBody);
@@ -200,6 +207,7 @@ public class ConsultancyProfileFragment extends Fragment {
                         MDToast mdToast = MDToast.makeText(getContext(), "Cover Image Successfully uploaded!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
                         getProfileInfo();
+                        progressDialog.dismiss();
 
                     } catch (Exception e) {
 
