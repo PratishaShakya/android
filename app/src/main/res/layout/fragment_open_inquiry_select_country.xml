@@ -144,94 +144,100 @@
                     fancy:fb_text="@string/next"
                     fancy:fb_textColor="@color/white" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:orientation="vertical">
+                    android:layout_below="@id/btn_next">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/nunito_semibold"
-                        android:text="Why fill this form?"
-                        android:textSize="16sp" />
-
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/extra_large_padding"
-                        android:layout_marginRight="@dimen/extra_large_padding"
-                        android:layout_marginBottom="@dimen/extra_large_padding"
-                        android:layout_marginTop="@dimen/medium_padding">
+                        android:layout_alignParentBottom="true"
+                        android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="75dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:orientation="vertical">
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/nunito_semibold"
+                            android:text="Why fill this form?"
+                            android:textSize="16sp" />
 
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_success" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_semibold"
-                                android:text="Easy and Convenient"
-                                android:textAlignment="center" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="95dp"
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:orientation="vertical">
+                            android:layout_marginLeft="@dimen/extra_large_padding"
+                            android:layout_marginTop="@dimen/medium_padding"
+                            android:layout_marginRight="@dimen/extra_large_padding"
+                            android:layout_marginBottom="@dimen/extra_large_padding">
 
-                            <ImageView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="75dp"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_group" />
+                                android:layout_alignParentStart="true"
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_success" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/nunito_semibold"
+                                    android:text="Easy and Convenient"
+                                    android:textAlignment="center" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="95dp"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_semibold"
-                                android:text="Authorized Consultancies"
-                                android:textAlignment="center" />
+                                android:layout_centerHorizontal="true"
+                                android:orientation="vertical">
 
-                        </LinearLayout>
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_group" />
 
-                        <LinearLayout
-                            android:layout_width="85dp"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/nunito_semibold"
+                                    android:text="Authorized Consultancies"
+                                    android:textAlignment="center" />
 
-                            <ImageView
-                                android:layout_width="wrap_content"
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="85dp"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_contract" />
+                                android:layout_alignParentEnd="true"
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_semibold"
-                                android:text="Curated List Just for You"
-                                android:textAlignment="center" />
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_contract" />
 
-                        </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/nunito_semibold"
+                                    android:text="Curated List Just for You"
+                                    android:textAlignment="center" />
 
-                    </RelativeLayout>
+                            </LinearLayout>
 
-                </LinearLayout>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
 
             </RelativeLayout>
 

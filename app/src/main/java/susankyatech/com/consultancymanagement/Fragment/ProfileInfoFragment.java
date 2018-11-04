@@ -55,8 +55,6 @@ public class ProfileInfoFragment extends Fragment {
     TextView locationTV;
     @BindView(R.id.phone_number)
     TextView phoneNoTV;
-    @BindView(R.id.email_id)
-    TextView emailIdTV;
     @BindView(R.id.description)
     TextView descriptionTV;
     @BindView(R.id.progressBarLayout)
