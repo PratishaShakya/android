@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(MainActivity.this, "Error on uploading logo. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
+                        progressDialog.dismiss();
                     } catch (Exception e) {
                     }
 

@@ -220,6 +220,7 @@ public class ConsultancyProfileFragment extends Fragment {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getContext(), "Error on uploading Cover Image. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
+                        progressDialog.dismiss();
                     } catch (Exception e) {
                     }
 

@@ -277,6 +277,7 @@ public class ProfileInfoFragment extends Fragment {
                         Log.d("coverPic", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
+
                     } catch (Exception e) {
                     }
                 }
