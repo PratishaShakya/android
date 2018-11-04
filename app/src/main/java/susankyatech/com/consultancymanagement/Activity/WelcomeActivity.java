@@ -32,10 +32,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +59,7 @@ import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocu
 public class WelcomeActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMAGE = 1;
+    private static final int RESULT_LOAD_LOGO = 1;
 
     @BindView(R.id.add_banner)
     ImageView addBanner;
@@ -80,7 +83,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private String selectedImagePath;
     private List<String> countryList = new ArrayList<>();
     private List<String> coursesList = new ArrayList<>();
-    private File file;
+    private File file, logoFile;
     private int FILE_SELECT_CODE = 100, detail_id;
     private Client client;
 
@@ -161,21 +164,25 @@ public class WelcomeActivity extends AppCompatActivity {
                         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+                        startActivityForResult(Intent.createChooser(intent, "Select Cover Picture"), RESULT_LOAD_IMAGE);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+
     }
 
     private void addClientDetail(String location, String phone, String description, String established, String achievement) {
 
         client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-        detail_id = client.detail.detail_id;
+
         ProfileInfo clientDetail = new ProfileInfo();
-        clientDetail.detail_id = detail_id;
+        if (client.detail != null){
+            detail_id = client.detail.detail_id;
+            clientDetail.detail_id = detail_id;
+        }
         clientDetail.courses = coursesList;
         clientDetail.countries = countryList;
         clientDetail.description = description;
@@ -231,7 +238,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                 } else {
                     try {
-                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        Log.d("loginError", response.errorBody().string());
+                        MDToast mdToast = MDToast.makeText(getApplicationContext(), "Error on posting cover picture. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {}
                 }

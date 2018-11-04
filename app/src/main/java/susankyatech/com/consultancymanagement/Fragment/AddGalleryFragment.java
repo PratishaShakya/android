@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -123,10 +124,14 @@ public class AddGalleryFragment extends Fragment {
     }
 
     private void selectImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
-        } else {
-            openFilePicker();
+        try {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+            } else {
+                openFilePicker();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

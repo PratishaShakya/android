@@ -8,34 +8,36 @@
     tools:context=".Activity.WelcomeActivity">
 
 
-    <ImageView
-        android:id="@+id/add_banner"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="1dp"
-        android:layout_below="@id/cv"
-        android:elevation="3dp"
-        android:src="@drawable/ic_photo" />
-
     <TextView
         android:id="@+id/cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:textSize="17sp"
-        android:textColor="@color/primary_text"
         android:padding="10dp"
-        android:text="Choose Cover Picture"/>
+        android:text="Choose Cover Picture"
+        android:textColor="@color/primary_text"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/add_banner"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/cv"
+        android:layout_marginTop="1dp"
+        android:elevation="3dp"
+        android:src="@drawable/ic_photo" />
+
+
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fillViewport="true"
         android:layout_below="@id/add_banner">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/add_banner"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
@@ -104,8 +106,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                >
+                android:layout_marginTop="10dp">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -117,16 +118,16 @@
                         android:id="@+id/welcome_courses"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:chipSpacing="5dp"
-                        app:chipTextColor="@color/colorWhite"
                         android:layout_marginLeft="10dp"
-                        app:chipTextSize="16dp"
-                        app:chipHeight="30dp"
-                        app:chipBackground="@color/colorWhite"
                         android:background="@drawable/rounded_edittext"
                         android:hint="Courses"
                         android:textColorHint="#fb494949"
-                        app:chipVerticalSpacing="5dp"/>
+                        app:chipBackground="@color/colorWhite"
+                        app:chipHeight="30dp"
+                        app:chipSpacing="5dp"
+                        app:chipTextColor="@color/colorWhite"
+                        app:chipTextSize="16dp"
+                        app:chipVerticalSpacing="5dp" />
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -135,8 +136,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                >
+                android:layout_marginTop="10dp">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -148,16 +148,16 @@
                         android:id="@+id/welcome_country"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:chipSpacing="5dp"
-                        app:chipTextColor="@color/colorWhite"
-                        app:chipTextSize="16dp"
-                        app:chipHeight="30dp"
-                        app:chipBackground="@color/colorWhite"
                         android:layout_marginLeft="10dp"
                         android:background="@drawable/rounded_edittext"
                         android:hint="Countries"
                         android:textColorHint="#fb494949"
-                        app:chipVerticalSpacing="5dp"/>
+                        app:chipBackground="@color/colorWhite"
+                        app:chipHeight="30dp"
+                        app:chipSpacing="5dp"
+                        app:chipTextColor="@color/colorWhite"
+                        app:chipTextSize="16dp"
+                        app:chipVerticalSpacing="5dp" />
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -179,12 +179,12 @@
                         android:id="@+id/welcome_description"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
-                        android:inputType="text|textMultiLine"
-                        android:gravity="top"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
+                        android:gravity="top"
                         android:hint="Description"
                         android:imeOptions="actionNext"
+                        android:inputType="text|textMultiLine"
                         android:nextFocusForward="@id/enquiry_address"
                         android:padding="5dp"
                         android:singleLine="true"

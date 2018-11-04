@@ -148,6 +148,11 @@ public class StudentProfileFragment extends Fragment {
         qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);

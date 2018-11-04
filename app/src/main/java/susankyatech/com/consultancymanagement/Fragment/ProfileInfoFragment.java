@@ -309,7 +309,8 @@ public class ProfileInfoFragment extends Fragment {
                         phoneNoTV.setText(detail.phone);
                         locationTV.setText(detail.location);
                         descriptionTV.setText(detail.description);
-                        makeTextViewResizable(descriptionTV, 3, "View More", true);
+                        int lineCount = descriptionTV.getLineCount();
+                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
 
                     }
                 } else {
@@ -344,15 +345,11 @@ public class ProfileInfoFragment extends Fragment {
                 obs.removeGlobalOnLayoutListener(this);
                 if (maxLine == 0) {
                     lineEndIndex = tv.getLayout().getLineEnd(0);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
-                } else if (maxLine > 0 && maxLine < 3){
-                    lineEndIndex = tv.getLayout().getLineEnd(0);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
+                    text = tv.getText().toString();
                 }
-
-                else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
+                else if (maxLine > 0 && maxLine >= 3) {
                     lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    text = tv.getText().toString();
                 } else {
                     lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
                     text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
@@ -379,11 +376,12 @@ public class ProfileInfoFragment extends Fragment {
                 public void onClick(View widget) {
                     tv.setLayoutParams(tv.getLayoutParams());
                     tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                    Log.d("spannable", "onClick: "+tv.getTag().toString());
                     tv.invalidate();
                     if (viewMore) {
                         makeTextViewResizable(tv, -1, "View Less", false);
                     } else {
-                        makeTextViewResizable(tv, 3, "View More", true);
+                        makeTextViewResizable(tv, maxLine, "View More", true);
                     }
                 }
             }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);

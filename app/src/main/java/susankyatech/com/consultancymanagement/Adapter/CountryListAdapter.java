@@ -34,8 +34,6 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
         String country_name = countries.get(position);
         holder.countryName.setText(country_name);
 
-        holder.flagImageView.setCountryCode(Locale.US);
-
     }
 
     @Override
@@ -45,13 +43,11 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
 
     public class CountryViewHolder extends RecyclerView.ViewHolder{
         View mView;
-        FlagImageView flagImageView;
         TextView countryName;
 
         public CountryViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
-            flagImageView = mView.findViewById(R.id.flagView);
             countryName = mView.findViewById(R.id.country_name);
         }
     }

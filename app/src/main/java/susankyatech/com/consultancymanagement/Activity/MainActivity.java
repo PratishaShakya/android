@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -91,13 +92,15 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_app_bar)
     Toolbar mToolbar;
 
-    private EditText qualification, summary;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
 
     private Spinner completedYear, qualificationSpinner;
     private String fragmentName, selectedLevel;
     private int selectedYear;
 
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
+
+    private ProgressDialog progressDialog;
 
     List<Integer> dates = new ArrayList<>();
     private String[] qualificationList = {
@@ -133,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        progressDialog = new ProgressDialog(this);
 
         for (int i = todayYear; i > 1969; i--){
             dates.add(i);
@@ -184,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Picasso.get().load(client.logo).into(userLogo);
+            Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
             userName.setText(client.client_name);
             if (getIntent() != null){
                 fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
@@ -234,11 +239,16 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
+                        progressDialog.setTitle("Uploading Logo");
+                        progressDialog.setMessage("Please wait, while we are uploading your logo.");
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
                         Log.d("loginError1", response.body().string() + "");
+                        getProfileInfo();
                         startActivity(new Intent(MainActivity.this, MainActivity.class));
                         MDToast mdToast = MDToast.makeText(MainActivity.this, "Logo Successfully uploaded!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
-                        getProfileInfo();
+
 
                     } catch (Exception e) {
 
@@ -402,17 +412,27 @@ public class MainActivity extends AppCompatActivity {
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
         toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
-
         ArrayAdapter dateAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, dates);
         ArrayAdapter levelAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, qualificationList);
 
+
+
         dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
@@ -444,8 +464,8 @@ public class MainActivity extends AppCompatActivity {
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addFurtherDetails();
-                materialDialog.dismiss();
+                addFurtherDetails(materialDialog);
+
             }
         });
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -482,10 +502,14 @@ public class MainActivity extends AppCompatActivity {
         return tests;
     }
 
-    private void addFurtherDetails() {
+    private void addFurtherDetails(final MaterialDialog materialDialog) {
 
         String studentQualification = qualification.getText().toString();
         String studentSummary = summary.getText().toString();
+        final String studentName = userName.getText().toString();
+        final String studentEmail = userEmail.getText().toString();
+        final String studentAddress = userAddress.getText().toString();
+        final String studentPhone = userPhone.getText().toString();
         String testsAttended=getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
@@ -503,10 +527,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
-                                    App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    startActivity(new Intent(MainActivity.this, MainActivity.class));
-                                    MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
-                                    mdToast.show();
+                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
+
                                 }
                             }else {
                                 try {
@@ -524,6 +546,30 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog) {
+
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone)
+                .enqueue(new Callback<Login>() {
+                    @Override
+                    public void onResponse(Call<Login> call, Response<Login> response) {
+                        if (response.isSuccessful()){
+                            if (response.body() != null){
+                                App.db().putObject(FragmentKeys.DATA, response.body().data);
+                                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                                MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                                mdToast.show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Login> call, Throwable t) {
+
+                    }
+                });
     }
 
 

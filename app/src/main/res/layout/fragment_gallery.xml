@@ -48,7 +48,7 @@
         android:textColor="@color/primary_text"
         android:gravity="center"
         android:textSize="18sp"
-        android:text="You haven't had interest on any Consultancy"
+        android:text="No Image found in Gallery"
         android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
