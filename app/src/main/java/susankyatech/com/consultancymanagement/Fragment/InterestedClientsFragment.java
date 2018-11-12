@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;
+import susankyatech.com.consultancymanagement.Generic.Utilities;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -47,6 +49,12 @@ public class InterestedClientsFragment extends Fragment {
     CardView cardView;
     @BindView(R.id.message)
     TextView message;
+    @BindView(R.id.emtpyTextview)
+    TextView emptyText;
+    @BindView(R.id.emptyTextLayout)
+    View emptyView;
+    @BindView(R.id.empty_img)
+    ImageView empty;
 
     private List<Client> clientList;
     Data data;
@@ -72,7 +80,20 @@ public class InterestedClientsFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         cardView.setVisibility(View.GONE);
-        getInterestedClients();
+
+        if (Utilities.isConnectionAvailable(getActivity())) {
+            emptyView.setVisibility(View.GONE);
+            getInterestedClients();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            cardView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            empty.setImageDrawable(getResources().getDrawable(R.drawable.ic_plug));
+            emptyText.setText("OOPS, out of Connection");
+        }
+
     }
 
     private void getInterestedClients() {

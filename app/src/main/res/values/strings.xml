@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Consultancy Finder</string>
+    <string name="mapBox">pk.eyJ1IjoibGZjYW1teSIsImEiOiJjam9lMDFzYWoxc21vM3BsZXNjNDZ4eTNqIn0.VLi6Q_E26APJlPBCyHicTwREoHiYb8R7mOdPyfsVVk6Q</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

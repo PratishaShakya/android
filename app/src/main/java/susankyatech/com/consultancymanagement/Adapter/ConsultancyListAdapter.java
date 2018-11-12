@@ -117,7 +117,12 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
             }
         });
 
-        Picasso.get().load(clientList.get(i).logo).into(holder.consultancyLogo);
+        if (clientList.get(i).logo == null){
+            Picasso.get().load(R.drawable.banner).into(holder.consultancyLogo);
+        }else{
+            Picasso.get().load(clientList.get(i).logo).into(holder.consultancyLogo);
+        }
+
         holder.btnEnquiry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

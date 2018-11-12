@@ -49,6 +49,7 @@ import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
+import susankyatech.com.consultancymanagement.Generic.Utilities;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.EnquiryDetails;
@@ -84,6 +85,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     RelativeLayout openInquiry;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.emtpyTextview)
+    TextView emptyText;
+    @BindView(R.id.emptyTextLayout)
+    View emptyView;
+    @BindView(R.id.empty_img)
+    ImageView empty;
 
     View view;
     private ClientAPI clientAPI;
@@ -127,8 +134,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     private void init() {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        wholeLayout.setVisibility(View.GONE);
-        openInquiry.setVisibility(View.GONE);
+
 
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
 
@@ -186,7 +192,18 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
             }
         });
 
-        getAllConsultancy();
+        if (Utilities.isConnectionAvailable(getActivity())) {
+            emptyView.setVisibility(View.GONE);
+            getAllConsultancy();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            wholeLayout.setVisibility(View.GONE);
+            openInquiry.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            empty.setImageDrawable(getResources().getDrawable(R.drawable.ic_plug));
+            emptyText.setText("OOPS, out of Connection");
+        }
 
         openInquiry.setOnClickListener(new View.OnClickListener() {
             @Override
