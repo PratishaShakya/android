@@ -17,22 +17,19 @@ import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
@@ -40,7 +37,6 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -49,13 +45,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
-import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapter.ProfileViewPagerAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
-import susankyatech.com.consultancymanagement.Generic.Keys;
-import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -72,8 +65,8 @@ public class ConsultancyProfileFragment extends Fragment {
 
     @BindView(R.id.profile_tabs)
     TabLayout tabLayout;
-    @BindView(R.id.profile_viewpager)
-    ViewPager viewPager;
+
+    public static ViewPager viewPager;
     @BindView(R.id.interest)
     ImageView interest;
     @BindView(R.id.profile_banner)
@@ -86,6 +79,12 @@ public class ConsultancyProfileFragment extends Fragment {
     TextView progressTextView;
     @BindView(R.id.edit_coverPic)
     ImageView editCoverPic;
+    @BindView(R.id.sendInquiry)
+    RelativeLayout sendInquiry;
+    @BindView(R.id.show_map)
+    RelativeLayout showMap;
+    @BindView(R.id.relative1)
+    RelativeLayout relativeLayout;
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_WRITE_PERMISSION = 786;
@@ -101,7 +100,6 @@ public class ConsultancyProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,10 +107,10 @@ public class ConsultancyProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+        viewPager = view.findViewById(R.id.profile_viewpager);
         init();
         return view;
     }
-
 
     private void init() {
         progressLayout.setVisibility(View.VISIBLE);
@@ -135,12 +133,30 @@ public class ConsultancyProfileFragment extends Fragment {
 
         if (clientId == 0){
             interest.setVisibility(View.GONE);
+            sendInquiry.setVisibility(View.GONE);
+            relativeLayout.setVisibility(View.GONE);
             getProfileInfo();
         }else {
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(clientName + "'s Profile");
 
             getClientProfileInfo();
         }
+
+        sendInquiry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("client_id", clientId);
+                bundle.putString("client_name", clientName);
+
+                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+                openInquirySelectCountryFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
+            }
+        });
 
         interest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +182,15 @@ public class ConsultancyProfileFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        showMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                ShowMapFragment showMapFragment = new ShowMapFragment();
+                fragmentTransaction.replace(R.id.main_container, showMapFragment).addToBackStack(null).commit();
             }
         });
     }
@@ -330,10 +355,13 @@ public class ConsultancyProfileFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        App.db().putObject(FragmentKeys.CLIENT, response.body().data.client);
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         profileBanner.setVisibility(View.VISIBLE);
                         editCoverPic.setVisibility(View.VISIBLE);
+
+
 
                         String imageUrl = response.body().data.client.detail.cover_photo;
                         Picasso.get().load(imageUrl).into(profileBanner);
@@ -366,6 +394,9 @@ public class ConsultancyProfileFragment extends Fragment {
                         progressBar.setVisibility(View.GONE);
                         profileBanner.setVisibility(View.VISIBLE);
                         interest.setVisibility(View.VISIBLE);
+                        sendInquiry.setVisibility(View.VISIBLE);
+                        relativeLayout.setVisibility(View.VISIBLE);
+
                         if (response.body().data.client.detail!=null){
 
                             String imageUrl = response.body().data.client.detail.cover_photo;

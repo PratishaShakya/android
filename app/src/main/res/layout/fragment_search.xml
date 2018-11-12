@@ -45,7 +45,7 @@
         android:id="@+id/whole_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/search_layout"
@@ -122,22 +122,28 @@
                     android:queryHint="Search Course"
                     android:visibility="gone" />
 
-
             </RelativeLayout>
 
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/consultancy_list"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:layout_below="@id/search_layout"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="#fff">
+            android:layout_height="match_parent">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/consultancy_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#fff">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </RelativeLayout>
 
@@ -150,8 +156,8 @@
         android:layout_marginRight="@dimen/medium_padding"
         android:layout_marginBottom="@dimen/medium_padding"
         android:background="@drawable/circle_layout"
-        android:visibility="gone"
-        android:elevation="3dp">
+        android:elevation="3dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -163,8 +169,8 @@
                 android:id="@+id/new_post"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_new_file" />
 
@@ -172,8 +178,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/new_post"
-                android:layout_marginTop="@dimen/small_margin"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/small_margin"
                 android:text="Post"
                 android:textColor="#fff" />
 

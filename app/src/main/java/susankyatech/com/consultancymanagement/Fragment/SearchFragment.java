@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -81,6 +82,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     RelativeLayout wholeLayout;
     @BindView(R.id.open_inquiry)
     RelativeLayout openInquiry;
+    @BindView(R.id.swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     View view;
     private ClientAPI clientAPI;
@@ -145,6 +148,13 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
         //Setting the ArrayAdapter data on the Spinner
         spinner.setAdapter(optionsAdapter);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRefresh();
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -297,6 +307,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                 resetSearch();
             }
         });
+
+    }
+
+    private void doRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
+        resetSearch();
 
     }
 

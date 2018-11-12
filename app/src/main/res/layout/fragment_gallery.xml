@@ -55,6 +55,7 @@
         android:id="@+id/gallery_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/btn_add_gallery"
         android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
 
@@ -64,8 +65,9 @@
         android:layout_height="45dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/small_margin"
         android:layout_marginRight="@dimen/medium_padding"
-        android:layout_marginBottom="@dimen/medium_padding"
+        android:layout_marginBottom="@dimen/small_margin"
         android:textAllCaps="true"
         fancy:fb_borderColor="@color/login_btn_color"
         fancy:fb_borderWidth="1dp"

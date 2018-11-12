@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -67,8 +69,8 @@ public class ProfileInfoFragment extends Fragment {
     RelativeLayout wholeLayout;
     @BindView(R.id.btn_edit)
     FancyButton editInfo;
-    @BindView(R.id.sendInquiry)
-    RelativeLayout sendInquiry;
+
+    public static final int MAX_LINES = 3;
 
     private Client client;
     private Detail detail;
@@ -102,31 +104,17 @@ public class ProfileInfoFragment extends Fragment {
             clientId = getArguments().getInt("clientId", 0);
             clientName = getArguments().getString("clientName");
         }
-        Log.d("initHERE1",clientId+"");
+        Log.d("countryAdd",clientId+"");
         
         if (clientId == 0){
             getProfileInfo();
-            sendInquiry.setVisibility(View.GONE);
+
         } else{
             editInfo.setVisibility(View.GONE);
             getClientProfileInfo();
         }
 
-        sendInquiry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("client_id", clientId);
-                bundle.putString("client_name", clientName);
-
-                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
-                openInquirySelectCountryFragment.setArguments(bundle);
-                fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
-//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
-            }
-        });
 
         editInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,7 +159,7 @@ public class ProfileInfoFragment extends Fragment {
         String clientEstablished = established.getText().toString();
         String clientLocation = location.getText().toString();
         String clientPhone = phoneNo.getText().toString();
-        String clientDescription = description.getText().toString();
+        String clientAchievements = description.getText().toString();
 
         if (TextUtils.isEmpty(clientEstablished)){
             established.setError("Enter Established Date");
@@ -188,11 +176,11 @@ public class ProfileInfoFragment extends Fragment {
         } else if (clientPhone.length() > 10){
             phoneNo.setError("Enter Valid Phone Number");
             phoneNo.requestFocus();
-        } else if (TextUtils.isEmpty(clientDescription)){
-            description.setError("Enter Description");
+        } else if (TextUtils.isEmpty(clientAchievements)){
+            description.setError("Enter Achievements");
             description.requestFocus();
         } else {
-            saveDetails(clientEstablished, clientLocation, clientPhone, clientDescription);
+            saveDetails(clientEstablished, clientLocation, clientPhone, clientAchievements);
             materialDialog.dismiss();
         }
 
@@ -205,12 +193,12 @@ public class ProfileInfoFragment extends Fragment {
         Log.d("asd", "saveDetails: "+ detail_id);
         ProfileInfo clientDetail = new ProfileInfo();
         clientDetail.detail_id = detail_id;
-        clientDetail.description = clientDescription;
+        clientDetail.achievements = clientDescription;
         clientDetail.phone = clientPhone;
         clientDetail.location = clientLocation;
         clientDetail.established = clientEstablished;
 
-        Log.d("asd", "saveDetails: "+clientDetail.detail_id + clientDetail.description + clientDetail.phone + clientDetail.location + clientDetail.established);
+        Log.d("asd", "saveDetails: "+clientDetail.detail_id + clientDetail.achievements + clientDetail.phone + clientDetail.location + clientDetail.established);
 
         clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
             @Override
@@ -221,7 +209,7 @@ public class ProfileInfoFragment extends Fragment {
                         progressBar.setVisibility(View.VISIBLE);
                         wholeLayout.setVisibility(View.GONE);
                         Log.d("asd", "onResponse: "+response.body().data.address +response.body().message);
-                        MDToast mdToast = MDToast.makeText(getActivity(), ""+response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        MDToast mdToast = MDToast.makeText(getActivity(), ""+response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
                         getProfileInfo();
                     }
@@ -254,7 +242,7 @@ public class ProfileInfoFragment extends Fragment {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
-                        sendInquiry.setVisibility(View.VISIBLE);
+
 
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
@@ -268,8 +256,53 @@ public class ProfileInfoFragment extends Fragment {
                             establishedDate.setText(detail.established);
                             phoneNoTV.setText(detail.phone);
                             locationTV.setText(detail.location);
-                            descriptionTV.setText(detail.description);
-                            makeTextViewResizable(descriptionTV, 3, "View More", true);
+                            descriptionTV.setText(detail.achievements);
+
+                            int lineCount = descriptionTV.getLineCount();
+
+//                            descriptionTV.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    // Past the maximum number of lines we want to display.
+//                                    if (descriptionTV.getLineCount() > MAX_LINES) {
+//                                        int lastCharShown = descriptionTV.getLayout().getLineVisibleEnd(MAX_LINES - 1);
+//
+//                                        descriptionTV.setMaxLines(MAX_LINES);
+//
+//                                        String moreString = getContext().getString(R.string.more);
+//                                        String suffix = TWO_SPACES + moreString;
+//
+//                                        // 3 is a "magic number" but it's just basically the length of the ellipsis we're going to insert
+//                                        String actionDisplayText = detail.achievements.substring(0, lastCharShown - suffix.length() - 3) + "..." + suffix;
+//
+//                                        SpannableString truncatedSpannableString = new SpannableString(actionDisplayText);
+//                                        int startIndex = actionDisplayText.indexOf(moreString);
+//                                        truncatedSpannableString.setSpan(new ForegroundColorSpan(getContext().getColor(android.R.color.blue)), startIndex, startIndex + moreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                        descriptionTV.setText(truncatedSpannableString);
+//                                    }
+//                                }
+//                            });
+
+                            if (descriptionTV.getText().toString().length()>300)
+                            {
+                                descriptionTV.setText(detail.achievements+"... Read more");
+
+                            }
+                            descriptionTV.setOnClickListener(
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                            if (descriptionTV.getText().toString().length()>300)
+                                            {
+                                                descriptionTV.setMaxLines(1000);
+                                                descriptionTV.setText(detail.achievements);
+                                            }
+                                        }
+                                    }
+                            );
+                            Log.d("poi", "onResponse: "+lineCount);
+                            makeTextViewResizable(descriptionTV, lineCount, "View More", true);
                         }
                     }
                 }else {
@@ -307,8 +340,9 @@ public class ProfileInfoFragment extends Fragment {
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
                         locationTV.setText(detail.location);
-                        descriptionTV.setText(detail.description);
+                        descriptionTV.setText(detail.achievements);
                         int lineCount = descriptionTV.getLineCount();
+                        Log.d("poi", "onResponse: "+ lineCount);
                         makeTextViewResizable(descriptionTV, lineCount, "View More", false);
 
                     }
@@ -340,6 +374,7 @@ public class ProfileInfoFragment extends Fragment {
             public void onGlobalLayout() {
                 String text;
                 int lineEndIndex;
+                Log.d("poi", "onGlobalLayout: "+maxLine);
                 ViewTreeObserver obs = tv.getViewTreeObserver();
                 obs.removeGlobalOnLayoutListener(this);
                 if (maxLine == 0) {

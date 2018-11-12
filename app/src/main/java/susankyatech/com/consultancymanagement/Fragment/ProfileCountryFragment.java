@@ -141,16 +141,17 @@ public class ProfileCountryFragment extends Fragment {
 
             Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
             detail_id = client.detail.id;
+            Log.d(TAG, "countryAdd: "+detail_id);
             ProfileInfo clientDetail = new ProfileInfo();
             clientDetail.detail_id = detail_id;
             clientDetail.countries = countryLists;
 
-            clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
+            clientAPI.addCountry(clientDetail).enqueue(new Callback<Login>() {
                 @Override
                 public void onResponse(Call<Login> call, Response<Login> response) {
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            Log.d("asd", "onClick: else success" );
+                            Log.d("asd", "onClick: else success" + response.body().data.countries);
                             getCountryList();
                             materialDialog.dismiss();
                         }

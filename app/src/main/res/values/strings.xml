@@ -44,6 +44,7 @@
     <string name="tofel">TOEFL</string>
     <string name="pte">PTE</string>
     <string name="gre">GRE</string>
+    <string name="title_activity_maps">Map</string>
 
 
 </resources>

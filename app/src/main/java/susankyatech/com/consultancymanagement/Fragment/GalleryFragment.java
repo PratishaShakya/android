@@ -58,7 +58,7 @@ public class GalleryFragment extends Fragment {
     @BindView(R.id.message)
     TextView cardView;
 
-    GalleryListAdapter galleryListAdapter;
+    public static GalleryListAdapter galleryListAdapter;
     List<Gallery> allGallery = new ArrayList<>();
     ArrayList<String> images;
 
@@ -180,6 +180,7 @@ public class GalleryFragment extends Fragment {
                         Log.d("asd", "onResponse: "+allGallery.size());
                         galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
                         galleryList.setAdapter(galleryListAdapter);
+
                     }
                 }else {
                     try {

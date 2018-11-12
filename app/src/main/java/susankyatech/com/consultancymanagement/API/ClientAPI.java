@@ -4,6 +4,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -12,6 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import susankyatech.com.consultancymanagement.Model.GalleryDeleteResponse;
 import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -22,6 +24,12 @@ public interface ClientAPI {
 
     @POST("client/detail")
     Call<Login> addClient(@Body ProfileInfo detail);
+
+    @POST("client/detail")
+    Call<Login> addCountry(@Body ProfileInfo detail);
+
+    @POST("client/detail")
+    Call<Login> addCourse(@Body ProfileInfo detail);
 
     @GET("students/clients/")
     Call<Login> getAllClients();
@@ -55,5 +63,8 @@ public interface ClientAPI {
                                    @Field("name") String name,
                                    @Field("address") String address,
                                    @Field("phone") String phone);
+
+    @DELETE("client/gallery/{id}")
+    Call<GalleryDeleteResponse> deleteGalleryImage(@Path("id") int id);
 
 }

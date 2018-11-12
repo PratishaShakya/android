@@ -137,7 +137,7 @@ public class ProfileUniversityFragment extends Fragment {
             // Do something with the text of each chip
             CharSequence text = chip.getText();
             coursesList.add(String.valueOf(text));
-            Log.d("asd", "onClick: coun" + coursesList.size());
+            Log.d(TAG, "countryAdd: "+detail_id);
 
             Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
             detail_id = client.detail.id;
@@ -145,7 +145,7 @@ public class ProfileUniversityFragment extends Fragment {
             clientDetail.detail_id = detail_id;
             clientDetail.courses = coursesList;
 
-            clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
+            clientAPI.addCourse(clientDetail).enqueue(new Callback<Login>() {
                 @Override
                 public void onResponse(Call<Login> call, Response<Login> response) {
                     if (response.isSuccessful()) {

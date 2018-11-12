@@ -35,11 +35,12 @@
 
             <TextView
                 android:id="@+id/consultancy_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/line"
                 android:layout_centerVertical="true"
                 android:padding="10dp"
+                android:minLines="2"
                 android:text="Consultancy Name"
                 android:fontFamily="@font/nunito_semibold"
                 android:textColor="@color/primary_text"
@@ -67,7 +68,7 @@
             <Button
                 android:id="@+id/btn_enquiry"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:layout_below="@id/consultancy_name"
                 android:background="@color/colorPrimary"
                 android:text="Send Inquiry"
