@@ -13,7 +13,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/consultancy_logo"
@@ -40,7 +40,8 @@
                 android:layout_below="@id/line"
                 android:layout_centerVertical="true"
                 android:padding="10dp"
-                android:minLines="2"
+                android:minLines="3"
+                android:gravity="center_vertical"
                 android:text="Consultancy Name"
                 android:fontFamily="@font/nunito_semibold"
                 android:textColor="@color/primary_text"

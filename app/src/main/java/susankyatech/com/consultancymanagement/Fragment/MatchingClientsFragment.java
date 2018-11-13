@@ -47,6 +47,8 @@ public class MatchingClientsFragment extends Fragment {
     TextView progressTextView;
     @BindView(R.id.card)
     CardView cardView;
+    @BindView(R.id.message)
+    TextView message;
     @BindView(R.id.emtpyTextview)
     TextView emptyText;
     @BindView(R.id.emptyTextLayout)
@@ -104,6 +106,10 @@ public class MatchingClientsFragment extends Fragment {
                         progressBar.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
                         cardView.setVisibility(View.VISIBLE);
+                        if (response.body().data.clients.isEmpty()){
+                            message.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.GONE);
+                        }
                         clientList = response.body().data.clients;
 
                         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));

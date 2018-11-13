@@ -56,6 +56,8 @@ public class ProfileCountryFragment extends Fragment {
     TextView progressTextView;
     @BindView(R.id.btn_add_country)
     FancyButton addCountry;
+    @BindView(R.id.message)
+    TextView message;
 
     private int clientId, detail_id;
 
@@ -85,6 +87,8 @@ public class ProfileCountryFragment extends Fragment {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         countryList.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+
         if (getArguments()!=null){
             clientId = getArguments().getInt("clientId", 0);
         }
@@ -157,6 +161,7 @@ public class ProfileCountryFragment extends Fragment {
                         }
                     } else {
                         try {
+
                             Log.d("loginError", response.errorBody().string());
                             MDToast mdToast = MDToast.makeText(getContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                             mdToast.show();
@@ -193,6 +198,9 @@ public class ProfileCountryFragment extends Fragment {
                     }
                 }else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
@@ -203,6 +211,9 @@ public class ProfileCountryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
@@ -227,6 +238,9 @@ public class ProfileCountryFragment extends Fragment {
                     }
                 }else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
@@ -237,6 +251,9 @@ public class ProfileCountryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();

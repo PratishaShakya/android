@@ -69,6 +69,8 @@ public class ProfileInfoFragment extends Fragment {
     RelativeLayout wholeLayout;
     @BindView(R.id.btn_edit)
     FancyButton editInfo;
+    @BindView(R.id.message)
+    TextView message;
 
     public static final int MAX_LINES = 3;
 
@@ -100,6 +102,7 @@ public class ProfileInfoFragment extends Fragment {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         wholeLayout.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
         if (getArguments()!=null){
             clientId = getArguments().getInt("clientId", 0);
             clientName = getArguments().getString("clientName");
@@ -216,6 +219,9 @@ public class ProfileInfoFragment extends Fragment {
                 }else {
                     try {
                         Log.d("asd", response.errorBody().string());
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {
@@ -226,6 +232,9 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d("client", "onFailure:tala "+t);
             }
         });
@@ -302,14 +311,15 @@ public class ProfileInfoFragment extends Fragment {
                                     }
                             );
                             Log.d("poi", "onResponse: "+lineCount);
-                            makeTextViewResizable(descriptionTV, lineCount, "View More", true);
+//                            makeTextViewResizable(descriptionTV, lineCount, "View More", true);
                         }
                     }
                 }else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("coverPic", response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
-                        mdToast.show();
 
                     } catch (Exception e) {
                     }
@@ -318,6 +328,9 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d("client", "onFailure:tala "+t);
             }
         });
@@ -343,11 +356,32 @@ public class ProfileInfoFragment extends Fragment {
                         descriptionTV.setText(detail.achievements);
                         int lineCount = descriptionTV.getLineCount();
                         Log.d("poi", "onResponse: "+ lineCount);
-                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
+//                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
+                        if (descriptionTV.getText().toString().length()>300)
+                        {
+                            descriptionTV.setText(detail.achievements+"... Read more");
+
+                        }
+                        descriptionTV.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        if (descriptionTV.getText().toString().length()>300)
+                                        {
+                                            descriptionTV.setMaxLines(1000);
+                                            descriptionTV.setText(detail.achievements);
+                                        }
+                                    }
+                                }
+                        );
 
                     }
                 } else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("client", "onResponse: error" + response.errorBody().string());
                     } catch (Exception e) {
                     }
@@ -356,6 +390,9 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d("client", "onFailure:tala "+t);
             }
         });

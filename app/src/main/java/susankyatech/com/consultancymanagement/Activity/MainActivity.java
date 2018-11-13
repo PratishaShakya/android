@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -39,6 +40,12 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.AppUpdaterUtils;
+import com.github.javiersantos.appupdater.enums.AppUpdaterError;
+import com.github.javiersantos.appupdater.enums.Display;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.github.javiersantos.appupdater.objects.Update;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
@@ -124,6 +131,72 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
+        checkAppRelease();
+    }
+
+    private void checkAppRelease() {
+        AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(this)
+                .setUpdateFrom(UpdateFrom.GOOGLE_PLAY)
+                .withListener(new AppUpdaterUtils.UpdateListener() {
+                    @Override
+                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
+                        Log.d("Latest Version", update.getLatestVersion());
+                        Log.d("available", isUpdateAvailable + "");
+                        App.db().putString(Keys.VERSION, update.getLatestVersion());
+                        if (isUpdateAvailable) {
+                            App.db().putString(Keys.VERSION, update.getLatestVersion());
+                            showUpdateDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(AppUpdaterError error) {
+                        Log.d("AppUpdater Error", "Something went wrong");
+                    }
+                });
+        appUpdaterUtils.start();
+
+    }
+
+    private void showUpdateDialog() {
+        new AppUpdater(this)
+                .setContentOnUpdateAvailable("Check out the latest version available of Online Vibrant!")
+                .setButtonUpdate("Update now?")
+                .setButtonUpdateClickListener(new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openAppStore();
+                    }
+                })
+                .setButtonDismiss("Maybe later")
+                .setButtonDismissClickListener(new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setButtonDoNotShowAgain("Huh, not interested")
+                .setButtonDoNotShowAgainClickListener(new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        App.db().putBoolean(Keys.NOT_INTERESTED,true);
+                    }
+                })
+                .setCancelable(false)
+                .setUpdateFrom(UpdateFrom.GOOGLE_PLAY)
+                .setDisplay(Display.DIALOG)
+                .showAppUpdated(true)
+                .start();
+    }
+
+    private void openAppStore() {
+        final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 
     private void init() {
