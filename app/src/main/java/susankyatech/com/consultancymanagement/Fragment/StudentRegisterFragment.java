@@ -27,7 +27,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.LoginAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Activity.WelcomeActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
@@ -178,7 +177,7 @@ public class StudentRegisterFragment extends Fragment {
                     try {
                         progressDialog.dismiss();
                         Log.d("loginError", response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Applicant Already Exists. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                        MDToast mdToast = MDToast.makeText(getActivity(), "Applicant Already Exists. Please try again!"+response.errorBody().string(), Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {
                     }
