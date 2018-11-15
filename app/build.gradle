@@ -6,8 +6,8 @@ android {
         applicationId "susankyatech.com.consultancymanagement"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 11
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -15,6 +15,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -24,13 +28,18 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:exifinterface:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
     //Iconify
     implementation 'com.joanzapata.iconify:android-iconify-material:2.2.2'
     // (v2.0.0)
@@ -44,23 +53,44 @@ dependencies {
     implementation 'com.joanzapata.iconify:android-iconify-simplelineicons:2.2.2'
     // (v1.0.0)
     implementation 'com.joanzapata.iconify:android-iconify-ionicons:2.2.2'
+
     //FancyButton
     implementation 'com.github.medyo:fancybuttons:1.9.0'
+
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.valdesekamdem.library:md-toast:0.9.0'
     implementation 'com.android.support:design:28.0.0'
+
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "com.hootsuite.android:nachos:1.1.1"
-
-    //Flag
-    implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'
 
     //Material Dialogue
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
     //MultipleSpinner
-    compile 'com.github.pratikbutani:MultiSelectSpinner:08d324c987'
+    implementation 'com.github.pratikbutani:MultiSelectSpinner:08d324c987'
+
+    //CircularImageView
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    //Map Route
+    implementation 'com.github.jd-alexander:library:1.1.0'
+
+    //MapBox
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.7.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-localization:0.5.0'
+
+    //showing release update
+    implementation 'com.github.javiersantos:AppUpdater:2.7'
+
+    //Glide Slider
+    implementation 'com.github.firdausmaulan:GlideSlider:1.3.2'
+
+    //Delegates
+    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.2-SNAPSHOT'
+
+    implementation 'com.jsibbold:zoomage:1.2.0'
 
 }

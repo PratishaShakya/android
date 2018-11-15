@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,11 +22,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;
+import susankyatech.com.consultancymanagement.Generic.Utilities;
 import susankyatech.com.consultancymanagement.Model.Client;
+import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -46,8 +49,15 @@ public class InterestedClientsFragment extends Fragment {
     CardView cardView;
     @BindView(R.id.message)
     TextView message;
+    @BindView(R.id.emtpyTextview)
+    TextView emptyText;
+    @BindView(R.id.emptyTextLayout)
+    View emptyView;
+    @BindView(R.id.empty_img)
+    ImageView empty;
 
     private List<Client> clientList;
+    Data data;
 
     public InterestedClientsFragment() {
         // Required empty public constructor
@@ -70,12 +80,25 @@ public class InterestedClientsFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         cardView.setVisibility(View.GONE);
-        getInterestedClients();
+
+        if (Utilities.isConnectionAvailable(getActivity())) {
+            emptyView.setVisibility(View.GONE);
+            getInterestedClients();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            cardView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            empty.setImageDrawable(getResources().getDrawable(R.drawable.ic_plug));
+            emptyText.setText("OOPS, out of Connection");
+        }
+
     }
 
     private void getInterestedClients() {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.getInterestedClient().enqueue(new Callback<Login>() {
+        clientAPI.getInterestedClient("is_interested").enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){

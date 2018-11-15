@@ -4,7 +4,6 @@ package susankyatech.com.consultancymanagement.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,9 +25,10 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.GalleryListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.GalleryListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Gallery;
@@ -52,8 +52,10 @@ public class GalleryFragment extends Fragment {
     ProgressBar progressBar;
     @BindView(R.id.progressTV)
     TextView progressTextView;
+    @BindView(R.id.message)
+    TextView cardView;
 
-    GalleryListAdapter galleryListAdapter;
+    public static GalleryListAdapter galleryListAdapter;
     List<Gallery> allGallery = new ArrayList<>();
     ArrayList<String> images;
 
@@ -87,6 +89,9 @@ public class GalleryFragment extends Fragment {
 
         if (clientId != 0){
             addGallery.setVisibility(View.GONE);
+            listClientGallery();
+        }else {
+            listGallery();
         }
         allGallery = new ArrayList<>();
 
@@ -99,10 +104,48 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-
         galleryList.setLayoutManager(new GridLayoutManager(getContext(),2));
-        listGallery();
 
+    }
+
+    private void listClientGallery() {
+        final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.getSingleClient(clientId).enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        galleryList.setVisibility(View.VISIBLE);
+
+                        allGallery = response.body().data.client.galleries;
+                        if (allGallery.size() == 0){
+                            cardView.setVisibility(View.VISIBLE);
+                            cardView.setText("No Gallery Found");
+                        }else{
+                            cardView.setVisibility(View.GONE);
+                        }
+                        images = new ArrayList<>();
+                        for(int i=0;i<allGallery.size();i++)
+                            images.add(allGallery.get(i).image);
+
+                        Log.d("asd", "onResponse: "+allGallery.size());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext(), clientId);
+                        galleryList.setAdapter(galleryListAdapter);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+                Log.d(TAG, "onFailure: "+t.getMessage());
+                MDToast mdToast = MDToast.makeText(getActivity(), "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                mdToast.show();
+            }
+        });
     }
 
     private void listGallery() {
@@ -116,16 +159,25 @@ public class GalleryFragment extends Fragment {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         galleryList.setVisibility(View.VISIBLE);
-                        addGallery.setVisibility(View.VISIBLE);
+
 
                         allGallery = response.body().data.client.galleries;
                         images = new ArrayList<>();
                         for(int i=0;i<allGallery.size();i++)
                         images.add(allGallery.get(i).image);
 
+                        if (allGallery.size() == 0){
+                            addGallery.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.VISIBLE);
+                        }else{
+                            addGallery.setVisibility(View.VISIBLE);
+                            cardView.setVisibility(View.GONE);
+                        }
+
                         Log.d("asd", "onResponse: "+allGallery.size());
-                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext(), clientId);
                         galleryList.setAdapter(galleryListAdapter);
+
                     }
                 }else {
                     try {

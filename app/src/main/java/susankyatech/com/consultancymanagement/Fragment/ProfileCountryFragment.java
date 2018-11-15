@@ -29,13 +29,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
-import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
-import susankyatech.com.consultancymanagement.Adapter.CountryListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.CountryListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Client;
-import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -55,6 +54,8 @@ public class ProfileCountryFragment extends Fragment {
     TextView progressTextView;
     @BindView(R.id.btn_add_country)
     FancyButton addCountry;
+    @BindView(R.id.message)
+    TextView message;
 
     private int clientId, detail_id;
 
@@ -64,13 +65,11 @@ public class ProfileCountryFragment extends Fragment {
     NachoTextView wCountry;
 
     private List<String> countries = new ArrayList<>();
-    private List<String> countryLists = new ArrayList<>();
-
+    private List<String> countryLists;
 
     public ProfileCountryFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,18 +85,16 @@ public class ProfileCountryFragment extends Fragment {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         countryList.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+
         if (getArguments()!=null){
-            clientId = getArguments().getInt("clientId");
+            clientId = getArguments().getInt("clientId", 0);
         }
-
-        Log.d(TAG, "initHERE: "+clientId);
-
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-
         countryList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         if (clientId == 0){
             getCountryList();
-
         } else{
             getClientCountryList();
             addCountry.setVisibility(View.GONE);
@@ -109,7 +106,7 @@ public class ProfileCountryFragment extends Fragment {
                 final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
                         .title("Edit/Add Countries")
                         .customView(R.layout.add_country_layout, true)
-                        .positiveText("Add")
+                        .positiveText("Save")
                         .negativeText("Close")
                         .positiveColor(getResources().getColor(R.color.green))
                         .negativeColor(getResources().getColor(R.color.red))
@@ -123,6 +120,7 @@ public class ProfileCountryFragment extends Fragment {
                 materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        countryLists = new ArrayList<>();
                         countryAdd(materialDialog);
                     }
                 });
@@ -134,7 +132,6 @@ public class ProfileCountryFragment extends Fragment {
                 });
             }
         });
-
     }
 
     private void countryAdd(final MaterialDialog materialDialog) {
@@ -145,22 +142,24 @@ public class ProfileCountryFragment extends Fragment {
             Log.d("asd", "onClick: coun" + countryLists.size());
 
             Client client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-            detail_id = client.detail.detail_id;
-            Detail clientDetail = new Detail();
+            detail_id = client.detail.id;
+            Log.d(TAG, "countryAdd: "+detail_id);
+            ProfileInfo clientDetail = new ProfileInfo();
             clientDetail.detail_id = detail_id;
             clientDetail.countries = countryLists;
 
-            clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
+            clientAPI.addCountry(clientDetail).enqueue(new Callback<Login>() {
                 @Override
                 public void onResponse(Call<Login> call, Response<Login> response) {
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            Log.d("asd", "onClick: else success" );
+                            Log.d("asd", "onClick: else success" + response.body().data.countries);
                             getCountryList();
                             materialDialog.dismiss();
                         }
                     } else {
                         try {
+
                             Log.d("loginError", response.errorBody().string());
                             MDToast mdToast = MDToast.makeText(getContext(), "Error on posting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                             mdToast.show();
@@ -180,9 +179,7 @@ public class ProfileCountryFragment extends Fragment {
     }
 
     private void getClientCountryList() {
-
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Log.d(TAG, "getClientCountryList: "+ConsultancyProfileFragment.clientStaticID);
         clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
 
             @Override
@@ -199,6 +196,9 @@ public class ProfileCountryFragment extends Fragment {
                     }
                 }else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
@@ -209,6 +209,9 @@ public class ProfileCountryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
@@ -224,7 +227,6 @@ public class ProfileCountryFragment extends Fragment {
                     if (response.body() != null){
                         countries = response.body().data.client.detail.countries;
 
-
                         countryListAdapter = new CountryListAdapter(countries);
                         countryList.setAdapter(countryListAdapter);
                         progressLayout.setVisibility(View.GONE);
@@ -234,6 +236,9 @@ public class ProfileCountryFragment extends Fragment {
                     }
                 }else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
@@ -244,6 +249,9 @@ public class ProfileCountryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();

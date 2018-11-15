@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/all_gallery_image"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         android:src="@drawable/banner"
         android:layout_margin="5dp"
-        android:scaleType="centerInside"
-        android:layout_weight="1"/>
+        android:scaleType="centerInside" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/delete_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cancel"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp"
+        android:scaleType="centerInside" />
+
+</RelativeLayout>

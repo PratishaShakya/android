@@ -7,24 +7,23 @@
     android:layout_marginBottom="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.haipq.android.flagkit.FlagImageView
-        android:id="@+id/flagView"
-        android:layout_width="60dp"
+    <ImageView
+        android:id="@+id/bullet"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:countryCode="US"
-        tools:src="@drawable/flag_us" />
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_rec"/>
 
     <TextView
         android:id="@+id/country_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="0dp"
-        android:layout_toRightOf="@id/flagView"
-        android:padding="5dp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="@color/primary_text"
         android:fontFamily="@font/nunito_semibold"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_toRightOf="@id/bullet"
         android:text="USA" />
 
 </RelativeLayout>

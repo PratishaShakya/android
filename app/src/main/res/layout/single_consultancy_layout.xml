@@ -8,54 +8,74 @@
         android:id="@+id/consultancy_whole_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        fancy:cardBackgroundColor="#ffffffff"
+        fancy:cardBackgroundColor="#fefefe"
         android:layout_weight="1">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/consultancy_logo"
-                android:layout_width="match_parent"
+                android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="2dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/banner" />
 
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/consultancy_logo"
+                android:background="#44111111" />
+
             <TextView
                 android:id="@+id/consultancy_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/consultancy_logo"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="1dp"
+                android:layout_below="@id/line"
+                android:layout_centerVertical="true"
                 android:padding="10dp"
+                android:minLines="3"
+                android:gravity="center_vertical"
                 android:text="Consultancy Name"
+                android:fontFamily="@font/nunito_semibold"
                 android:textColor="@color/primary_text"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
-            <mehdi.sakout.fancybuttons.FancyButton
+            <!--<mehdi.sakout.fancybuttons.FancyButton-->
+                <!--android:id="@+id/btn_enquiry"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="45dp"-->
+                <!--android:layout_below="@id/consultancy_name"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+                <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textAllCaps="true"-->
+                <!--fancy:fb_borderColor="@color/login_btn_color"-->
+                <!--fancy:fb_borderWidth="1dp"-->
+                <!--fancy:fb_defaultColor="#ddffffff"-->
+                <!--fancy:fb_focusColor="@color/login_btn_color"-->
+                <!--fancy:fb_radius="@dimen/medium_padding"-->
+                <!--fancy:fb_text="Send Enquiry"-->
+                <!--fancy:fb_textColor="@color/login_btn_color" />-->
+
+            <Button
                 android:id="@+id/btn_enquiry"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_below="@id/consultancy_name"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:textAllCaps="true"
-                fancy:fb_borderColor="@color/login_btn_color"
-                fancy:fb_borderWidth="1dp"
-                fancy:fb_defaultColor="#ddffffff"
-                fancy:fb_focusColor="@color/login_btn_color"
-                fancy:fb_radius="@dimen/medium_padding"
-                fancy:fb_text="Send Enquiry"
-                fancy:fb_textColor="@color/login_btn_color" />
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="0dp"
+                android:background="@color/blue"
+                android:text="Send Inquiry"
+                android:textColor="#fff" />
 
         </RelativeLayout>
 

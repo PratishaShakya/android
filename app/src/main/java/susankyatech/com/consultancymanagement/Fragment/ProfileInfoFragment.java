@@ -3,12 +3,16 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +34,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
+import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Application.MySpannable;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
-import susankyatech.com.consultancymanagement.Generic.Keys;
+import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.Model.Client;
 import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -52,8 +57,8 @@ public class ProfileInfoFragment extends Fragment {
     TextView locationTV;
     @BindView(R.id.phone_number)
     TextView phoneNoTV;
-    @BindView(R.id.email_id)
-    TextView emailIdTV;
+    @BindView(R.id.services)
+    TextView servicesTV;
     @BindView(R.id.description)
     TextView descriptionTV;
     @BindView(R.id.progressBarLayout)
@@ -66,12 +71,17 @@ public class ProfileInfoFragment extends Fragment {
     RelativeLayout wholeLayout;
     @BindView(R.id.btn_edit)
     FancyButton editInfo;
+    @BindView(R.id.message)
+    TextView message;
+
+    public static final int MAX_LINES = 3;
 
     private Client client;
     private Detail detail;
     private int clientId, detail_id;
+    private String clientName;
 
-    private EditText established, location, phoneNo, emailId, description;
+    private EditText established, location, phoneNo, description;
 
 
     public ProfileInfoFragment() {
@@ -94,17 +104,21 @@ public class ProfileInfoFragment extends Fragment {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         wholeLayout.setVisibility(View.GONE);
-        if (getArguments()!=null){
+        message.setVisibility(View.GONE);
+        if (getArguments() != null) {
             clientId = getArguments().getInt("clientId", 0);
+            clientName = getArguments().getString("clientName");
         }
-        Log.d("initHERE1",clientId+"");
-        
-        if (clientId == 0){
+        Log.d("countryAdd", clientId + "");
+
+        if (clientId == 0) {
             getProfileInfo();
-        } else{
+
+        } else {
             editInfo.setVisibility(View.GONE);
             getClientProfileInfo();
         }
+
 
         editInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +135,6 @@ public class ProfileInfoFragment extends Fragment {
                 established = materialDialog.getCustomView().findViewById(R.id.established_date);
                 location = materialDialog.getCustomView().findViewById(R.id.location);
                 phoneNo = materialDialog.getCustomView().findViewById(R.id.phone_number);
-                emailId = materialDialog.getCustomView().findViewById(R.id.email_address);
                 description = materialDialog.getCustomView().findViewById(R.id.description);
 
                 established.setText(detail.established);
@@ -150,59 +163,66 @@ public class ProfileInfoFragment extends Fragment {
         String clientEstablished = established.getText().toString();
         String clientLocation = location.getText().toString();
         String clientPhone = phoneNo.getText().toString();
-        String clientEmail = emailId.getText().toString();
-        String clientDescription = description.getText().toString();
+        String clientAchievements = description.getText().toString();
 
-        if (TextUtils.isEmpty(clientEstablished)){
+        if (TextUtils.isEmpty(clientEstablished)) {
             established.setError("Enter Established Date");
             established.requestFocus();
-        } else if (TextUtils.isEmpty(clientLocation)){
+        } else if (TextUtils.isEmpty(clientLocation)) {
             location.setError("Enter Location");
             location.requestFocus();
-        } else if (TextUtils.isEmpty(clientPhone)){
+        } else if (TextUtils.isEmpty(clientPhone)) {
             phoneNo.setError("Enter Phone Number");
             phoneNo.requestFocus();
-        }
-//        else if (TextUtils.isEmpty(clientEmail)){
-//            emailId.setError("Enter Email Address");
-//            emailId.requestFocus();
-//        }
-        else if (TextUtils.isEmpty(clientDescription)){
-            description.setError("Enter Description");
+        } else if (clientPhone.length() < 10) {
+            phoneNo.setError("Enter Valid Phone Number");
+            phoneNo.requestFocus();
+        } else if (clientPhone.length() > 10) {
+            phoneNo.setError("Enter Valid Phone Number");
+            phoneNo.requestFocus();
+        } else if (TextUtils.isEmpty(clientAchievements)) {
+            description.setError("Enter Achievements");
             description.requestFocus();
         } else {
-            saveDetails(clientEstablished, clientLocation, clientPhone, clientEmail, clientDescription);
+            saveDetails(clientEstablished, clientLocation, clientPhone, clientAchievements);
             materialDialog.dismiss();
         }
 
     }
 
-    private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientEmail, String clientDescription) {
+    private void saveDetails(String clientEstablished, String clientLocation, String clientPhone, String clientDescription) {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        detail_id = client.detail.detail_id;
-        Log.d("asd", "saveDetails: "+ detail_id);
-        Detail clientDetail = new Detail();
+        Client client1 = App.db().getObject(FragmentKeys.CLIENT, Client.class);
+        detail_id = client1.detail.id;
+        Log.d("asd", "saveDetails: " + detail_id);
+        ProfileInfo clientDetail = new ProfileInfo();
         clientDetail.detail_id = detail_id;
-        clientDetail.description = clientDescription;
+        clientDetail.achievements = clientDescription;
         clientDetail.phone = clientPhone;
         clientDetail.location = clientLocation;
         clientDetail.established = clientEstablished;
 
-        Log.d("asd", "saveDetails: "+clientDetail.detail_id + clientDetail.description + clientDetail.phone + clientDetail.location + clientDetail.established);
+        Log.d("asd", "saveDetails: " + clientDetail.detail_id + clientDetail.achievements + clientDetail.phone + clientDetail.location + clientDetail.established);
 
         clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if(response.isSuccessful()){
-                    if (response.body() != null){
-                        Log.d("asd", "onResponse: "+response.body().data.location);
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Successfully!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        progressLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        wholeLayout.setVisibility(View.GONE);
+                        Log.d("asd", "onResponse: " + response.body().data.address + response.body().message);
+                        MDToast mdToast = MDToast.makeText(getActivity(), "" + response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
                         getProfileInfo();
                     }
-                }else {
+                } else {
                     try {
-                        Log.d("coverPic", response.errorBody().string());
+                        Log.d("asd", response.errorBody().string());
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
                     } catch (Exception e) {
@@ -213,43 +233,81 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("client", "onFailure:tala "+t);
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
 
     private void getClientProfileInfo() {
         final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Log.d("OOPS",clientId+"");
+        Log.d("OOPS", clientId + "");
         clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
+
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
                         profileName.setText(client.client_name);
-                        if (detail == null){
-                            establishedDate.setText("Established Date not inserted yet");
-                            phoneNoTV.setText("Phone Number not inserted yet");
-                            locationTV.setText("Location  not inserted yet");
-                            descriptionTV.setText("Description not inserted yet");
-                        }else{
-                            establishedDate.setText(detail.established);
-                            phoneNoTV.setText(detail.phone);
-                            locationTV.setText(detail.location);
-                            descriptionTV.setText(detail.description);
-                            makeTextViewResizable(descriptionTV, 3, "View More", true);
+                        if (detail.achievements == null) {
+                            descriptionTV.setText("");
+                        } else {
+
+                            descriptionTV.setText(detail.achievements);
                         }
+                        String services = "";
+                        Log.d("asd", "onResponse: "+client.subjects);
+
+                        for (int i = 0; i < client.subjects.size(); i++){
+                            if (i == client.subjects.size() -1){
+                                services += client.subjects.get(i).name;
+                            } else {
+                                services += client.subjects.get(i).name + ", ";
+                            }
+                        }
+                        servicesTV.setText(services);
+                        establishedDate.setText(detail.established);
+                        phoneNoTV.setText(detail.phone);
+                        locationTV.setText(Html.fromHtml(detail.location));
+
+                        int lineCount = descriptionTV.getLineCount();
+
+                        if (descriptionTV.getText().toString().length() > 300) {
+                            descriptionTV.setText(Html.fromHtml(detail.achievements + "... Read more"));
+
+                        }
+                        descriptionTV.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        if (descriptionTV.getText().toString().length() > 300) {
+                                            descriptionTV.setMaxLines(1000);
+                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
+                                        } else {
+                                            descriptionTV.setMaxLines(3);
+                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
+                                        }
+                                    }
+                                }
+                        );
+                        Log.d("poi", "onResponse: " + lineCount);
+                        makeTextViewResizable(descriptionTV, lineCount, "View More", true);
                     }
-                }else {
+                } else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("coverPic", response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting client details. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
-                        mdToast.show();
+
                     } catch (Exception e) {
                     }
                 }
@@ -257,7 +315,10 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("client", "onFailure:tala "+t);
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
@@ -279,12 +340,17 @@ public class ProfileInfoFragment extends Fragment {
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
                         locationTV.setText(detail.location);
-                        descriptionTV.setText(detail.description);
-                        makeTextViewResizable(descriptionTV, 3, "View More", true);
+                        descriptionTV.setText(detail.achievements);
+                        int lineCount = descriptionTV.getLineCount();
+                        Log.d("poi", "onResponse: " + lineCount);
+                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
 
                     }
                 } else {
                     try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        message.setVisibility(View.VISIBLE);
                         Log.d("client", "onResponse: error" + response.errorBody().string());
                     } catch (Exception e) {
                     }
@@ -293,7 +359,10 @@ public class ProfileInfoFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("client", "onFailure:tala "+t);
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
@@ -311,17 +380,18 @@ public class ProfileInfoFragment extends Fragment {
             public void onGlobalLayout() {
                 String text;
                 int lineEndIndex;
+                Log.d("poi", "onGlobalLayout: " + maxLine);
                 ViewTreeObserver obs = tv.getViewTreeObserver();
                 obs.removeGlobalOnLayoutListener(this);
                 if (maxLine == 0) {
                     lineEndIndex = tv.getLayout().getLineEnd(0);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " ;
-                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
+                    text = tv.getText().toString();
+                } else if (maxLine > 0 && maxLine >= 3) {
                     lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    text = tv.getText().toString();
                 } else {
                     lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    text = tv.getText().subSequence(0, lineEndIndex) + " ";
+                    text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
                 }
                 tv.setText(text);
                 tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -340,17 +410,17 @@ public class ProfileInfoFragment extends Fragment {
 
         if (str.contains(spanableText)) {
 
-
             ssb.setSpan(new MySpannable(false) {
                 @Override
                 public void onClick(View widget) {
                     tv.setLayoutParams(tv.getLayoutParams());
                     tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                    Log.d("spannable", "onClick: " + tv.getTag().toString());
                     tv.invalidate();
                     if (viewMore) {
                         makeTextViewResizable(tv, -1, "View Less", false);
                     } else {
-                        makeTextViewResizable(tv, 3, "View More", true);
+                        makeTextViewResizable(tv, maxLine, "View More", true);
                     }
                 }
             }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);

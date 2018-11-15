@@ -72,14 +72,14 @@ public class StudentLoginFragment extends Fragment {
                 String userPassword = password.getText().toString();
                 
                 if (TextUtils.isEmpty(userEmail)){
-                    email.setError("Enter your email");
+                    email.setError("Please enter your email!");
                     email.requestFocus();
                 } else if (TextUtils.isEmpty(userPassword)){
-                    password.setError("Enter your password");
+                    password.setError("Please enter your password!");
                     password.requestFocus();
                 }else{
                     progressDialog.setTitle("Logging in");
-                    progressDialog.setMessage("Please wait, while we are logging in your account");
+                    progressDialog.setMessage("Please wait, while we are logging in your account.");
                     progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
                     loginStudent(userEmail, userPassword);

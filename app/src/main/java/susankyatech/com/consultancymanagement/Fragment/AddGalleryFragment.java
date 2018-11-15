@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,19 +35,19 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.ImageUploadListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.ImageUploadListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
-import susankyatech.com.consultancymanagement.Model.Gallery;
-import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
-import static android.Manifest.permission_group.CAMERA;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isDownloadsDocument;
@@ -69,6 +69,7 @@ public class AddGalleryFragment extends Fragment {
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_WRITE_PERMISSION = 786;
+    private int maxLength = 2048 * 1024;
 
     private List<String> fileNameList;
     private List<Uri> fileImageList;
@@ -118,10 +119,14 @@ public class AddGalleryFragment extends Fragment {
     }
 
     private void selectImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
-        } else {
-            openFilePicker();
+        try {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+            } else {
+                openFilePicker();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -142,39 +147,72 @@ public class AddGalleryFragment extends Fragment {
     }
 
     private void uploadGallery() {
-        Gallery gallery = new Gallery();
-        gallery.galleries = fileGalleryList;
-        Toast.makeText(getActivity(), ""+fileGalleryList.size(), Toast.LENGTH_SHORT).show();
-        GalleryAPI galleryAPI = App.consultancyRetrofit().create(GalleryAPI.class);
-        galleryAPI.addGalleries(gallery).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        Fragment fragment = new GalleryFragment();
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.main_container, fragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                }else {
-                    try {
-                        Log.d("loginError", response.errorBody().string());
-                        MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting gallery. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
-                        mdToast.show();
-                    } catch (Exception e) {
-                    }
 
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.getMessage());
-                MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+        for (int i=0;i<fileGalleryList.size();i++)
+        {
+            if (fileGalleryList.get(i).length() > maxLength){
+                MDToast mdToast = MDToast.makeText(getActivity(), "Image size exceeded 2 MB!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
             }
-        });
+        }
+
+        if (fileGalleryList.size() == 0){
+            MDToast mdToast = MDToast.makeText(getActivity(), "Select atleast 1 image!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+            mdToast.show();
+        } else {
+            MultipartBody.Part[]  files=new MultipartBody.Part [fileGalleryList.size()];
+            for (int i=0;i<fileGalleryList.size();i++)
+            {
+                RequestBody fileBody =
+                        RequestBody.create( MediaType.parse("multipart/form-data"), fileGalleryList.get(i));
+                files[i]  = MultipartBody.Part.createFormData("images["+i+"]", fileGalleryList.get(i).getName(), fileBody);
+
+            }
+
+            //Setting the file name as an empty string here causes the same issue, which is sending the request successfully without saving the files in the backend, so don't neglect the file name parameter.
+
+            Log.d("loginError1","filelength"+files.length);
+            GalleryAPI galleryAPI = App.consultancyRetrofit().create(GalleryAPI.class);
+            galleryAPI.addGalleries(files).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try
+                        {
+                            Log.d("loginError1",response.body().string()+"");
+
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        if (response.body() != null){
+                            Fragment fragment = new ConsultancyProfileFragment();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.main_container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                    }else {
+                        try {
+                            Log.d("loginError", response.errorBody().string());
+                            MDToast mdToast = MDToast.makeText(getActivity(), "Error on getting gallery. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
+                            mdToast.show();
+                        } catch (Exception e) {
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                    MDToast mdToast = MDToast.makeText(getActivity(), "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                    mdToast.show();
+                }
+            });
+        }
+
     }
 
     @Override
@@ -201,7 +239,7 @@ public class AddGalleryFragment extends Fragment {
                 fileGalleryList.add(file);
                 fileNameList.add(fileName);
                 fileImageList.add(data.getData());
-                uploadListAdapter.notifyDataSetChanged();
+                 uploadListAdapter.notifyDataSetChanged();
             }
         }
     }

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/user_post_layout"
+<RelativeLayout android:id="@+id/user_post_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
+    <com.jsibbold.zoomage.ZoomageView
         android:id="@+id/user_post_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/banner"
         android:scaleType="fitCenter"
+        app:zoomage_restrictBounds="false"
+        app:zoomage_animateOnReset="true"
+        app:zoomage_autoResetMode="UNDER"
+        app:zoomage_autoCenter="true"
+        app:zoomage_zoomable="true"
+        app:zoomage_translatable="true"
+        app:zoomage_minScale="0.6"
+        app:zoomage_maxScale="8"
         />
 
 </RelativeLayout>

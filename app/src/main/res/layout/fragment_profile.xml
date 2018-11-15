@@ -8,6 +8,39 @@
     android:orientation="vertical"
     tools:context=".Fragment.ConsultancyProfileFragment">
 
+    <LinearLayout
+        android:id="@+id/progressBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:progressBarStyle"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:background="@drawable/circular_bg"
+            android:elevation="2dp"
+            android:padding="4dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/progressTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
@@ -17,6 +50,8 @@
             android:id="@+id/profile_banner"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:elevation="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/banner" />
@@ -31,9 +66,20 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="end"
         android:layout_marginTop="5dp"
+        android:visibility="gone"
         android:layout_marginRight="5dp"
         android:src="@drawable/ic_interest" />
 
+    <ImageView
+        android:id="@+id/edit_coverPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/banner"
+        android:layout_alignParentEnd="true"
+        android:visibility="visible"
+        android:layout_marginRight="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:src="@drawable/ic_photo_camera" />
 
 
     <android.support.design.widget.TabLayout
@@ -49,11 +95,65 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/profile_tabs"
-        android:layout_above="@id/btn_edit"
-        android:layout_marginBottom="@dimen/medium_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <RelativeLayout
+        android:id="@+id/relative1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scrollview1"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true">
 
+        <RelativeLayout
+            android:id="@+id/open_inquiry"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/sendInquiry"
+            android:layout_marginRight="@dimen/medium_padding"
+            android:layout_marginBottom="@dimen/medium_padding"
+            android:background="@drawable/circle_layout"
+            android:elevation="7dp"
+            android:visibility="visible">
 
+            <RelativeLayout
+                android:id="@+id/show_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
 
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/ic_sign_post" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/sendInquiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/blue"
+            android:visibility="visible"
+            android:padding="@dimen/medium_padding">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/nunito_semibold"
+                android:text="Send Inquiry"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 </RelativeLayout>

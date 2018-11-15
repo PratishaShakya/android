@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -41,11 +39,39 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/emptyTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/empty_img"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/emtpyTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:text="Empty Textview"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/whole_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/search_layout"
@@ -64,7 +90,7 @@
                     android:id="@+id/search_options"
                     android:layout_width="120dp"
                     android:layout_height="49dp"
-                    android:layout_marginRight="@dimen/medium_padding"></Spinner>
+                    android:layout_marginRight="@dimen/medium_padding" />
 
                 <View
                     android:id="@+id/view"
@@ -73,27 +99,10 @@
                     android:layout_toRightOf="@id/search_options"
                     android:background="#eee" />
 
-                <!--<mehdi.sakout.fancybuttons.FancyButton-->
-                <!--android:id="@+id/btn_reset"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="50dp"-->
-                <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
-                <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-                <!--android:gravity="center"-->
-                <!--android:textAllCaps="true"-->
-                <!--fancy:fb_borderColor="@color/login_btn_color"-->
-                <!--fancy:fb_borderWidth="1dp"-->
-                <!--fancy:fb_defaultColor="@color/colorTransparent"-->
-                <!--fancy:fb_focusColor="@color/login_btn_color"-->
-                <!--fancy:fb_radius="@dimen/small_margin"-->
-                <!--fancy:fb_text="Reset"-->
-                <!--fancy:fb_textColor="@color/login_btn_color" />-->
-
                 <SearchView
                     android:id="@+id/searchConsultancy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/reset"
                     android:layout_toRightOf="@id/view"
                     android:background="#fff"
                     android:focusable="false"
@@ -105,22 +114,12 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="50dp"
-                    android:layout_toLeftOf="@id/reset"
                     android:background="#eee" />
-
-                <ImageView
-                    android:id="@+id/reset"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_reset" />
 
                 <SearchView
                     android:id="@+id/searchCountry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/reset"
                     android:layout_toRightOf="@id/view"
                     android:background="#fff"
                     android:iconifiedByDefault="false"
@@ -131,43 +130,77 @@
                     android:id="@+id/searchCourse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/reset"
                     android:layout_toRightOf="@id/view"
                     android:background="#fff"
                     android:iconifiedByDefault="false"
                     android:queryHint="Search Course"
                     android:visibility="gone" />
 
-
             </RelativeLayout>
-
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/consultancy_list"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/search_layout"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="@dimen/small_margin">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/consultancy_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sliderLayout"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginRight="5dp"
+                android:background="#fff">
 
-        <!--<TextView-->
-        <!--android:id="@+id/enquiry_btn"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="#fff"-->
-        <!--android:elevation="2dp"-->
-        <!--android:fontFamily="@font/nunito_semibold"-->
-        <!--android:gravity="center"-->
-        <!--android:padding="10dp"-->
-        <!--android:text="Open Enquiry"-->
-        <!--android:textColor="@android:color/background_dark" />-->
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/open_inquiry"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:layout_marginBottom="@dimen/medium_padding"
+        android:background="@drawable/circle_layout"
+        android:elevation="3dp"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-6dp">
+
+            <ImageView
+                android:id="@+id/new_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_new_file" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/new_post"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/small_margin"
+                android:text="Post"
+                android:textColor="#fff" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

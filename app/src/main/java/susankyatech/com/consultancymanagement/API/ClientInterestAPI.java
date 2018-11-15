@@ -11,7 +11,11 @@ import susankyatech.com.consultancymanagement.Model.Login;
 public interface ClientInterestAPI {
     @FormUrlEncoded
     @POST("students/client/interested/")
-    Call<Login> interestedOnClient(@Field("client_id") int id);
+    Call<Login> interestedOnClient(@Field("client_id") int id,
+                                   @Field("is_interested") int is_interested,
+                                   @Field("is_enquiring") int is_enquiring,
+                                   @Field("to_owner") int to_owner);
+
 
     @FormUrlEncoded
     @POST("students/client/remove-interested/")

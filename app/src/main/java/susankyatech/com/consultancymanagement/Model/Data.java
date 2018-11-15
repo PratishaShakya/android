@@ -12,7 +12,7 @@ public class Data {
     public List<String> courses;
     public List<String> countries;
     public List<Client> clients;
-    public String location;
+    public String address;
     public String phone;
     public String description;
     public String established;
@@ -23,5 +23,7 @@ public class Data {
     public String jwt_token;
     @SerializedName("detail")
     public EnquiryDetails enquiry_details;
+    public String ad_image;
+    public List<Banner> banners;
 
 }

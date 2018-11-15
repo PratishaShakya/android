@@ -14,6 +14,35 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/enquiry_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Name"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_address"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,12 +57,130 @@
                     android:padding="10dp">
 
                     <EditText
-                        android:id="@+id/enquiry_level_completed"
+                        android:id="@+id/enquiry_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:background="@color/colorTransparent"
-                        android:hint="Level Completed"
+                        android:hint="Address"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_phone"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/enquiry_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Phone No"
+                        android:inputType="phone"
+                       android:maxLength="10"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_email"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/enquiry_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/colorTransparent"
+                        android:hint="Email ID"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/enquiry_level_completed"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textColorHint="#fb494949"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Level Completed"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_edittext"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Level"/>
+
+                    <Spinner
+                        android:id="@+id/qualification_spinner"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="textEnd">
+
+                    </Spinner>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_edittext"
+                        android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/enquiry_level_completed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorTransparent"
+                        android:hint="Stream"
                         android:textAllCaps="true"
                         android:gravity="top"
                         android:imeOptions="actionNext"
@@ -42,8 +189,9 @@
                         android:singleLine="true"
                         android:textColorHint="#fb494949"
                         android:textSize="14dp" />
+                    </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -65,78 +213,14 @@
 
                     <Spinner
                         android:id="@+id/enquiry_complete_year"
-                        android:layout_width="80dp"
+                        android:layout_width="85dp"
                         android:layout_height="40dp"
                         android:layout_marginLeft="10dp"
-                        android:gravity="top"
                         android:hint="Complete Year"
                         android:imeOptions="actionNext"
-                        android:nextFocusForward="@id/enquiry_apply_country"
-                        android:padding="5dp"
-                        android:singleLine="true"
+                        android:nextFocusForward="@id/about_you"
+                        android:padding="10dp"
                         android:textSize="14dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_edittext"
-                    android:padding="10dp">
-
-                    <EditText
-                        android:id="@+id/enquiry_apply_country"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="top"
-                        android:background="@color/colorTransparent"
-                        android:hint="Apply Country"
-                        android:imeOptions="actionNext"
-                        android:nextFocusForward="@id/course_to_apply"
-                        android:padding="5dp"
-                        android:singleLine="true"
-                        android:textColorHint="#fb494949"
-                        android:textSize="14dp" />
-
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_edittext"
-                    android:padding="10dp">
-
-                    <EditText
-                        android:id="@+id/course_to_apply"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="top"
-                        android:background="@color/colorTransparent"
-                        android:hint="Course to Apply"
-                        android:imeOptions="actionNext"
-                        android:nextFocusForward="@id/test_attended"
-                        android:padding="5dp"
-                        android:singleLine="true"
-                        android:textColorHint="#fb494949"
-                        android:textSize="14dp" />
-
-                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
@@ -146,7 +230,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/rounded_edittext"
                 android:padding="10dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -160,7 +244,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginLeft="@dimen/medium_padding">
+                    android:layout_marginLeft="@dimen/small_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -178,6 +262,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/tofel" />
+
+                        <CheckBox
+                            android:id="@+id/cv_sat"
+                            android:layout_width="70dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sat" />
                     </LinearLayout>
 
                     <LinearLayout
