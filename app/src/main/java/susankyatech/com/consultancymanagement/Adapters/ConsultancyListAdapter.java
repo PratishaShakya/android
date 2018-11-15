@@ -66,7 +66,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
     ArrayAdapter dateAdapter, levelAdapter;
 
-    private EditText qualification, summary;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
     private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
     private Spinner completedYear, qualificationSpinner;
@@ -109,8 +109,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
                 fragmentTransaction.replace(R.id.main_container, consultancyProfileFragment).addToBackStack(null).commit();
             }
         });
-
-
 
         if (clientList.get(i).logo == null){
             Picasso.get().load(R.drawable.banner).into(holder.consultancyLogo);
@@ -155,11 +153,26 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
-        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        ArrayAdapter dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
+        ArrayAdapter levelAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, qualificationList);
+
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
+
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
