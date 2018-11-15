@@ -56,6 +56,10 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.fitCenter();
 
+        if(bannerGrid.bannerItemList.size() == 0){
+            vh.sliderLayout.setVisibility(View.GONE);
+        }
+
         for (int i = 0; i < bannerGrid.bannerItemList.size(); i++) {
             DefaultSliderView sliderView = new DefaultSliderView(activity);
             sliderView

@@ -84,6 +84,8 @@ public class ConsultancyProfileFragment extends Fragment {
     RelativeLayout sendInquiry;
     @BindView(R.id.show_map)
     RelativeLayout showMap;
+    @BindView(R.id.open_inquiry)
+    RelativeLayout openInquiry;
     @BindView(R.id.relative1)
     RelativeLayout relativeLayout;
 
@@ -118,6 +120,7 @@ public class ConsultancyProfileFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         profileBanner.setVisibility(View.GONE);
         editCoverPic.setVisibility(View.GONE);
+        openInquiry.setVisibility(View.GONE);
 
         progressDialog = new ProgressDialog(getContext());
 

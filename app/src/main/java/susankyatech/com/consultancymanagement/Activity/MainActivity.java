@@ -295,9 +295,12 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){
                     if (response.body() != null){
-                        String nav_image = response.body().data.ad_image;
-                        Picasso.get().load(nav_image).placeholder(R.drawable.nav_background).into(navBg);
-
+                        if (response.body().data == null){
+                            Picasso.get().load(R.drawable.nav_background).into(navBg);
+                        }else {
+                            String nav_image = response.body().data.ad_image;
+                            Picasso.get().load(nav_image).into(navBg);
+                        }
                     }
                 }
             }
