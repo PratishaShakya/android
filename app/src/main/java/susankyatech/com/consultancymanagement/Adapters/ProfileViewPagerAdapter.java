@@ -1,4 +1,4 @@
-package susankyatech.com.consultancymanagement.Adapter;
+package susankyatech.com.consultancymanagement.Adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

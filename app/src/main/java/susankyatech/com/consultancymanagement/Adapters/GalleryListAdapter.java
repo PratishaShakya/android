@@ -1,9 +1,8 @@
-package susankyatech.com.consultancymanagement.Adapter;
+package susankyatech.com.consultancymanagement.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,21 +17,16 @@ import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
-import susankyatech.com.consultancymanagement.Fragment.GalleryFragment;
 import susankyatech.com.consultancymanagement.Fragment.GalleryFullScreenFragment;
 import susankyatech.com.consultancymanagement.Model.Gallery;
 import susankyatech.com.consultancymanagement.Model.GalleryDeleteResponse;
-import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
 public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.GalleryViewHolder> {
@@ -40,11 +34,13 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
     private List<Gallery> galleryList;
     private Context context;
     private ArrayList<String> stringList = new ArrayList<>();
+    private int clientId;
 
-    public GalleryListAdapter(List<Gallery> galleryList, ArrayList<String> images, Context context) {
+    public GalleryListAdapter(List<Gallery> galleryList, ArrayList<String> images, Context context, int clientId) {
         this.galleryList = galleryList;
         this.stringList = images;
         this.context = context;
+        this.clientId = clientId;
     }
 
     @NonNull
@@ -76,6 +72,14 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
             }
         });
 
+        if (clientId == 0){
+            holder.deleteImage.setVisibility(View.VISIBLE);
+        } else {
+            holder.deleteImage.setVisibility(View.GONE);
+        }
+
+
+
         holder.deleteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,17 +87,6 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
                 clientAPI.deleteGalleryImage(galleryList.get(position).id).enqueue(new Callback<GalleryDeleteResponse>() {
                     @Override
                     public void onResponse(Call<GalleryDeleteResponse> call, Response<GalleryDeleteResponse> response) {
-                        try
-                        {
-                            Log.d("OOPS","REACHED HERE");
-                            Log.d("OOPS",response.raw().body().string());
-
-
-                        }
-                        catch (Exception e)
-                        {
-                             Log.d("OOPS",e.toString());
-                        }
                         if (response.isSuccessful()){
 
                             if (response.body() != null){

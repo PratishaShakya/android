@@ -16,5 +16,6 @@ public class Client {
     public boolean interested;
     public int mobile;
     public Detail detail;
+    public List<Subjects> subjects;
 
 }

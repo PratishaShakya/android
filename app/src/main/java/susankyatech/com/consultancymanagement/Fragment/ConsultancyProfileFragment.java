@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +48,7 @@ import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.ProfileViewPagerAdapter;
+import susankyatech.com.consultancymanagement.Adapters.ProfileViewPagerAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Login;
@@ -65,7 +67,6 @@ public class ConsultancyProfileFragment extends Fragment {
 
     @BindView(R.id.profile_tabs)
     TabLayout tabLayout;
-
     public static ViewPager viewPager;
     @BindView(R.id.interest)
     ImageView interest;
@@ -128,13 +129,14 @@ public class ConsultancyProfileFragment extends Fragment {
         Log.d(TAG, "init: "+clientId);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.blue));
 
 
         if (clientId == 0){
             interest.setVisibility(View.GONE);
             sendInquiry.setVisibility(View.GONE);
             relativeLayout.setVisibility(View.GONE);
+            interest.setVisibility(View.GONE);
             getProfileInfo();
         }else {
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(clientName + "'s Profile");
@@ -188,18 +190,39 @@ public class ConsultancyProfileFragment extends Fragment {
         showMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                ShowMapFragment showMapFragment = new ShowMapFragment();
-                fragmentTransaction.replace(R.id.main_container, showMapFragment).addToBackStack(null).commit();
+                if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+                    return;
+                }else{
+                    sendUserToMapFragment();
+                }
+
             }
         });
     }
+
+    private void sendUserToMapFragment() {
+        FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+        ShowMapFragment showMapFragment = new ShowMapFragment();
+        fragmentTransaction.replace(R.id.main_container, showMapFragment).addToBackStack(null).commit();
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openFilePicker();
         }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED){
+                sendUserToMapFragment();
+            }
+        }
+
+
     }
 
 
@@ -361,10 +384,9 @@ public class ConsultancyProfileFragment extends Fragment {
                         profileBanner.setVisibility(View.VISIBLE);
                         editCoverPic.setVisibility(View.VISIBLE);
 
-
-
                         String imageUrl = response.body().data.client.detail.cover_photo;
                         Picasso.get().load(imageUrl).into(profileBanner);
+
                     }
                 } else {
                     try {
@@ -396,6 +418,7 @@ public class ConsultancyProfileFragment extends Fragment {
                         interest.setVisibility(View.VISIBLE);
                         sendInquiry.setVisibility(View.VISIBLE);
                         relativeLayout.setVisibility(View.VISIBLE);
+                        interest.setVisibility(View.VISIBLE);
 
                         if (response.body().data.client.detail!=null){
 
@@ -486,15 +509,15 @@ public class ConsultancyProfileFragment extends Fragment {
         ProfileCountryFragment profileCountryFragment = new ProfileCountryFragment();
         profileCountryFragment.setArguments(bundle);
 
-        ProfileUniversityFragment profileUniversityFragment = new ProfileUniversityFragment();
-        profileUniversityFragment.setArguments(bundle);
+        ProfileCourseFragment profileCourseFragment = new ProfileCourseFragment();
+        profileCourseFragment.setArguments(bundle);
 
         GalleryFragment galleryFragment = new GalleryFragment();
         galleryFragment.setArguments(bundle);
 
         adapter.addFragment(profileInfoFragment, "Info");
         adapter.addFragment(profileCountryFragment, "Countries");
-        adapter.addFragment(profileUniversityFragment, "Courses");
+        adapter.addFragment(profileCourseFragment, "Courses");
         adapter.addFragment(galleryFragment, "Gallery");
         viewPager.setAdapter(adapter);
     }

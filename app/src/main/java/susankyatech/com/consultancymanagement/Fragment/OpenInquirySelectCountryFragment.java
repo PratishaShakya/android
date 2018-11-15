@@ -72,6 +72,7 @@ public class OpenInquirySelectCountryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_open_inquiry_select_country, container, false);
         ButterKnife.bind(this, view);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Send Inquiry");
         init();
 
         return view;

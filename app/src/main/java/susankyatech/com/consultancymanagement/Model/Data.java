@@ -23,5 +23,7 @@ public class Data {
     public String jwt_token;
     @SerializedName("detail")
     public EnquiryDetails enquiry_details;
+    public String ad_image;
+    public List<Banner> banners;
 
 }

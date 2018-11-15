@@ -5,18 +5,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.ImageSliderAdapter;
+import susankyatech.com.consultancymanagement.Adapters.ImageSliderAdapter;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.content.ContentValues.TAG;
@@ -27,6 +26,8 @@ public class GalleryFullScreenFragment extends Fragment {
 //    ImageView fullScreen;
     @BindView(R.id.galleryViewPager)
     ViewPager mSlidePager;
+
+
 
     private String galleryImage;
     private int adapterPosition;
@@ -63,9 +64,11 @@ public class GalleryFullScreenFragment extends Fragment {
         Log.d(TAG, "init: "+adapterPosition);
         mSlidePager.setAdapter(sliderAdapter);
         mSlidePager.setCurrentItem(adapterPosition);
-
-
     }
+
+
+
+
 
 
 }

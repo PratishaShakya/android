@@ -2,10 +2,13 @@ package susankyatech.com.consultancymanagement.Fragment;
 
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,7 +44,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import mehdi.sakout.fancybuttons.FancyButton;
 import susankyatech.com.consultancymanagement.R;
 
 import static android.support.constraint.Constraints.TAG;
@@ -58,6 +63,8 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
     MapView mMapView;
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private FancyButton getDirection;
 
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.blue};
@@ -76,6 +83,8 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         polylines = new ArrayList<>();
         mMapView = view.findViewById(R.id.mapView);
+        getDirection = view.findViewById(R.id.get_direction);
+
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume(); // needed to get the map to display immediately
@@ -88,8 +97,39 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         mMapView.getMapAsync(this);
 
+        getDirection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGoogleMap();
+            }
+        });
+
 
         return view;
+    }
+
+    private void openGoogleMap() {
+
+//      String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", 27.6840308, 85.3160972);
+        String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", 27.6840308, 85.3160972, "");
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setPackage("com.google.android.apps.maps");
+        try
+        {
+            startActivity(intent);
+        }
+        catch(ActivityNotFoundException ex)
+        {
+            try
+            {
+                Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(unrestrictedIntent);
+            }
+            catch(ActivityNotFoundException innerEx)
+            {
+                Toast.makeText(getContext(), "Please install a maps application", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void init() {
@@ -156,7 +196,7 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-//        init();
+        init();
     }
 
     @Override

@@ -57,6 +57,8 @@ public class ProfileInfoFragment extends Fragment {
     TextView locationTV;
     @BindView(R.id.phone_number)
     TextView phoneNoTV;
+    @BindView(R.id.services)
+    TextView servicesTV;
     @BindView(R.id.description)
     TextView descriptionTV;
     @BindView(R.id.progressBarLayout)
@@ -103,20 +105,19 @@ public class ProfileInfoFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         wholeLayout.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
-        if (getArguments()!=null){
+        if (getArguments() != null) {
             clientId = getArguments().getInt("clientId", 0);
             clientName = getArguments().getString("clientName");
         }
-        Log.d("countryAdd",clientId+"");
-        
-        if (clientId == 0){
+        Log.d("countryAdd", clientId + "");
+
+        if (clientId == 0) {
             getProfileInfo();
 
-        } else{
+        } else {
             editInfo.setVisibility(View.GONE);
             getClientProfileInfo();
         }
-
 
 
         editInfo.setOnClickListener(new View.OnClickListener() {
@@ -164,22 +165,22 @@ public class ProfileInfoFragment extends Fragment {
         String clientPhone = phoneNo.getText().toString();
         String clientAchievements = description.getText().toString();
 
-        if (TextUtils.isEmpty(clientEstablished)){
+        if (TextUtils.isEmpty(clientEstablished)) {
             established.setError("Enter Established Date");
             established.requestFocus();
-        } else if (TextUtils.isEmpty(clientLocation)){
+        } else if (TextUtils.isEmpty(clientLocation)) {
             location.setError("Enter Location");
             location.requestFocus();
-        } else if (TextUtils.isEmpty(clientPhone)){
+        } else if (TextUtils.isEmpty(clientPhone)) {
             phoneNo.setError("Enter Phone Number");
             phoneNo.requestFocus();
-        } else if (clientPhone.length() < 10){
+        } else if (clientPhone.length() < 10) {
             phoneNo.setError("Enter Valid Phone Number");
             phoneNo.requestFocus();
-        } else if (clientPhone.length() > 10){
+        } else if (clientPhone.length() > 10) {
             phoneNo.setError("Enter Valid Phone Number");
             phoneNo.requestFocus();
-        } else if (TextUtils.isEmpty(clientAchievements)){
+        } else if (TextUtils.isEmpty(clientAchievements)) {
             description.setError("Enter Achievements");
             description.requestFocus();
         } else {
@@ -193,7 +194,7 @@ public class ProfileInfoFragment extends Fragment {
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
         Client client1 = App.db().getObject(FragmentKeys.CLIENT, Client.class);
         detail_id = client1.detail.id;
-        Log.d("asd", "saveDetails: "+ detail_id);
+        Log.d("asd", "saveDetails: " + detail_id);
         ProfileInfo clientDetail = new ProfileInfo();
         clientDetail.detail_id = detail_id;
         clientDetail.achievements = clientDescription;
@@ -201,22 +202,22 @@ public class ProfileInfoFragment extends Fragment {
         clientDetail.location = clientLocation;
         clientDetail.established = clientEstablished;
 
-        Log.d("asd", "saveDetails: "+clientDetail.detail_id + clientDetail.achievements + clientDetail.phone + clientDetail.location + clientDetail.established);
+        Log.d("asd", "saveDetails: " + clientDetail.detail_id + clientDetail.achievements + clientDetail.phone + clientDetail.location + clientDetail.established);
 
         clientAPI.addClient(clientDetail).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if(response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         progressLayout.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.VISIBLE);
                         wholeLayout.setVisibility(View.GONE);
-                        Log.d("asd", "onResponse: "+response.body().data.address +response.body().message);
-                        MDToast mdToast = MDToast.makeText(getActivity(), ""+response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                        Log.d("asd", "onResponse: " + response.body().data.address + response.body().message);
+                        MDToast mdToast = MDToast.makeText(getActivity(), "" + response.body().message, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                         mdToast.show();
                         getProfileInfo();
                     }
-                }else {
+                } else {
                     try {
                         Log.d("asd", response.errorBody().string());
                         progressLayout.setVisibility(View.GONE);
@@ -235,86 +236,72 @@ public class ProfileInfoFragment extends Fragment {
                 progressLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 message.setVisibility(View.VISIBLE);
-                Log.d("client", "onFailure:tala "+t);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
 
     private void getClientProfileInfo() {
         final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Log.d("OOPS",clientId+"");
+        Log.d("OOPS", clientId + "");
         clientAPI.getSingleClient(ConsultancyProfileFragment.clientStaticID).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
 
-
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
                         profileName.setText(client.client_name);
-                        if (detail == null){
-                            establishedDate.setText("Established Date not inserted yet");
-                            phoneNoTV.setText("Phone Number not inserted yet");
-                            locationTV.setText("Location  not inserted yet");
-                            descriptionTV.setText("Description not inserted yet");
-                        }else{
-                            establishedDate.setText(detail.established);
-                            phoneNoTV.setText(detail.phone);
-                            locationTV.setText(detail.location);
+                        if (detail.achievements == null) {
+                            descriptionTV.setText("");
+                        } else {
+
                             descriptionTV.setText(detail.achievements);
+                        }
+                        String services = "";
+                        Log.d("asd", "onResponse: "+client.subjects);
 
-                            int lineCount = descriptionTV.getLineCount();
-
-//                            descriptionTV.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    // Past the maximum number of lines we want to display.
-//                                    if (descriptionTV.getLineCount() > MAX_LINES) {
-//                                        int lastCharShown = descriptionTV.getLayout().getLineVisibleEnd(MAX_LINES - 1);
-//
-//                                        descriptionTV.setMaxLines(MAX_LINES);
-//
-//                                        String moreString = getContext().getString(R.string.more);
-//                                        String suffix = TWO_SPACES + moreString;
-//
-//                                        // 3 is a "magic number" but it's just basically the length of the ellipsis we're going to insert
-//                                        String actionDisplayText = detail.achievements.substring(0, lastCharShown - suffix.length() - 3) + "..." + suffix;
-//
-//                                        SpannableString truncatedSpannableString = new SpannableString(actionDisplayText);
-//                                        int startIndex = actionDisplayText.indexOf(moreString);
-//                                        truncatedSpannableString.setSpan(new ForegroundColorSpan(getContext().getColor(android.R.color.blue)), startIndex, startIndex + moreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                        descriptionTV.setText(truncatedSpannableString);
-//                                    }
-//                                }
-//                            });
-
-                            if (descriptionTV.getText().toString().length()>300)
-                            {
-                                descriptionTV.setText(detail.achievements+"... Read more");
-
+                        for (int i = 0; i < client.subjects.size(); i++){
+                            if (i == client.subjects.size() -1){
+                                services += client.subjects.get(i).name;
+                            } else {
+                                services += client.subjects.get(i).name + ", ";
                             }
-                            descriptionTV.setOnClickListener(
-                                    new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
+                        }
+                        servicesTV.setText(services);
+                        establishedDate.setText(detail.established);
+                        phoneNoTV.setText(detail.phone);
+                        locationTV.setText(Html.fromHtml(detail.location));
 
-                                            if (descriptionTV.getText().toString().length()>300)
-                                            {
-                                                descriptionTV.setMaxLines(1000);
-                                                descriptionTV.setText(detail.achievements);
-                                            }
+                        int lineCount = descriptionTV.getLineCount();
+
+                        if (descriptionTV.getText().toString().length() > 300) {
+                            descriptionTV.setText(Html.fromHtml(detail.achievements + "... Read more"));
+
+                        }
+                        descriptionTV.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        if (descriptionTV.getText().toString().length() > 300) {
+                                            descriptionTV.setMaxLines(1000);
+                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
+                                        } else {
+                                            descriptionTV.setMaxLines(3);
+                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
                                         }
                                     }
-                            );
-                            Log.d("poi", "onResponse: "+lineCount);
-//                            makeTextViewResizable(descriptionTV, lineCount, "View More", true);
-                        }
+                                }
+                        );
+                        Log.d("poi", "onResponse: " + lineCount);
+                        makeTextViewResizable(descriptionTV, lineCount, "View More", true);
                     }
-                }else {
+                } else {
                     try {
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
@@ -331,7 +318,7 @@ public class ProfileInfoFragment extends Fragment {
                 progressLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 message.setVisibility(View.VISIBLE);
-                Log.d("client", "onFailure:tala "+t);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
@@ -355,26 +342,8 @@ public class ProfileInfoFragment extends Fragment {
                         locationTV.setText(detail.location);
                         descriptionTV.setText(detail.achievements);
                         int lineCount = descriptionTV.getLineCount();
-                        Log.d("poi", "onResponse: "+ lineCount);
-//                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
-                        if (descriptionTV.getText().toString().length()>300)
-                        {
-                            descriptionTV.setText(detail.achievements+"... Read more");
-
-                        }
-                        descriptionTV.setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if (descriptionTV.getText().toString().length()>300)
-                                        {
-                                            descriptionTV.setMaxLines(1000);
-                                            descriptionTV.setText(detail.achievements);
-                                        }
-                                    }
-                                }
-                        );
+                        Log.d("poi", "onResponse: " + lineCount);
+                        makeTextViewResizable(descriptionTV, lineCount, "View More", false);
 
                     }
                 } else {
@@ -393,7 +362,7 @@ public class ProfileInfoFragment extends Fragment {
                 progressLayout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 message.setVisibility(View.VISIBLE);
-                Log.d("client", "onFailure:tala "+t);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
@@ -411,14 +380,13 @@ public class ProfileInfoFragment extends Fragment {
             public void onGlobalLayout() {
                 String text;
                 int lineEndIndex;
-                Log.d("poi", "onGlobalLayout: "+maxLine);
+                Log.d("poi", "onGlobalLayout: " + maxLine);
                 ViewTreeObserver obs = tv.getViewTreeObserver();
                 obs.removeGlobalOnLayoutListener(this);
                 if (maxLine == 0) {
                     lineEndIndex = tv.getLayout().getLineEnd(0);
                     text = tv.getText().toString();
-                }
-                else if (maxLine > 0 && maxLine >= 3) {
+                } else if (maxLine > 0 && maxLine >= 3) {
                     lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
                     text = tv.getText().toString();
                 } else {
@@ -447,7 +415,7 @@ public class ProfileInfoFragment extends Fragment {
                 public void onClick(View widget) {
                     tv.setLayoutParams(tv.getLayoutParams());
                     tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                    Log.d("spannable", "onClick: "+tv.getTag().toString());
+                    Log.d("spannable", "onClick: " + tv.getTag().toString());
                     tv.invalidate();
                     if (viewMore) {
                         makeTextViewResizable(tv, -1, "View Less", false);

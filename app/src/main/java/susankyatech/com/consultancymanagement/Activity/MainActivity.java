@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -67,6 +69,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Multipart;
+import susankyatech.com.consultancymanagement.API.BannerAPI;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Application.App;
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     private String fragmentName, selectedLevel;
     private int selectedYear;
 
-    private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
+    private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
     private ProgressDialog progressDialog;
 
@@ -180,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        App.db().putBoolean(Keys.NOT_INTERESTED,true);
+                        App.db().putBoolean(Keys.NOT_INTERESTED, true);
                     }
                 })
                 .setCancelable(false)
@@ -200,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+
         setSupportActionBar(mToolbar);
 
         getSupportActionBar().setTitle("Home");
@@ -212,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        for (int i = todayYear; i > 1969; i--){
+        for (int i = todayYear; i > 1969; i--) {
             dates.add(i);
         }
 
@@ -228,22 +232,26 @@ public class MainActivity extends AppCompatActivity {
         if (App.db().getBoolean(Keys.IS_STUDENT)) {
             navigationView.inflateMenu(R.menu.navigation_menu_student);
             getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
-            data = App.db().getObject(FragmentKeys.DATA,Data.class);
-            Log.d("poi", "init: "+data);
+            data = App.db().getObject(FragmentKeys.DATA, Data.class);
+            Log.d("poi", "init: " + data);
             View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
+            ImageView navBg = navView.findViewById(R.id.nav_background);
+            getNavBackground(navBg);
+
             TextView userName = navView.findViewById(R.id.user_name);
             userName.setText(data.name);
-            if (data.enquiry_details == null){
+            if (data.enquiry_details == null) {
                 getStudentFurtherDetails();
             }
-        }
-        else {
+        } else {
             navigationView.inflateMenu(R.menu.navigation_menu_admin);
 
-            client = App.db().getObject(FragmentKeys.CLIENT,Client.class);
+            client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
             View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
+            ImageView navBg = navView.findViewById(R.id.nav_background);
+            getNavBackground(navBg);
             TextView userName = navView.findViewById(R.id.user_name);
-             userLogo = navView.findViewById(R.id.client_logo);
+            userLogo = navView.findViewById(R.id.client_logo);
             ImageView editLogo = navView.findViewById(R.id.add_logo);
 
             editLogo.setOnClickListener(new View.OnClickListener() {
@@ -264,27 +272,54 @@ public class MainActivity extends AppCompatActivity {
 
             Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
             userName.setText(client.client_name);
-            if (getIntent() != null){
+            if (getIntent() != null) {
                 fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
-                if (fragmentName == null){
+                if (fragmentName == null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
-                } else if (fragmentName.equals("AddGallery")){
+                } else if (fragmentName.equals("AddGallery")) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new AddGalleryFragment()).commit();
                 }
             }
         }
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+            return;
+        }
     }
+
+    private void getNavBackground(ImageView navBg) {
+        BannerAPI bannerAPI = App.consultancyRetrofit().create(BannerAPI.class);
+        bannerAPI.getNavBanner().enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        String nav_image = response.body().data.ad_image;
+                        Picasso.get().load(nav_image).placeholder(R.drawable.nav_background).into(navBg);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openFilePicker();
         }
+
     }
 
-    public void updateViews()
-    {
-        client=App.db().getObject(FragmentKeys.CLIENT,Client.class);
+    public void updateViews() {
+        client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
         Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
     }
 
@@ -293,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
     }
 
     @Override
@@ -313,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         RequestBody fileBody =
-                RequestBody.create( MediaType.parse("multipart/form-data"), file);
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("logo", file.getName(), fileBody);
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
@@ -335,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                     if (response.body() != null) {
 
                     }
-                }else {
+                } else {
                     try {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(MainActivity.this, "Error on uploading logo. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
@@ -361,11 +396,10 @@ public class MainActivity extends AppCompatActivity {
         clientAPI.getClient().enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         App.db().putObject(FragmentKeys.CLIENT, response.body().data.client);
                         updateViews();
-
                     }
                 }
             }
@@ -498,14 +532,13 @@ public class MainActivity extends AppCompatActivity {
         userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
-        satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
-        ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
-        greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
-        pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
-        toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
-        ArrayAdapter dateAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, dates);
-        ArrayAdapter levelAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, qualificationList);
-
+        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        ArrayAdapter dateAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, dates);
+        ArrayAdapter levelAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, qualificationList);
 
 
         dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -558,10 +591,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getTestsString()
-    {
-        List<String> chosenTests=new ArrayList<>();
-        String tests="";
+    private String getTestsString() {
+        List<String> chosenTests = new ArrayList<>();
+        String tests = "";
         if (toeflCB.isChecked())
             chosenTests.add("TOEFL");
         if (satCB.isChecked())
@@ -573,12 +605,11 @@ public class MainActivity extends AppCompatActivity {
         if (pteCB.isChecked())
             chosenTests.add("PTE");
 
-        for (int i=0;i<chosenTests.size();i++)
-        {
-            String test=chosenTests.get(i);
-            if (i==chosenTests.size()-1)
-                tests+=test;
-            else tests+=test+", ";
+        for (int i = 0; i < chosenTests.size(); i++) {
+            String test = chosenTests.get(i);
+            if (i == chosenTests.size() - 1)
+                tests += test;
+            else tests += test + ", ";
         }
 
         return tests;
@@ -592,27 +623,27 @@ public class MainActivity extends AppCompatActivity {
         final String studentEmail = userEmail.getText().toString();
         final String studentAddress = userAddress.getText().toString();
         final String studentPhone = userPhone.getText().toString();
-        String testsAttended=getTestsString();
+        String testsAttended = getTestsString();
 
-        if (TextUtils.isEmpty(studentQualification)){
+        if (TextUtils.isEmpty(studentQualification)) {
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
-        }  else if (TextUtils.isEmpty(studentSummary)){
+        } else if (TextUtils.isEmpty(studentSummary)) {
             summary.setError("Enter Summary");
             summary.requestFocus();
         } else {
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear,testsAttended)
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
-                            if (response.isSuccessful()){
-                                if (response.body() != null){
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
                                     editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
 
                                 }
-                            }else {
+                            } else {
                                 try {
                                     Log.d("client", "onResponse: error" + response.errorBody().string());
                                     MDToast mdToast = MDToast.makeText(MainActivity.this, "There was something wrong while saving your info. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
@@ -637,8 +668,8 @@ public class MainActivity extends AppCompatActivity {
                 .enqueue(new Callback<Login>() {
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {
-                        if (response.isSuccessful()){
-                            if (response.body() != null){
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 App.db().putObject(FragmentKeys.DATA, response.body().data);
                                 startActivity(new Intent(MainActivity.this, MainActivity.class));
                                 MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
@@ -657,14 +688,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void userMenuSelector(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.search:
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
 
@@ -676,7 +707,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.student_profile:
-                if (data.enquiry_details == null){
+                if (data.enquiry_details == null) {
                     getStudentFurtherDetails();
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new StudentProfileFragment()).commit();
@@ -684,7 +715,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.matched_client:
-                if (data.enquiry_details == null){
+                if (data.enquiry_details == null) {
                     getStudentFurtherDetails();
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new MatchingClientsFragment()).commit();

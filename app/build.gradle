@@ -88,4 +88,9 @@ dependencies {
     //Glide Slider
     implementation 'com.github.firdausmaulan:GlideSlider:1.3.2'
 
+    //Delegates
+    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.2-SNAPSHOT'
+
+    implementation 'com.jsibbold:zoomage:1.2.0'
+
 }

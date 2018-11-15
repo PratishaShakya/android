@@ -1,4 +1,4 @@
-package susankyatech.com.consultancymanagement.Adapter;
+package susankyatech.com.consultancymanagement.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +29,7 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
 
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
-        String course_name = courses.get(position);
+        String course_name = courses.get(position).trim();
         holder.countryName.setText(course_name);
     }
 

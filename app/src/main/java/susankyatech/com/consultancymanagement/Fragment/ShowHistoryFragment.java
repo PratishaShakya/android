@@ -20,7 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
-import susankyatech.com.consultancymanagement.Adapter.ConsultancyListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;

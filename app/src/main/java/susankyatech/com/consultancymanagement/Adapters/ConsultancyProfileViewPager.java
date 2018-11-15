@@ -1,4 +1,4 @@
-package susankyatech.com.consultancymanagement.Adapter;
+package susankyatech.com.consultancymanagement.Adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,11 +8,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnquiryViewPagerAdapter extends FragmentPagerAdapter {
+public class ConsultancyProfileViewPager extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public EnquiryViewPagerAdapter(FragmentManager manager){
+    public ConsultancyProfileViewPager(FragmentManager manager){
         super(manager);
     }
 

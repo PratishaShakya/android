@@ -45,7 +45,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/scrollview1"
         android:layout_marginBottom="@dimen/small_margin"
-        android:visibility="gone"
         android:fillViewport="true">
 
         <RelativeLayout
@@ -169,10 +168,44 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/profile_description_layout"
+                android:id="@+id/profile_services_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/profile_phone_layout"
+                android:layout_marginLeft="5dp"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_semibold"
+                    android:text="Services"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_semibold"
+                    android:text=":"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/services"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:fontFamily="@font/nunito_semibold"
+                    android:text="Services"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profile_description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_services_layout"
                 android:layout_marginLeft="5dp"
                 android:orientation="horizontal"
                 android:padding="5dp">

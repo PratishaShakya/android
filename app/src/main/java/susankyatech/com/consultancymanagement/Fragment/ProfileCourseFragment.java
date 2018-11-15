@@ -29,12 +29,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
-import susankyatech.com.consultancymanagement.Adapter.CountryListAdapter;
-import susankyatech.com.consultancymanagement.Adapter.CourseListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.CourseListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Client;
-import susankyatech.com.consultancymanagement.Model.Detail;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.Model.ProfileInfo;
 import susankyatech.com.consultancymanagement.R;
@@ -44,7 +42,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileUniversityFragment extends Fragment {
+public class ProfileCourseFragment extends Fragment {
 
     @BindView(R.id.course_list)
     RecyclerView courseList;
@@ -69,7 +67,7 @@ public class ProfileUniversityFragment extends Fragment {
     private List<String> courses = new ArrayList<>();
     private List<String> coursesList;
 
-    public ProfileUniversityFragment() {
+    public ProfileCourseFragment() {
         // Required empty public constructor
     }
 

@@ -1,4 +1,4 @@
-package susankyatech.com.consultancymanagement.Adapter;
+package susankyatech.com.consultancymanagement.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 
 import java.util.List;
-import java.util.Locale;
 
 import susankyatech.com.consultancymanagement.R;
 
@@ -30,7 +29,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder holder, int position) {
-        String country_name = countries.get(position);
+        String country_name = countries.get(position).trim();
         holder.countryName.setText(country_name);
 
     }

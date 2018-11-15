@@ -4,8 +4,6 @@ package susankyatech.com.consultancymanagement.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.GalleryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
-import susankyatech.com.consultancymanagement.Adapter.GalleryListAdapter;
+import susankyatech.com.consultancymanagement.Adapters.GalleryListAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Model.Gallery;
@@ -135,7 +132,7 @@ public class GalleryFragment extends Fragment {
                             images.add(allGallery.get(i).image);
 
                         Log.d("asd", "onResponse: "+allGallery.size());
-                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext(), clientId);
                         galleryList.setAdapter(galleryListAdapter);
                     }
 
@@ -178,7 +175,7 @@ public class GalleryFragment extends Fragment {
                         }
 
                         Log.d("asd", "onResponse: "+allGallery.size());
-                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext());
+                        galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext(), clientId);
                         galleryList.setAdapter(galleryListAdapter);
 
                     }

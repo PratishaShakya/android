@@ -50,6 +50,8 @@
             android:id="@+id/profile_banner"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:elevation="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/banner" />
@@ -64,6 +66,7 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="end"
         android:layout_marginTop="5dp"
+        android:visibility="gone"
         android:layout_marginRight="5dp"
         android:src="@drawable/ic_interest" />
 
@@ -137,7 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="#008577"
+            android:background="@color/blue"
             android:visibility="visible"
             android:padding="@dimen/medium_padding">
 
