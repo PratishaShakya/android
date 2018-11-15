@@ -56,6 +56,8 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.fitCenter();
 
+        Log.d(TAG, "onBindViewHolder: " + bannerGrid.bannerItemList.size());
+
         if(bannerGrid.bannerItemList.size() == 0){
             vh.sliderLayout.setVisibility(View.GONE);
         }
