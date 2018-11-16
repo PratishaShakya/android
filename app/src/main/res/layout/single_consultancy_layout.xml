@@ -40,7 +40,7 @@
                 android:layout_below="@id/line"
                 android:layout_centerVertical="true"
                 android:padding="10dp"
-                android:minLines="3"
+                android:minLines="2"
                 android:gravity="center_vertical"
                 android:text="Consultancy Name"
                 android:fontFamily="@font/nunito_semibold"

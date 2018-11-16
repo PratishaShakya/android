@@ -60,9 +60,14 @@ public interface ClientAPI {
     @FormUrlEncoded
     @POST("students/change-primary-info")
     Call<Login> changePrimaryInfo(@Field("email") String email,
-                                   @Field("name") String name,
-                                   @Field("address") String address,
-                                   @Field("phone") String phone);
+                                  @Field("name") String name,
+                                  @Field("address") String address,
+                                  @Field("phone") String phone,
+                                  @Field("dob") String dob);
+
+    @FormUrlEncoded
+    @POST("students/change-primary-info")
+    Call<Login> addDOB(@Field("dob") String dob);
 
     @DELETE("client/gallery/{id}")
     Call<GalleryDeleteResponse> deleteGalleryImage(@Path("id") int id);

@@ -42,12 +42,12 @@
                 android:drawableTint="@color/login_color"
                 android:gravity="center_vertical"
                 android:hint="@string/full_name"
-                android:textSize="13sp"
                 android:imeOptions="actionNext"
                 android:inputType="textCapWords"
                 android:nextFocusForward="@id/email"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
 
             <EditText
@@ -59,13 +59,13 @@
                 android:drawablePadding="@dimen/small_margin"
                 android:drawableTint="@color/login_color"
                 android:gravity="center_vertical"
-                android:textSize="13sp"
                 android:hint="@string/email"
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:nextFocusForward="@id/phone"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
             <EditText
                 android:id="@+id/phone"
@@ -76,13 +76,13 @@
                 android:drawablePadding="@dimen/small_margin"
                 android:drawableTint="@color/login_color"
                 android:gravity="center_vertical"
-                android:textSize="13sp"
                 android:hint="@string/phone"
                 android:imeOptions="actionNext"
                 android:inputType="phone"
                 android:nextFocusForward="@id/address"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
             <EditText
                 android:id="@+id/address"
@@ -93,35 +93,35 @@
                 android:drawablePadding="@dimen/small_margin"
                 android:drawableTint="@color/login_color"
                 android:gravity="center_vertical"
-                android:textSize="13sp"
                 android:hint="@string/address"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:nextFocusForward="@id/gender"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:orientation="horizontal"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:orientation="horizontal">
+                android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_gender"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_gender" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:text="@string/gender"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
 
                 <Spinner
                     android:id="@+id/gender"
@@ -129,27 +129,28 @@
                     android:layout_height="40dp"
                     android:textAlignment="textEnd"></Spinner>
 
-                <!--<EditText-->
-                    <!--android:id="@+id/gender"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="45dp"-->
-                    <!--android:layout_marginTop="@dimen/activity_horizontal_margin"-->
-                    <!--android:drawableLeft="@drawable/ic_gender"-->
-                    <!--android:drawablePadding="@dimen/small_margin"-->
-                    <!--android:drawableTint="@color/login_color"-->
-                    <!--android:gravity="center_vertical"-->
-                    <!--android:hint="@string/gender"-->
-                    <!--android:imeOptions="actionNext"-->
-                    <!--android:inputType="text"-->
-                    <!--android:nextFocusForward="@id/password"-->
-                    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-                    <!--android:paddingRight="@dimen/activity_horizontal_margin" />-->
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#77111111"/>
+                android:background="#77111111" />
+
+            <EditText
+                android:id="@+id/dob"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:drawableLeft="@drawable/ic_birthday"
+                android:drawablePadding="@dimen/small_margin"
+                android:gravity="center_vertical"
+                android:hint="DOB"
+                android:imeOptions="actionNext"
+                android:inputType="date"
+                android:nextFocusForward="@id/password"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
             <EditText
                 android:id="@+id/password"
@@ -162,11 +163,11 @@
                 android:gravity="center_vertical"
                 android:hint="@string/password"
                 android:imeOptions="actionNext"
-                android:textSize="13sp"
                 android:inputType="textPassword"
                 android:nextFocusForward="@id/rePassword"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
 
             <EditText
@@ -181,9 +182,9 @@
                 android:hint="@string/repeat_password"
                 android:imeOptions="actionGo"
                 android:inputType="textPassword"
-                android:textSize="13sp"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textSize="13sp" />
 
             <mehdi.sakout.fancybuttons.FancyButton
                 android:id="@+id/btnSignUp"
@@ -215,8 +216,8 @@
                     android:fontFamily="sans-serif"
                     android:gravity="center_vertical"
                     android:text="@string/already_have_an_account"
-                    android:textSize="14dp"
                     android:textColor="@color/primary_text"
+                    android:textSize="14dp"
                     android:textStyle="normal" />
 
                 <TextView

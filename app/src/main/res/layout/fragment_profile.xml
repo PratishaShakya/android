@@ -150,7 +150,7 @@
                 android:layout_centerInParent="true"
                 android:fontFamily="@font/nunito_semibold"
                 android:text="Send Inquiry"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textSize="17sp" />
 
         </RelativeLayout>

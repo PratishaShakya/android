@@ -21,11 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.directions.route.AbstractRouting;
-import com.directions.route.Route;
-import com.directions.route.RouteException;
-import com.directions.route.Routing;
-import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -35,12 +30,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,23 +102,16 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     private void openGoogleMap() {
 
-//      String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", 27.6840308, 85.3160972);
         String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", 27.6840308, 85.3160972, "");
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         intent.setPackage("com.google.android.apps.maps");
-        try
-        {
+        try {
             startActivity(intent);
-        }
-        catch(ActivityNotFoundException ex)
-        {
-            try
-            {
+        } catch (ActivityNotFoundException ex) {
+            try {
                 Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(unrestrictedIntent);
-            }
-            catch(ActivityNotFoundException innerEx)
-            {
+            } catch (ActivityNotFoundException innerEx) {
                 Toast.makeText(getContext(), "Please install a maps application", Toast.LENGTH_LONG).show();
             }
         }
@@ -136,29 +121,16 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
         LatLng consultancyLatLng = new LatLng(27.6840308, 85.3160972);
         MarkerOptions marker = new MarkerOptions().position(consultancyLatLng);
 
-// adding marker
+        // adding marker
         mMap.addMarker(marker);
-//        getRouteToMaker(consultancyLatLng);
     }
-
-//    private void getRouteToMaker(LatLng consultancyLatLng) {
-//        Log.d(TAG, "getRouteToMaker: "+mLastLocation.getLatitude());
-//        Routing routing = new Routing.Builder()
-//                .key("AIzaSyAs9HdVNIcpHkm0qu-vNgjf7lbpj-6-DWQ")
-//                .travelMode(AbstractRouting.TravelMode.DRIVING)
-//                .withListener(this)
-//                .alternativeRoutes(false)
-//                .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), consultancyLatLng)
-//                .build();
-//        routing.execute();
-//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
             return;
         }
@@ -166,7 +138,7 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mMap.setMyLocationEnabled(true);
     }
 
-    protected synchronized void buildGoogleApiClient(){
+    protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -181,7 +153,7 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED){
+                    == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         }
@@ -191,7 +163,7 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void onLocationChanged(Location location) {
         mLastLocation = location;
 
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
@@ -223,55 +195,4 @@ public class ShowMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
-//    @Override
-//    public void onRoutingFailure(RouteException e) {
-//        if(e != null) {
-//            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-//        }else {
-//            Toast.makeText(getContext(), "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    @Override
-//    public void onRoutingStart() {
-//
-//    }
-//
-//    @Override
-//    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-//        if(polylines.size()>0) {
-//            for (Polyline poly : polylines) {
-//                poly.remove();
-//            }
-//        }
-//
-//        polylines = new ArrayList<>();
-//        //add route(s) to the map.
-//        for (int i = 0; i <route.size(); i++) {
-//
-//            //In case of more than 5 alternative routes
-//            int colorIndex = i % COLORS.length;
-//
-//            PolylineOptions polyOptions = new PolylineOptions();
-//            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
-//            polyOptions.width(10 + i * 3);
-//            polyOptions.addAll(route.get(i).getPoints());
-//            Polyline polyline = mMap.addPolyline(polyOptions);
-//            polylines.add(polyline);
-//
-//            Toast.makeText(getActivity().getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    @Override
-//    public void onRoutingCancelled() {
-//
-//    }
-//
-//    private void erasePolyLines(){
-//        for (Polyline line : polylines){
-//            line.remove();
-//        }
-//        polylines.clear();
-//    }
 }

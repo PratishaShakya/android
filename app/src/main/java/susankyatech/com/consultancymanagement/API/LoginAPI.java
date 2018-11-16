@@ -23,5 +23,6 @@ public interface LoginAPI {
                                 @Field("phone")String userPhone,
                                 @Field("password")String password,
                                 @Field("address")String userAddress,
-                                @Field("gender")String userGender);
+                                @Field("gender")String userGender,
+                                @Field("dob")String userDob);
 }

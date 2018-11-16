@@ -69,9 +69,6 @@ public class ConsultancyAdapterDelegate  extends AdapterDelegate<List<HomeItems>
       vh.recyclerView.setLayoutManager(vh.gridLayoutManager);
       vh.recyclerView.setAdapter(new ConsultancyListAdapter(consultancySlide.clientList, activity));
       vh.recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(activity));
-//        vh.recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(10));
-//        vh.recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(10));
-
     }
 
     public class ConsultancyListViewHolder extends RecyclerView.ViewHolder {

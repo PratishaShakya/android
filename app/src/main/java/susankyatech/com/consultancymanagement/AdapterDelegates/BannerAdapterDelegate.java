@@ -50,33 +50,43 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
 
     @Override
     protected void onBindViewHolder(@NonNull List<HomeItems> items, int position, @NonNull RecyclerView.ViewHolder holder, @NonNull List<Object> payloads) {
-        BannerViewHolder vh = (BannerViewHolder) holder;
-        BannerGrid bannerGrid = (BannerGrid) items.get(position);
 
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.fitCenter();
+        try
+        {
+            BannerViewHolder vh = (BannerViewHolder) holder;
+            BannerGrid bannerGrid = (BannerGrid) items.get(position);
 
-        Log.d(TAG, "onBindViewHolder: " + bannerGrid.bannerItemList.size());
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.fitCenter();
 
-        if(bannerGrid.bannerItemList.size() == 0){
-            vh.sliderLayout.setVisibility(View.GONE);
+
+            if(bannerGrid.bannerItemList.size() == 0){
+                vh.sliderLayout.setVisibility(View.GONE);
+            }
+
+            for (int i = 0; i < bannerGrid.bannerItemList.size(); i++) {
+                DefaultSliderView sliderView = new DefaultSliderView(activity);
+                sliderView
+                        .image(bannerGrid.bannerItemList.get(i).banner)
+                        .setRequestOption(requestOptions)
+                        .setBackgroundColor(Color.WHITE)
+                        .setProgressBarVisible(true);
+
+                vh.sliderLayout.addSlider(sliderView);
+            }
+            // set Slider Transition Animation
+            vh.sliderLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
+            vh.sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+            vh.sliderLayout.setCustomAnimation(new DescriptionAnimation());
+            vh.sliderLayout.setDuration(4000);
         }
 
-        for (int i = 0; i < bannerGrid.bannerItemList.size(); i++) {
-            DefaultSliderView sliderView = new DefaultSliderView(activity);
-            sliderView
-                    .image(bannerGrid.bannerItemList.get(i).banner)
-                    .setRequestOption(requestOptions)
-                    .setBackgroundColor(Color.WHITE)
-                    .setProgressBarVisible(true);
+        catch (Throwable t)
+        {
 
-            vh.sliderLayout.addSlider(sliderView);
+            Log.d("OOPS",t.toString());
         }
-        // set Slider Transition Animation
-        vh.sliderLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
-        vh.sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        vh.sliderLayout.setCustomAnimation(new DescriptionAnimation());
-        vh.sliderLayout.setDuration(4000);
+
     }
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {

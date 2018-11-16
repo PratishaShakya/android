@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Activity;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -8,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.location.LocationManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,9 +18,6 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +30,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -51,7 +48,6 @@ import com.github.javiersantos.appupdater.objects.Update;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +64,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Multipart;
 import susankyatech.com.consultancymanagement.API.BannerAPI;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
@@ -80,6 +75,7 @@ import susankyatech.com.consultancymanagement.Fragment.InterestedClientsFragment
 import susankyatech.com.consultancymanagement.Fragment.MatchingClientsFragment;
 import susankyatech.com.consultancymanagement.Fragment.SearchFragment;
 import susankyatech.com.consultancymanagement.Fragment.StudentProfileFragment;
+import susankyatech.com.consultancymanagement.Fragment.VisaTrackingFragment;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Model.Client;
@@ -102,11 +98,11 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_app_bar)
     Toolbar mToolbar;
 
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB;
 
     private Spinner completedYear, qualificationSpinner;
     private String fragmentName, selectedLevel;
-    private int selectedYear;
+    private int selectedYear, mYear, mMonth, mDay;
 
     private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
@@ -163,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showUpdateDialog() {
         new AppUpdater(this)
-                .setContentOnUpdateAvailable("Check out the latest version available of Online Vibrant!")
+                .setContentOnUpdateAvailable("Check out the latest version available of Consultancy Finder!")
                 .setButtonUpdate("Update now?")
                 .setButtonUpdateClickListener(new DialogInterface.OnClickListener() {
                     @Override
@@ -240,8 +236,13 @@ public class MainActivity extends AppCompatActivity {
 
             TextView userName = navView.findViewById(R.id.user_name);
             userName.setText(data.name);
+
             if (data.enquiry_details == null) {
                 getStudentFurtherDetails();
+            } else {
+                if (data.dob == null){
+                    getDOB();
+                }
             }
         } else {
             navigationView.inflateMenu(R.menu.navigation_menu_admin);
@@ -287,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
     }
+
 
     private void getNavBackground(ImageView navBg) {
         BannerAPI bannerAPI = App.consultancyRetrofit().create(BannerAPI.class);
@@ -495,26 +497,55 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = this.getApplicationContext().getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
+    private void getDOB() {
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(this)
+                .title("Add your Date Of Birth")
+                .customView(R.layout.add_dob_layout, true)
+                .positiveText("Save Details")
+                .negativeText("Close")
+                .positiveColor(getResources().getColor(R.color.green))
+                .negativeColor(getResources().getColor(R.color.red))
+                .show();
+
+        userDOB = materialDialog.getCustomView().findViewById(R.id.user_dob);
+        userDOB.setFocusable(false);
+        userDOB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get Current Date
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                userDOB.setText(year + "-" + (monthOfYear + 1) +dayOfMonth + "-");
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
             }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
+        });
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addStudentDOB();
+
             }
-        }
-        return result;
+        });
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
     }
 
     private void getStudentFurtherDetails() {
@@ -535,6 +566,7 @@ public class MainActivity extends AppCompatActivity {
         userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
+        userDOB = materialDialog.getCustomView().findViewById(R.id.enquiry_dob);
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
@@ -551,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
+        userDOB.setText(data.dob);
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
@@ -626,6 +659,7 @@ public class MainActivity extends AppCompatActivity {
         final String studentEmail = userEmail.getText().toString();
         final String studentAddress = userAddress.getText().toString();
         final String studentPhone = userPhone.getText().toString();
+        final String studentDOB = userDOB.getText().toString();
         String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)) {
@@ -643,7 +677,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()) {
                                 if (response.body() != null) {
-                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
+                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog, studentDOB);
 
                                 }
                             } else {
@@ -664,10 +698,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog) {
+    private void addStudentDOB() {
+        String studendDOB = userDOB.getText().toString();
+        if (TextUtils.isEmpty(studendDOB)){
+            userDOB.setError("Enter your DOB");
+        }else {
+            ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+            clientAPI.addDOB(studendDOB).enqueue(new Callback<Login>() {
+                @Override
+                public void onResponse(Call<Login> call, Response<Login> response) {
+                    if (response.isSuccessful()){
+                        if (response.body()!=null){
+                            App.db().putObject(FragmentKeys.DATA, response.body().data);
+                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                            mdToast.show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Login> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog, String studentDOB) {
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone)
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, studentDOB)
                 .enqueue(new Callback<Login>() {
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {
@@ -715,6 +776,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new StudentProfileFragment()).commit();
                 }
+                break;
+
+            case R.id.visa_track:
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new VisaTrackingFragment()).commit();
                 break;
 
             case R.id.matched_client:

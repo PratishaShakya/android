@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valdesekamdem.library.mdtoast.MDToast;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,9 +62,13 @@ public class StudentRegisterFragment extends Fragment {
     EditText address;
     @BindView(R.id.gender)
     Spinner gender;
+    @BindView(R.id.dob)
+    EditText dob;
 
     String[] sex = { "Male", "Female" };
     private String userGender;
+
+    private int mYear, mMonth, mDay;
 
     private ProgressDialog progressDialog;
 
@@ -97,6 +105,33 @@ public class StudentRegisterFragment extends Fragment {
             }
         });
 
+        dob.setFocusable(false);
+
+        dob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get Current Date
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                dob.setText(year + "-" + (monthOfYear + 1) + "-" +dayOfMonth );
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+
+            }
+        });
+
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,27 +141,31 @@ public class StudentRegisterFragment extends Fragment {
                 String userPassword = password.getText().toString();
                 String userRePassword = rePassword.getText().toString();
                 String userAddress = address.getText().toString();
+                String userDOB = dob.getText().toString();
 
 
                 if (TextUtils.isEmpty(userName)){
                     fullName.setError("Enter your name");
                     fullName.requestFocus();
-                }else if (TextUtils.isEmpty(userEmail)){
+                } else if (TextUtils.isEmpty(userEmail)){
                     email.setError("Enter your email");
                     email.requestFocus();
                 } else if (TextUtils.isEmpty(userPhone)){
                     phone.setError("Enter your phone");
                     phone.requestFocus();
-                }else if (TextUtils.isEmpty(userAddress)){
+                } else if (TextUtils.isEmpty(userAddress)){
                     address.setError("Enter your address");
                     address.requestFocus();
-                }else if (TextUtils.isEmpty(userPassword)){
+                } else if (TextUtils.isEmpty(userDOB)){
+                    dob.setError("Enter your DOB");
+                    dob.requestFocus();
+                } else if (TextUtils.isEmpty(userPassword)){
                     password.setError("Enter your password");
                     password.requestFocus();
-                }else if (TextUtils.isEmpty(userRePassword)){
+                } else if (TextUtils.isEmpty(userRePassword)){
                     rePassword.setError("Enter your confirm password");
                     rePassword.requestFocus();
-                }else if (!userPassword.equals(userRePassword)){
+                } else if (!userPassword.equals(userRePassword)){
                     rePassword.setError("Enter password doesn't match");
                     rePassword.requestFocus();
                 } else {
@@ -134,7 +173,7 @@ public class StudentRegisterFragment extends Fragment {
                     progressDialog.setMessage("Please wait, while we are creating your account");
                     progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
-                    registerStudent(userName, userEmail, userPhone, userPassword, userAddress, userGender);
+                    registerStudent(userName, userEmail, userPhone, userPassword, userAddress, userGender, userDOB);
                 }
             }
         });
@@ -147,9 +186,9 @@ public class StudentRegisterFragment extends Fragment {
         });
     }
 
-    private void registerStudent(String userName, String userEmail, String userPhone, String userPassword, String userAddress, String userGender) {
+    private void registerStudent(String userName, String userEmail, String userPhone, String userPassword, String userAddress, String userGender, String userDOB) {
         LoginAPI loginAPI = App.consultancyRetrofit().create(LoginAPI.class);
-        loginAPI.studentRegister(userName, userEmail, userPhone, userPassword, userAddress , userGender).enqueue(new Callback<Login>() {
+        loginAPI.studentRegister(userName, userEmail, userPhone, userPassword, userAddress , userGender, userDOB).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.body() != null) {

@@ -19,6 +19,7 @@ public class Data {
     public String achievements;
     public String email;
     public String name;
+    public String dob;
     public boolean is_student;
     public String jwt_token;
     @SerializedName("detail")

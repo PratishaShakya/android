@@ -76,7 +76,7 @@ import static android.support.constraint.Constraints.TAG;
  */
 public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
 
-    @BindView(R.id.consultancy_list)
+    @BindView(R.id.home_item_list)
     RecyclerView recyclerView;
     @BindView(R.id.search_options)
     Spinner spinner;
@@ -119,7 +119,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     private String selected_options, selectedLevel;
 
     List<Integer> dates = new ArrayList<>();
-    List<BannerItem> bannerItems;
+    List<BannerItem> bannerItems=new ArrayList<>();
     String[] qualificationList = {"+2", "Bachelors", "Masters"};
     String[] options = {"Consultancy", "Course", "Country"};
 
@@ -129,7 +129,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     public static List<Client> clientList;
     private Data data;
-    private EnquiryDetails enquiryDetails;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -209,7 +208,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
         if (Utilities.isConnectionAvailable(getActivity())) {
             emptyView.setVisibility(View.GONE);
-            getSearchItems();
+            getAllConsultancy();
         } else {
             progressLayout.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
@@ -245,7 +244,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 //                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
                 consultancyListAdapter.filter(text);
                 if (text.trim().length() == 0){
-                    getSearchItems();
+                    getAllConsultancy();
                 }else {
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                     recyclerView.setAdapter(consultancyListAdapter);
@@ -267,7 +266,10 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
                                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                                 recyclerView.setAdapter(consultancyListAdapter);
-                                recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
+                                if (recyclerView.getItemDecorationCount() == 0) {
+                                    recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
+                                }
+
 
                             }
                         } else {
@@ -292,7 +294,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
             @Override
             public boolean onQueryTextChange(String s) {
                 if (s.equals("")) {
-                    getSearchItems();
+                    getAllConsultancy();
                 }
                 return false;
             }
@@ -319,7 +321,9 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
                                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                                 recyclerView.setAdapter(consultancyListAdapter);
-                                recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
+                                if (recyclerView.getItemDecorationCount() == 0) {
+                                    recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
+                                }
 
                             }
                         } else {
@@ -343,20 +347,14 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
             @Override
             public boolean onQueryTextChange(String s) {
                 if (s.equals("")) {
-                    getSearchItems();
+                    getAllConsultancy();
                 }
                 return false;
             }
         });
 
     }
-
-    private void getSearchItems() {
-        getAllConsultancy();
-        getSLiderItems();
-    }
-
-    private void getSLiderItems() {
+    private void getSLiderItems(List<Client> clientList) {
         BannerAPI bannerAPI = App.consultancyRetrofit().create(BannerAPI.class);
         bannerAPI.getBanners().enqueue(new Callback<Login>() {
             @Override
@@ -370,6 +368,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 bannerItems.add(new BannerItem(bannerList.get(i).ad_image));
                             }
                         }
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(new HomeAdapter(getContext(), displayHomeItems(clientList)));
+                        if (recyclerView.getItemDecorationCount() == 0) {
+                            recyclerView.addItemDecoration(new GridViewItemDecoration(context));
+                        }
                     }
                 }
             }
@@ -379,20 +383,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
             }
         });
-    }
-
-
-    private void doRefresh() {
-        swipeRefreshLayout.setRefreshing(false);
-        init();
-
-    }
-
-    private void getEnquiry() {
-        FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
-        OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
-        fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
-
     }
 
     private void getStudentFurtherDetails() {
@@ -454,6 +444,18 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         });
     }
 
+    private void doRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
+        getAllConsultancy();
+        recyclerView.removeItemDecoration(new GridViewItemDecoration(getContext()));
+    }
+
+    private void getEnquiry() {
+        FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
+        OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+        fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+
+    }
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
         String studentQualification = qualification.getText().toString();
@@ -532,10 +534,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
                         clientList = response.body().data.clients;
                         consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        recyclerView.setAdapter(new HomeAdapter(getContext(), displayHomeItems(clientList)));
-//                        recyclerView.setAdapter(consultancyListAdapter);
-                        recyclerView.addItemDecoration(new GridViewItemDecoration(context));
+                        getSLiderItems(clientList);
                     }
 
                 }else {
@@ -547,7 +546,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         mdToast.show();
                     } catch (Exception e) {
                     }
-
                 }
             }
 

@@ -6,8 +6,8 @@ android {
         applicationId "susankyatech.com.consultancymanagement"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 11
-        versionName "1.1"
+        versionCode 14
+        versionName "1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -69,18 +69,8 @@ dependencies {
     //Material Dialogue
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
-    //MultipleSpinner
-    implementation 'com.github.pratikbutani:MultiSelectSpinner:08d324c987'
-
     //CircularImageView
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-
-    //Map Route
-    implementation 'com.github.jd-alexander:library:1.1.0'
-
-    //MapBox
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.7.0'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-localization:0.5.0'
 
     //showing release update
     implementation 'com.github.javiersantos:AppUpdater:2.7'
@@ -91,6 +81,6 @@ dependencies {
     //Delegates
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.2-SNAPSHOT'
 
+    //Photo Zoomer
     implementation 'com.jsibbold:zoomage:1.2.0'
-
 }

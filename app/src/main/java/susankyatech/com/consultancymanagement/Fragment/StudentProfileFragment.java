@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Fragment;
 
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,11 +67,13 @@ public class StudentProfileFragment extends Fragment {
     TextView testAttendedTv;
     @BindView(R.id.summary)
     TextView summaryTv;
+    @BindView(R.id.dob)
+    TextView dob;
     @BindView(R.id.btn_edit)
     FancyButton editInfo;
 
 
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -78,7 +82,7 @@ public class StudentProfileFragment extends Fragment {
     private String testAttended, selectedLevel;
 
     List<String> testsAttendedList=new ArrayList<>();
-    private int selectedYear;
+    private int selectedYear, mYear, mMonth, mDay;;
 
     private EnquiryDetails enquiryDetails;
     private Data data;
@@ -133,6 +137,9 @@ public class StudentProfileFragment extends Fragment {
         summaryTv.setText(enquiryDetails.summary);
         completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
+        if (data.dob != null) {
+            dob.setText(data.dob);
+        }
     }
 
     private void getStudentFurtherDetails() {
@@ -191,11 +198,37 @@ public class StudentProfileFragment extends Fragment {
         userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
+        userDOB = materialDialog.getCustomView().findViewById(R.id.enquiry_dob);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
         toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+
+        userDOB.setFocusable(false);
+
+        userDOB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get Current Date
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                userDOB.setText(year + "-" + (monthOfYear + 1) + "-" +dayOfMonth );
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
 
         ArrayAdapter dateAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
         ArrayAdapter levelAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,qualificationList);
@@ -246,6 +279,9 @@ public class StudentProfileFragment extends Fragment {
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
+        if (data.dob != null) {
+            userDOB.setText(data.dob);
+        }
 
         String[] testsSplit=enquiryDetails.test_attended.split(",");
 
@@ -311,6 +347,7 @@ public class StudentProfileFragment extends Fragment {
         final String studentEmail = userEmail.getText().toString();
         final String studentAddress = userAddress.getText().toString();
         final String studentPhone = userPhone.getText().toString();
+        final String studentDOB = userDOB.getText().toString();
         String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)){
@@ -328,7 +365,7 @@ public class StudentProfileFragment extends Fragment {
                         public void onResponse(Call<Login> call, Response<Login> response) {
                             if (response.isSuccessful()){
                                 if (response.body() != null){
-                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog);
+                                    editStudentPrimaryInfo(studentName, studentEmail, studentAddress, studentPhone, materialDialog, studentDOB);
                                 }
                             }else {
                                 try {
@@ -350,10 +387,10 @@ public class StudentProfileFragment extends Fragment {
         }
     }
 
-    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog) {
+    private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog, String studentDOB) {
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone)
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, studentDOB)
                 .enqueue(new Callback<Login>() {
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {
