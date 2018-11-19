@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             if (data.enquiry_details == null) {
                 getStudentFurtherDetails();
             } else {
-                if (data.dob == null){
+                if (data.dob == null) {
                     getDOB();
                 }
             }
@@ -295,11 +295,11 @@ public class MainActivity extends AppCompatActivity {
         bannerAPI.getNavBanner().enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        if (response.body().data == null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().data == null) {
                             Picasso.get().load(R.drawable.nav_background).into(navBg);
-                        }else {
+                        } else {
                             String nav_image = response.body().data.ad_image;
                             Picasso.get().load(nav_image).into(navBg);
                         }
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
 
-                                userDOB.setText(year + "-" + (monthOfYear + 1) +dayOfMonth + "-");
+                                userDOB.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth );
 
                             }
                         }, mYear, mMonth, mDay);
@@ -700,15 +700,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void addStudentDOB() {
         String studendDOB = userDOB.getText().toString();
-        if (TextUtils.isEmpty(studendDOB)){
+        if (TextUtils.isEmpty(studendDOB)) {
             userDOB.setError("Enter your DOB");
-        }else {
+        } else {
             ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
             clientAPI.addDOB(studendDOB).enqueue(new Callback<Login>() {
                 @Override
                 public void onResponse(Call<Login> call, Response<Login> response) {
-                    if (response.isSuccessful()){
-                        if (response.body()!=null){
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
                             App.db().putObject(FragmentKeys.DATA, response.body().data);
                             startActivity(new Intent(MainActivity.this, MainActivity.class));
                             MDToast mdToast = MDToast.makeText(MainActivity.this, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
@@ -778,9 +778,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case R.id.visa_track:
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new VisaTrackingFragment()).commit();
-                break;
+//            case R.id.visa_track:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new VisaTrackingFragment()).commit();
+//                break;
 
             case R.id.matched_client:
                 if (data.enquiry_details == null) {
