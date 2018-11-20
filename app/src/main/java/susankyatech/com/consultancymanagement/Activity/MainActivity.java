@@ -18,6 +18,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -273,12 +274,17 @@ public class MainActivity extends AppCompatActivity {
 
             Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
             userName.setText(client.client_name);
+
             if (getIntent() != null) {
                 fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
                 if (fragmentName == null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
                 } else if (fragmentName.equals("AddGallery")) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new AddGalleryFragment()).commit();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FragmentKeys.FRAGMENTNAME, "MainActivity");
+                    AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
+                    addGalleryFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
                 }
             }
         }
@@ -331,16 +337,18 @@ public class MainActivity extends AppCompatActivity {
     private void openFilePicker() {
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Logo"), RESULT_LOAD_IMAGE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("asd", "onActivityResult: "+data);
+
         if ((requestCode == RESULT_LOAD_IMAGE) && (resultCode == -1)) {
+            Log.d("asd", "onActivityResult0: "+data);
             String fileName = getPath(data.getData());
             file = new File(getPath(data.getData()));
             uploadLogo();
@@ -433,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
             else if (isDownloadsDocument(uri)) {
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        Uri.parse("content://downloads/my_downloads"), Long.valueOf(id));
 
                 return getDataColumn(this, contentUri, null, null);
             }

@@ -74,7 +74,7 @@ public class StudentLoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                bundle.putString(FragmentKeys.FRAGMENTNAME, "Login");
+                bundle.putString(FragmentKeys.FRAGMENTNAME, "studentProfile");
                 FragmentTransaction fragmentTransaction = ((LoginActivity) getContext()).getSupportFragmentManager().beginTransaction();
                 VisaTrackingFragment visaTrackingFragment = new VisaTrackingFragment();
                 visaTrackingFragment.setArguments(bundle);

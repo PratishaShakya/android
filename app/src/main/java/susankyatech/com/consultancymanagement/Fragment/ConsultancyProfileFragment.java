@@ -311,6 +311,7 @@ public class ConsultancyProfileFragment extends Fragment {
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                Log.d(TAG, "getPath:q "+uri);
 
                 return getDataColumn(getContext(), contentUri, null, null);
             }
@@ -323,6 +324,7 @@ public class ConsultancyProfileFragment extends Fragment {
                 Uri contentUri = null;
                 if ("image".equals(type)) {
                     contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    Log.d(TAG, "getPath:w "+uri);
                 } else if ("video".equals(type)) {
                     contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 } else if ("audio".equals(type)) {
@@ -354,6 +356,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
+        Log.d(TAG, "getPath: "+uri);
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {

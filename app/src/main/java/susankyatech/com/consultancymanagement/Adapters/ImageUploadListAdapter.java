@@ -1,5 +1,6 @@
 package susankyatech.com.consultancymanagement.Adapters;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -19,10 +21,12 @@ public class ImageUploadListAdapter extends RecyclerView.Adapter<ImageUploadList
 
     public List<String> fileNameList;
     public List<Uri> fineDoneList;
+    private Context context;
 
-    public ImageUploadListAdapter(List<String> fileNameList, List<Uri> fineDoneList) {
+    public ImageUploadListAdapter(Context context, List<String> fileNameList, List<Uri> fineDoneList) {
         this.fileNameList = fileNameList;
         this.fineDoneList = fineDoneList;
+        this.context = context;
     }
 
     @NonNull
@@ -38,6 +42,7 @@ public class ImageUploadListAdapter extends RecyclerView.Adapter<ImageUploadList
         String fileName = fileNameList.get(position);
         holder.fileNameView.setText(fileName);
         Uri image = fineDoneList.get(position);
+        Toast.makeText(context, ""+image.getPath(), Toast.LENGTH_SHORT).show();
         holder.fileImageView.setImageURI(image);
     }
 
