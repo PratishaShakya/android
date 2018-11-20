@@ -5,4 +5,5 @@ public interface FragmentKeys {
     String INTERESTED = "INTERESTED";
     String DATA = "DATA";
     String FRAGMENTNAME = "FRAGMENTNAME";
+    String RESULT = "RESULT";
 }

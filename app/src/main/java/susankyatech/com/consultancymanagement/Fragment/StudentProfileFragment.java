@@ -73,7 +73,7 @@ public class StudentProfileFragment extends Fragment {
     FancyButton editInfo;
 
 
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, year, month, day;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -198,37 +198,15 @@ public class StudentProfileFragment extends Fragment {
         userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
-        userDOB = materialDialog.getCustomView().findViewById(R.id.enquiry_dob);
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
         toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
-        userDOB.setFocusable(false);
-
-        userDOB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get Current Date
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-                                userDOB.setText(year + "-" + (monthOfYear + 1) + "-" +dayOfMonth );
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
 
         ArrayAdapter dateAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
         ArrayAdapter levelAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,qualificationList);
@@ -280,7 +258,7 @@ public class StudentProfileFragment extends Fragment {
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
         if (data.dob != null) {
-            userDOB.setText(data.dob);
+//            userDOB.setText(data.dob);
         }
 
         String[] testsSplit=enquiryDetails.test_attended.split(",");
@@ -347,16 +325,31 @@ public class StudentProfileFragment extends Fragment {
         final String studentEmail = userEmail.getText().toString();
         final String studentAddress = userAddress.getText().toString();
         final String studentPhone = userPhone.getText().toString();
-        final String studentDOB = userDOB.getText().toString();
+        String yrs = year.getText().toString();
+        String mth = month.getText().toString();
+        String days = day.getText().toString();
         String testsAttended = getTestsString();
 
-        if (TextUtils.isEmpty(studentQualification)){
+        if (TextUtils.isEmpty(studentSummary)) {
+            summary.setError("Enter Summary");
+            summary.requestFocus();
+        } else if (TextUtils.isEmpty(yrs)){
+            year.setError("Enter year");
+            year.requestFocus();
+        } else if (TextUtils.isEmpty(mth)){
+            month.setError("Enter month");
+            month.requestFocus();
+        } else if (TextUtils.isEmpty(yrs)){
+            day.setError("Enter day");
+            day.requestFocus();
+        } else  if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
             qualification.requestFocus();
         } else if (TextUtils.isEmpty(studentSummary)){
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
+            String studentDOB = yrs + "-" + mth + "-" + days;
             String userQualification = selectedLevel + "," + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
             enquiryAPI.saveDetailsNew(userQualification, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)

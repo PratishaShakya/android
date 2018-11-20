@@ -5,12 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.LoginAPI;
+import susankyatech.com.consultancymanagement.Activity.LoginActivity;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
@@ -45,6 +48,8 @@ public class StudentLoginFragment extends Fragment {
     TextView txtSignUp;
     @BindView(R.id.txtConsultancy)
     TextView txtConsultancyLogin;
+    @BindView(R.id.visa_track)
+    LinearLayout visaTrack;
 
     private ProgressDialog progressDialog;
 
@@ -65,6 +70,17 @@ public class StudentLoginFragment extends Fragment {
 
     private void init() {
         progressDialog = new ProgressDialog(getContext());
+        visaTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FragmentKeys.FRAGMENTNAME, "Login");
+                FragmentTransaction fragmentTransaction = ((LoginActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                VisaTrackingFragment visaTrackingFragment = new VisaTrackingFragment();
+                visaTrackingFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.login_container, visaTrackingFragment).addToBackStack(null).commit();
+            }
+        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -83,4 +83,7 @@ dependencies {
 
     //Photo Zoomer
     implementation 'com.jsibbold:zoomage:1.2.0'
+
+    //TimeLine
+    implementation 'com.github.vipulasri:timelineview:1.0.6'
 }

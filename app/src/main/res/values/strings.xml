@@ -34,6 +34,7 @@
 
     //Message
     <string name="profile_message">Your profile details act as your inquiry details</string>
+    <string name="visa_tracking_message">To track your visa processing get your student code form the respective consultancy</string>
     <string name="recommended_message">This shows the list of consultancies matched with your profile</string>
     <string name="starred_message">This shows the list of consultancies you have favourite</string>
     <string name="gallery_message">No image found, Please add some image</string>

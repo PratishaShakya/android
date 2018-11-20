@@ -141,27 +141,89 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:background="@drawable/rounded_edittext"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_edittext"
-                    android:padding="10dp">
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/medium_padding"
+                    android:padding="@dimen/small_margin"
+                    android:textColor="@color/primary_text"
+                    android:text="DOB"
+                    />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
 
                     <EditText
-                        android:id="@+id/enquiry_dob"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/year"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
                         android:layout_marginLeft="10dp"
-                        android:background="@color/colorTransparent"
-                        android:hint="DOB"
-                        android:inputType="date"
+                        android:gravity="center"
+                        android:textColorHint="@color/primary_text"
+                        android:focusable="true"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Year"
+                        android:inputType="number"
                         android:imeOptions="actionNext"
-                        android:nextFocusForward="@id/enquiry_level_completed"
+                        android:nextFocusForward="@id/month"
                         android:padding="5dp"
                         android:singleLine="true"
-                        android:textColorHint="#fb494949"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
+
+                    <EditText
+                        android:id="@+id/month"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:focusable="true"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Month"
+                        android:textColorHint="@color/primary_text"
+                        android:gravity="center"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:nextFocusForward="@id/day"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
+
+                    <EditText
+                        android:id="@+id/day"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Day"
+                        android:textColorHint="@color/primary_text"
+                        android:imeOptions="actionGo"
+                        android:inputType="number"
+                        android:padding="5dp"
+                        android:singleLine="true"
                         android:textSize="14sp" />
 
                 </android.support.design.widget.TextInputLayout>

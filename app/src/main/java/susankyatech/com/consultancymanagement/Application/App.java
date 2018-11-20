@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.joanzapata.iconify.fonts.IoniconsModule;
@@ -71,6 +73,14 @@ public class App extends Application {
             });
             builder.client(okHttpBuilder.build());
         }
+        Retrofit retrofit = builder.build();
+        return retrofit;
+    }
+
+    public static Retrofit noHeaderConsultancyRetrofit(){
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
         Retrofit retrofit = builder.build();
         return retrofit;
     }

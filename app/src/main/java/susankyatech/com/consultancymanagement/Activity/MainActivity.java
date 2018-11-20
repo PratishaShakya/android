@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_app_bar)
     Toolbar mToolbar;
 
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, year, month, day;
 
     private Spinner completedYear, qualificationSpinner;
     private String fragmentName, selectedLevel;
@@ -507,37 +507,14 @@ public class MainActivity extends AppCompatActivity {
                 .negativeColor(getResources().getColor(R.color.red))
                 .show();
 
-        userDOB = materialDialog.getCustomView().findViewById(R.id.user_dob);
-        userDOB.setFocusable(false);
-        userDOB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get Current Date
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-                                userDOB.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth );
-
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addStudentDOB();
-
             }
         });
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -566,7 +543,9 @@ public class MainActivity extends AppCompatActivity {
         userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
-        userDOB = materialDialog.getCustomView().findViewById(R.id.enquiry_dob);
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
@@ -583,7 +562,6 @@ public class MainActivity extends AppCompatActivity {
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
-        userDOB.setText(data.dob);
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
@@ -659,7 +637,11 @@ public class MainActivity extends AppCompatActivity {
         final String studentEmail = userEmail.getText().toString();
         final String studentAddress = userAddress.getText().toString();
         final String studentPhone = userPhone.getText().toString();
-        final String studentDOB = userDOB.getText().toString();
+        String yrs = year.getText().toString();
+        String mth = month.getText().toString();
+        String days = day.getText().toString();
+
+
         String testsAttended = getTestsString();
 
         if (TextUtils.isEmpty(studentQualification)) {
@@ -668,7 +650,17 @@ public class MainActivity extends AppCompatActivity {
         } else if (TextUtils.isEmpty(studentSummary)) {
             summary.setError("Enter Summary");
             summary.requestFocus();
-        } else {
+        } else if (TextUtils.isEmpty(yrs)){
+            year.setError("Enter year");
+            year.requestFocus();
+        } else if (TextUtils.isEmpty(mth)){
+            month.setError("Enter month");
+            month.requestFocus();
+        } else if (TextUtils.isEmpty(yrs)){
+            day.setError("Enter day");
+            day.requestFocus();
+        } else  {
+            String studentDOB = yrs + "-" + mth + "-" + days;
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
             enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
@@ -699,10 +691,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addStudentDOB() {
-        String studendDOB = userDOB.getText().toString();
-        if (TextUtils.isEmpty(studendDOB)) {
-            userDOB.setError("Enter your DOB");
+        String yrs = year.getText().toString();
+        String mth = month.getText().toString();
+        String days = day.getText().toString();
+
+        if (TextUtils.isEmpty(yrs)){
+            year.setError("Enter year");
+            year.requestFocus();
+        } else if (TextUtils.isEmpty(mth)){
+            month.setError("Enter month");
+            month.requestFocus();
+        } else if (TextUtils.isEmpty(yrs)){
+            day.setError("Enter day");
+            day.requestFocus();
         } else {
+            String studendDOB = yrs + "-" + mth + "-" + days;
             ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
             clientAPI.addDOB(studendDOB).enqueue(new Callback<Login>() {
                 @Override
@@ -778,9 +781,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-//            case R.id.visa_track:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new VisaTrackingFragment()).commit();
-//                break;
+            case R.id.visa_track:
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new VisaTrackingFragment()).commit();
+                break;
 
             case R.id.matched_client:
                 if (data.enquiry_details == null) {
