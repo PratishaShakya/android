@@ -138,7 +138,6 @@ public class StudentProfileFragment extends Fragment {
     }
 
     private void init() {
-
         data = App.db().getObject(FragmentKeys.DATA, Data.class);
         if (data.enquiry_details == null) {
             getStudentFurtherDetails();
@@ -162,12 +161,9 @@ public class StudentProfileFragment extends Fragment {
         uploadFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FragmentKeys.FRAGMENTNAME, "studentProfile");
                 FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
-                addGalleryFragment.setArguments(bundle);
-                fragmentTransaction.replace(R.id.main_container, addGalleryFragment).addToBackStack(null).commit();
+                UploadFilesFragment uploadFilesFragment = new UploadFilesFragment();
+                fragmentTransaction.replace(R.id.main_container, uploadFilesFragment).addToBackStack(null).commit();
             }
         });
 
@@ -309,7 +305,9 @@ public class StudentProfileFragment extends Fragment {
     private void getStudentInfo() {
         data = App.db().getObject(FragmentKeys.DATA, Data.class);
         enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+        if (enquiryDetails.qualification != null){
+            qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+        }
         nameTv.setText(data.name);
         addressTv.setText(data.address);
         contactTv.setText(data.phone);
@@ -515,7 +513,7 @@ public class StudentProfileFragment extends Fragment {
         } else if (TextUtils.isEmpty(mth)) {
             month.setError("Enter month");
             month.requestFocus();
-        } else if (TextUtils.isEmpty(yrs)) {
+        } else if (TextUtils.isEmpty(days)) {
             day.setError("Enter day");
             day.requestFocus();
         } else if (TextUtils.isEmpty(studentQualification)) {

@@ -33,8 +33,9 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
     private Context activity;
 
     public BannerAdapterDelegate(Context activity) {
-        inflater = (LayoutInflater) activity.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.activity = activity;
+        inflater = (LayoutInflater) this.activity.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
     }
 
     @Override

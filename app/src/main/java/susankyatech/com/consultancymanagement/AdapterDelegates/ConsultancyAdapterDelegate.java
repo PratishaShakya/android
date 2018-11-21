@@ -45,8 +45,9 @@ public class ConsultancyAdapterDelegate  extends AdapterDelegate<List<HomeItems>
     private Context activity;
 
     public ConsultancyAdapterDelegate(Context activity) {
-        inflater = (LayoutInflater) activity.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.activity = activity;
+        inflater = (LayoutInflater) this.activity.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
     }
 
     @Override

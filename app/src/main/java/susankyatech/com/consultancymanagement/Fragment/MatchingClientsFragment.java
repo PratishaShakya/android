@@ -6,12 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.List;
 
@@ -117,12 +121,27 @@ public class MatchingClientsFragment extends Fragment {
                         recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(16));
                         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(16));
                     }
+                }else {
+                    try {
+                        progressLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+
+                        message.setVisibility(View.VISIBLE);
+                        cardView.setVisibility(View.GONE);
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+
+                    } catch (Exception e) {
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressLayout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
 
+                message.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.GONE);
             }
         });
     }

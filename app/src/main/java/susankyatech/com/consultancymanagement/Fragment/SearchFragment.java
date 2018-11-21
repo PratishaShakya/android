@@ -145,6 +145,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     private void init() {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
@@ -241,7 +247,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
             @Override
             public boolean onQueryTextChange(String s) {
                 String text = s;
-//                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
                 consultancyListAdapter.filter(text);
                 if (text.trim().length() == 0){
                     getAllConsultancy();
@@ -269,8 +274,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 if (recyclerView.getItemDecorationCount() == 0) {
                                     recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
                                 }
-
-
                             }
                         } else {
                             try {
@@ -301,7 +304,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         });
 
         searchCountry.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String s) {
                 progressLayout.setVisibility(View.VISIBLE);
@@ -454,7 +456,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
         OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
         fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
-
     }
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
@@ -518,6 +519,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     }
 
     private void getAllConsultancy() {
+        Log.d(TAG, "getAllConsultancy:  hi");
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         wholeLayout.setVisibility(View.GONE);

@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:fillViewport="true">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,7 +126,7 @@
                     android:id="@+id/gender"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
-                    android:textAlignment="textEnd"></Spinner>
+                    android:textAlignment="textEnd"/>
 
             </LinearLayout>
 
@@ -136,21 +135,104 @@
                 android:layout_height="1dp"
                 android:background="#77111111" />
 
-            <EditText
-                android:id="@+id/dob"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:drawableLeft="@drawable/ic_birthday"
-                android:drawablePadding="@dimen/small_margin"
-                android:gravity="center_vertical"
-                android:hint="DOB"
-                android:imeOptions="actionNext"
-                android:inputType="date"
-                android:nextFocusForward="@id/password"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:textSize="13sp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_padding"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:src="@drawable/ic_birthday"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/medium_padding"
+                    android:padding="@dimen/small_margin"
+                    android:textColor="@color/primary_text"
+                    android:text="DOB"
+                    />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
+
+                    <EditText
+                        android:id="@+id/year"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center"
+                        android:textColorHint="@color/primary_text"
+                        android:focusable="true"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Year"
+                        android:inputType="number"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/month"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
+
+                    <EditText
+                        android:id="@+id/month"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:focusable="true"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Month"
+                        android:textColorHint="@color/primary_text"
+                        android:gravity="center"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:nextFocusForward="@id/day"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:focusable="true"
+                    android:focusedByDefault="true">
+
+                    <EditText
+                        android:id="@+id/day"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:hint="Day"
+                        android:textColorHint="@color/primary_text"
+                        android:imeOptions="actionGo"
+                        android:inputType="number"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/password"

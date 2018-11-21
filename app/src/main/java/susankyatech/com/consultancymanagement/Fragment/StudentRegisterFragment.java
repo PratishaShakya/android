@@ -62,8 +62,13 @@ public class StudentRegisterFragment extends Fragment {
     EditText address;
     @BindView(R.id.gender)
     Spinner gender;
-    @BindView(R.id.dob)
-    EditText dob;
+    @BindView(R.id.year)
+    EditText year;
+    @BindView(R.id.month)
+    EditText month;
+    @BindView(R.id.day)
+    EditText day;
+
 
     String[] sex = { "Male", "Female" };
     private String userGender;
@@ -105,32 +110,6 @@ public class StudentRegisterFragment extends Fragment {
             }
         });
 
-        dob.setFocusable(false);
-
-        dob.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get Current Date
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-                                dob.setText(year + "-" + (monthOfYear + 1) + "-" +dayOfMonth );
-
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-
-            }
-        });
 
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +120,9 @@ public class StudentRegisterFragment extends Fragment {
                 String userPassword = password.getText().toString();
                 String userRePassword = rePassword.getText().toString();
                 String userAddress = address.getText().toString();
-                String userDOB = dob.getText().toString();
+                String yrs = year.getText().toString();
+                String mth = month.getText().toString();
+                String mDay = day.getText().toString();
 
 
                 if (TextUtils.isEmpty(userName)){
@@ -156,9 +137,15 @@ public class StudentRegisterFragment extends Fragment {
                 } else if (TextUtils.isEmpty(userAddress)){
                     address.setError("Enter your address");
                     address.requestFocus();
-                } else if (TextUtils.isEmpty(userDOB)){
-                    dob.setError("Enter your DOB");
-                    dob.requestFocus();
+                } else if (TextUtils.isEmpty(yrs)) {
+                    year.setError("Enter year");
+                    year.requestFocus();
+                } else if (TextUtils.isEmpty(mth)) {
+                    month.setError("Enter month");
+                    month.requestFocus();
+                } else if (TextUtils.isEmpty(mDay)) {
+                    day.setError("Enter day");
+                    day.requestFocus();
                 } else if (TextUtils.isEmpty(userPassword)){
                     password.setError("Enter your password");
                     password.requestFocus();
@@ -169,11 +156,12 @@ public class StudentRegisterFragment extends Fragment {
                     rePassword.setError("Enter password doesn't match");
                     rePassword.requestFocus();
                 } else {
+                    String studentDOB = yrs + "-" + mth + "-" + mDay;
                     progressDialog.setTitle("Signing up");
                     progressDialog.setMessage("Please wait, while we are creating your account");
                     progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
-                    registerStudent(userName, userEmail, userPhone, userPassword, userAddress, userGender, userDOB);
+                    registerStudent(userName, userEmail, userPhone, userPassword, userAddress, userGender, studentDOB);
                 }
             }
         });

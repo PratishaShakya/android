@@ -280,10 +280,7 @@ public class MainActivity extends AppCompatActivity {
                 if (fragmentName == null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
                 } else if (fragmentName.equals("AddGallery")) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FragmentKeys.FRAGMENTNAME, "MainActivity");
                     AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
-                    addGalleryFragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
                 }
             }

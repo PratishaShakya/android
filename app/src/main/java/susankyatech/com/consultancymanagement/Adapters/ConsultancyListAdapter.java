@@ -74,7 +74,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     public ConsultancyListAdapter(List<Client> clientList, Context context) {
         this.clientList = clientList;
         this.context = context;
-        this.arrayList = new ArrayList<Client>();
+        this.arrayList = new ArrayList<>();
         this.arrayList.addAll(SearchFragment.clientList);
         this.data = App.db().getObject(FragmentKeys.DATA, Data.class);
 
@@ -94,7 +94,7 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     @NonNull
     @Override
     public ConsultancyListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(context).inflate(R.layout.single_consultancy_layout, viewGroup, false);
+        View view = LayoutInflater.from(this.context).inflate(R.layout.single_consultancy_layout, viewGroup, false);
         return new ConsultancyListViewHolder(view);
     }
 
