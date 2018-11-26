@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".Fragment.ConsultancyProfileFragment">
 
@@ -58,17 +57,40 @@
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/interest"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/consultancy_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_gravity="end"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        android:layout_marginRight="5dp"
-        android:src="@drawable/ic_interest" />
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/user"
+        android:layout_marginTop="75dp" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/consultancy_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:padding="10dp"
+        android:text="Consultancy Name"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <!--<ImageView-->
+        <!--android:id="@+id/interest"-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_gravity="end"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_marginRight="5dp"-->
+        <!--android:src="@drawable/ic_interest" />-->
 
     <ImageView
         android:id="@+id/edit_coverPic"
@@ -86,7 +108,7 @@
         android:id="@+id/profile_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/banner"
+        android:layout_below="@id/profile_name"
         app:tabGravity="fill"
         app:tabMode="fixed" />
 
@@ -156,4 +178,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
 </RelativeLayout>

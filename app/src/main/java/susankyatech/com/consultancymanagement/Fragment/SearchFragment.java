@@ -15,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +34,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.request.RequestOptions;
-import com.glide.slider.library.Animations.DescriptionAnimation;
-import com.glide.slider.library.SliderLayout;
-import com.glide.slider.library.SliderTypes.DefaultSliderView;
-import com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
@@ -55,6 +52,7 @@ import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapters.ConsultancyListAdapter;
 import susankyatech.com.consultancymanagement.Adapters.HomeAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
+import susankyatech.com.consultancymanagement.Decorations.GridViewItemDecoration;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
 import susankyatech.com.consultancymanagement.Generic.Keys;
 import susankyatech.com.consultancymanagement.Generic.Utilities;
@@ -140,9 +138,28 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.bind(this, view);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Home");
+        setHasOptionsMenu(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Consultancy Manager");
         init();
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.notification_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.notification:
+                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                NotificationFragment notificationFragment = new NotificationFragment();
+                fragmentTransaction.replace(R.id.main_container, notificationFragment).addToBackStack(null).commit();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -154,7 +171,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     private void init() {
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-
 
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
 
@@ -272,7 +288,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                                 recyclerView.setAdapter(consultancyListAdapter);
                                 if (recyclerView.getItemDecorationCount() == 0) {
-                                    recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
+                                    recyclerView.addItemDecoration(new GridViewItemDecoration(getContext()));
                                 }
                             }
                         } else {
@@ -323,9 +339,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
                                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                                 recyclerView.setAdapter(consultancyListAdapter);
-                                if (recyclerView.getItemDecorationCount() == 0) {
-                                    recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(getContext()));
-                                }
 
                             }
                         } else {
@@ -373,9 +386,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(new HomeAdapter(getContext(), displayHomeItems(clientList)));
-                        if (recyclerView.getItemDecorationCount() == 0) {
-                            recyclerView.addItemDecoration(new GridViewItemDecoration(context));
-                        }
                     }
                 }
             }

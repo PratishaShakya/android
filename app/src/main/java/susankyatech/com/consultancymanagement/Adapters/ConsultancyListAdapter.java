@@ -58,18 +58,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
     private List<Client> arrayList;
     private Context context;
     private Data data;
-    private int selectedYear;
-    private String selectedLevel;
-
-    List<Integer> dates = new ArrayList<>();
-    String[] qualificationList = {"+2", "Bachelors", "Masters"};
-
-    ArrayAdapter dateAdapter, levelAdapter;
-
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone;
-    private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
-
-    private Spinner completedYear, qualificationSpinner;
 
     public ConsultancyListAdapter(List<Client> clientList, Context context) {
         this.clientList = clientList;
@@ -77,24 +65,12 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         this.arrayList = new ArrayList<>();
         this.arrayList.addAll(SearchFragment.clientList);
         this.data = App.db().getObject(FragmentKeys.DATA, Data.class);
-
-        dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
-        levelAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, qualificationList);
-
-        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        for (int i = todayYear; i > 1969; i--) {
-            dates.add(i);
-        }
     }
 
     @NonNull
     @Override
     public ConsultancyListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(this.context).inflate(R.layout.single_consultancy_layout, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.single_consultancy_layout, viewGroup, false);
         return new ConsultancyListViewHolder(view);
     }
 
@@ -115,165 +91,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
         }else{
             Picasso.get().load(clientList.get(i).logo).into(holder.consultancyLogo);
         }
-
-        holder.btnEnquiry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("client_id", clientList.get(i).id);
-                bundle.putString("client_name", clientList.get(i).client_name);
-
-                if (data.enquiry_details == null) {
-                    getStudentFurtherDetails(clientList.get(i).id, clientList.get(i).client_name);
-                } else {
-
-                    FragmentTransaction fragmentTransaction = ((MainActivity) context).getSupportFragmentManager().beginTransaction();
-                    OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
-                    openInquirySelectCountryFragment.setArguments(bundle);
-                    fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
-//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
-                }
-
-            }
-        });
-    }
-
-    private void getStudentFurtherDetails(final int id, final String client_name) {
-        final MaterialDialog materialDialog = new MaterialDialog.Builder(context)
-                .title("Complete your Profile")
-                .customView(R.layout.fragment_course_enquiry, true)
-                .positiveText("Save Details")
-                .negativeText("Close")
-                .positiveColor(context.getResources().getColor(R.color.green))
-                .negativeColor(context.getResources().getColor(R.color.red))
-                .show();
-
-        qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
-        completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
-        summary = materialDialog.getCustomView().findViewById(R.id.about_you);
-        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
-        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
-        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
-        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
-        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
-        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
-        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
-        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
-        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
-        ArrayAdapter dateAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dates);
-        ArrayAdapter levelAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, qualificationList);
-
-        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        userEmail.setText(data.email);
-        userName.setText(data.name);
-        userPhone.setText(data.phone);
-        userAddress.setText(data.address);
-
-
-        completedYear.setAdapter(dateAdapter);
-        qualificationSpinner.setAdapter(levelAdapter);
-
-        completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedYear = dates.get(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedLevel = qualificationList[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addFurtherDetails(materialDialog, id, client_name);
-            }
-        });
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-    }
-
-    private void addFurtherDetails(final MaterialDialog materialDialog, final int id, final String client_name) {
-        String studentQualification = qualification.getText().toString();
-        String studentSummary = summary.getText().toString();
-        String testsAttended = getTestsString();
-
-        if (TextUtils.isEmpty(studentQualification)) {
-            qualification.setError("Enter your qualification");
-            qualification.requestFocus();
-        } else if (TextUtils.isEmpty(studentSummary)) {
-            summary.setError("Enter Summary");
-            summary.requestFocus();
-        } else {
-            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
-            EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
-            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
-                    .enqueue(new Callback<Login>() {
-                        @Override
-                        public void onResponse(Call<Login> call, Response<Login> response) {
-                            if (response.isSuccessful()) {
-                                if (response.body() != null) {
-                                    App.db().putObject(FragmentKeys.DATA, response.body().data);
-                                    MDToast mdToast = MDToast.makeText(context, "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
-                                    mdToast.show();
-                                    materialDialog.dismiss();
-                                }
-                            } else {
-                                try {
-                                    Log.d("client", "onResponse: error" + response.errorBody().string());
-                                    MDToast mdToast = MDToast.makeText(context, "There was something wrong while saving your info. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
-                                    mdToast.show();
-                                } catch (Exception e) {
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Login> call, Throwable t) {
-                            Log.d(TAG, "onFailure: " + t.getMessage());
-                            MDToast mdToast = MDToast.makeText(context, "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
-                            mdToast.show();
-                        }
-                    });
-        }
-    }
-
-    private String getTestsString() {
-        String tests = "";
-        if (toeflCB.isChecked())
-            tests += "TOEFL, ";
-        if (satCB.isChecked())
-            tests += "SAT, ";
-        if (greCB.isChecked())
-            tests += "GRE, ";
-        if (ieltsCB.isChecked())
-            tests += "IELTS, ";
-        if (pteCB.isChecked())
-            tests += "PTE";
-
-        return tests;
     }
 
     // Filter Class
@@ -301,8 +118,6 @@ public class ConsultancyListAdapter extends RecyclerView.Adapter<ConsultancyList
 
         @BindView(R.id.consultancy_logo)
         ImageView consultancyLogo;
-        @BindView(R.id.btn_enquiry)
-        Button btnEnquiry;
         @BindView(R.id.consultancy_name)
         TextView consultancyName;
         @BindView(R.id.consultancy_whole_layout)

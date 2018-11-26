@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
-    <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_home"
-        android:title="Home"/>
+    <group android:checkableBehavior="single">
 
-    <item
-        android:id="@+id/student_profile"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="Profile"/>
+        <item
+            android:id="@+id/search"
+            android:icon="@drawable/ic_home"
+            android:checked="true"
+            android:title="Home" />
 
-    <item
-        android:id="@+id/stared"
-        android:icon="@drawable/ic_interested"
-        android:title="Starred"/>
+        <item
+            android:id="@+id/student_profile"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="Profile" />
 
-    <item
-        android:id="@+id/matched_client"
-        android:icon="@drawable/ic_recommend"
-        android:title="Recommended"/>
+        <item
+            android:id="@+id/stared"
+            android:icon="@drawable/ic_interested"
+            android:title="Starred" />
 
-    <item
-        android:id="@+id/visa_track"
-        android:icon="@drawable/ic_track"
-        android:title="Visa Tracking"/>
+        <item
+            android:id="@+id/matched_client"
+            android:icon="@drawable/ic_recommend"
+            android:title="Recommended" />
 
-    <item
-        android:id="@+id/logout"
-        android:icon="@drawable/ic_logout"
-        android:title="Logout"/>
+        <item
+            android:id="@+id/visa_track"
+            android:icon="@drawable/ic_track"
+            android:title="Visa Tracking" />
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
+
+    </group>
+
 </menu>

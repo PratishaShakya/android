@@ -53,17 +53,6 @@
             android:layout_height="wrap_content"
             android:visibility="visible">
 
-            <TextView
-                android:id="@+id/profile_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/profile_tabs"
-                android:fontFamily="@font/nunito_semibold"
-                android:padding="10dp"
-                android:text="Consultancy Name"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20dp"
-                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/profile_established_layout"

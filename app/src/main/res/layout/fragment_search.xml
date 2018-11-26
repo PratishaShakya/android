@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#efefef"
+    android:background="@color/colorPrimaryDark"
     tools:context=".Fragment.SearchFragment">
 
     <LinearLayout
@@ -144,8 +144,7 @@
             android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/search_layout"
-            android:layout_marginBottom="@dimen/small_margin">
+            android:layout_below="@id/search_layout">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/home_item_list"

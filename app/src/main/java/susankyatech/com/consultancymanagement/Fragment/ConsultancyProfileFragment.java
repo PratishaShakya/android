@@ -23,6 +23,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -68,8 +71,8 @@ public class ConsultancyProfileFragment extends Fragment {
     @BindView(R.id.profile_tabs)
     TabLayout tabLayout;
     public static ViewPager viewPager;
-    @BindView(R.id.interest)
-    ImageView interest;
+//    @BindView(R.id.interest)
+//    ImageView interest;
     @BindView(R.id.profile_banner)
     ImageView profileBanner;
     @BindView(R.id.progressBarLayout)
@@ -124,26 +127,24 @@ public class ConsultancyProfileFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getContext());
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             clientId = getArguments().getInt("client_id", 0);
             clientName = getArguments().getString("client_name");
         }
-        clientStaticID=clientId;
-        Log.d(TAG, "init: "+clientId);
+        clientStaticID = clientId;
+        Log.d(TAG, "init: " + clientId);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.blue));
 
 
-        if (clientId == 0){
-            interest.setVisibility(View.GONE);
+        if (clientId == 0) {
             sendInquiry.setVisibility(View.GONE);
             relativeLayout.setVisibility(View.GONE);
-            interest.setVisibility(View.GONE);
             getProfileInfo();
-        }else {
+        } else {
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(clientName + "'s Profile");
-
+            setHasOptionsMenu(true);
             getClientProfileInfo();
         }
 
@@ -159,20 +160,19 @@ public class ConsultancyProfileFragment extends Fragment {
                 OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
                 openInquirySelectCountryFragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
-//                    getEnquiry(clientList.get(i).id, clientList.get(i).client_name);
             }
         });
 
-        interest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (App.db().getBoolean(FragmentKeys.INTERESTED)){
-                    setUnInterestInConsultancy();
-                }else {
-                    setInterestInConsultancy();
-                }
-            }
-        });
+//        interest.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (App.db().getBoolean(FragmentKeys.INTERESTED)) {
+//                    setUnInterestInConsultancy();
+//                } else {
+//                    setInterestInConsultancy();
+//                }
+//            }
+//        });
 
         editCoverPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,15 +194,40 @@ public class ConsultancyProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
                     return;
-                }else{
+                } else {
                     sendUserToMapFragment();
                 }
 
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.chat_menu, menu);
+        Log.d(TAG, "onCreateOptionsMenu: " + clientId);
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.chat:
+                Bundle bundle = new Bundle();
+                bundle.putInt("client_id", clientId);
+
+                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                ChatFragment chatFragment = new ChatFragment();
+                chatFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.main_container, chatFragment).addToBackStack(null).commit();
+                break;
+        }
+        return true;
     }
 
     private void sendUserToMapFragment() {
@@ -220,7 +245,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED){
+                    == PackageManager.PERMISSION_GRANTED) {
                 sendUserToMapFragment();
             }
         }
@@ -246,7 +271,7 @@ public class ConsultancyProfileFragment extends Fragment {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         RequestBody fileBody =
-                RequestBody.create( MediaType.parse("multipart/form-data"), file);
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("cover_photo", file.getName(), fileBody);
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
@@ -266,7 +291,7 @@ public class ConsultancyProfileFragment extends Fragment {
                     if (response.body() != null) {
 
                     }
-                }else {
+                } else {
                     try {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getContext(), "Error on uploading Cover Image. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
@@ -290,7 +315,7 @@ public class ConsultancyProfileFragment extends Fragment {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"), RESULT_LOAD_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
     }
 
     public String getPath(Uri uri) {
@@ -311,7 +336,7 @@ public class ConsultancyProfileFragment extends Fragment {
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                Log.d(TAG, "getPath:q "+uri);
+                Log.d(TAG, "getPath:q " + uri);
 
                 return getDataColumn(getContext(), contentUri, null, null);
             }
@@ -324,7 +349,7 @@ public class ConsultancyProfileFragment extends Fragment {
                 Uri contentUri = null;
                 if ("image".equals(type)) {
                     contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                    Log.d(TAG, "getPath:w "+uri);
+                    Log.d(TAG, "getPath:w " + uri);
                 } else if ("video".equals(type)) {
                     contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 } else if ("audio".equals(type)) {
@@ -356,7 +381,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
-        Log.d(TAG, "getPath: "+uri);
+        Log.d(TAG, "getPath: " + uri);
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
@@ -404,40 +429,38 @@ public class ConsultancyProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("client", "onFailure:tala "+t);
+                Log.d("client", "onFailure:tala " + t);
             }
         });
     }
 
     private void getClientProfileInfo() {
         final ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        Log.d("OOPS",clientId+"");
+        Log.d("OOPS", clientId + "");
         clientAPI.getSingleClient(clientId).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         profileBanner.setVisibility(View.VISIBLE);
-                        interest.setVisibility(View.VISIBLE);
                         sendInquiry.setVisibility(View.VISIBLE);
                         relativeLayout.setVisibility(View.VISIBLE);
-                        interest.setVisibility(View.VISIBLE);
 
-                        if (response.body().data.client.detail!=null){
+                        if (response.body().data.client.detail != null) {
 
                             String imageUrl = response.body().data.client.detail.cover_photo;
                             Picasso.get().load(imageUrl).into(profileBanner);
-                        }else{
+                        } else {
                             Picasso.get().load(R.drawable.banner).into(profileBanner);
                         }
-                        if (App.db().getBoolean(FragmentKeys.INTERESTED)){
-                            interest.setImageResource(R.drawable.ic_interested);
-                        }else {
-                            interest.setImageResource(R.drawable.ic_interest);
-                        }
+//                        if (App.db().getBoolean(FragmentKeys.INTERESTED)) {
+//                            interest.setImageResource(R.drawable.ic_interested);
+//                        } else {
+//                            interest.setImageResource(R.drawable.ic_interest);
+//                        }
                     }
 
                 }
@@ -445,7 +468,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d(TAG, "onFailure: "+t.getMessage());
+                Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
             }
@@ -460,9 +483,9 @@ public class ConsultancyProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         App.db().putBoolean(FragmentKeys.INTERESTED, false);
-                        interest.setImageResource(R.drawable.ic_interest);
+//                        interest.setImageResource(R.drawable.ic_interest);
                     }
-                }else {
+                } else {
                     try {
                         Log.d("interested", "onResponse: error" + response.errorBody().string());
                     } catch (Exception e) {
@@ -472,22 +495,22 @@ public class ConsultancyProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("interested", "onFailure:tala "+t);
+                Log.d("interested", "onFailure:tala " + t);
             }
         });
     }
 
     private void setInterestInConsultancy() {
         ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.interestedOnClient(clientId, 1,0,0).enqueue(new Callback<Login>() {
+        clientInterestAPI.interestedOnClient(clientId, 1, 0, 0).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         App.db().putBoolean(FragmentKeys.INTERESTED, true);
-                        interest.setImageResource(R.drawable.ic_interested);
+//                        interest.setImageResource(R.drawable.ic_interested);
                     }
-                }else {
+                } else {
                     try {
                         Log.d("interested", "onResponse: error" + response.errorBody().string());
                     } catch (Exception e) {
@@ -497,7 +520,7 @@ public class ConsultancyProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("interested", "onFailure:tala "+t);
+                Log.d("interested", "onFailure:tala " + t);
             }
         });
     }

@@ -437,7 +437,12 @@ public class StudentProfileFragment extends Fragment {
         userAddress.setText(data.address);
         if (data.dob != null) {
 //            userDOB.setText(data.dob);
+
         }
+
+
+
+
 
         String[] testsSplit = enquiryDetails.test_attended.split(",");
 

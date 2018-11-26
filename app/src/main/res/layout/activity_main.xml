@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawable_layout"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
     tools:context=".Activity.MainActivity">
 
     <RelativeLayout
@@ -31,6 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:itemIconTint="@color/colorPrimaryDark"
+        app:itemTextColor="@drawable/drawer_item_color"
         android:layout_marginBottom="3dp"
        >
 

@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapters.ConsultancyListAdapter;
+import susankyatech.com.consultancymanagement.Decorations.GridViewItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.HorizontalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Decorations.VerticalSpaceItemDecoration;
 import susankyatech.com.consultancymanagement.Fragment.ConsultancyProfileFragment;
@@ -69,7 +70,9 @@ public class ConsultancyAdapterDelegate  extends AdapterDelegate<List<HomeItems>
       vh.gridLayoutManager = new GridLayoutManager(activity, 2);
       vh.recyclerView.setLayoutManager(vh.gridLayoutManager);
       vh.recyclerView.setAdapter(new ConsultancyListAdapter(consultancySlide.clientList, activity));
-      vh.recyclerView.addItemDecoration(new com.susankya.wcbookstore.ItemDecorations.GridViewItemDecoration(activity));
+//      vh.recyclerView.addItemDecoration(new GridViewItemDecoration(activity));
+        vh.recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(20));
+        vh.recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(20));
     }
 
     public class ConsultancyListViewHolder extends RecyclerView.ViewHolder {

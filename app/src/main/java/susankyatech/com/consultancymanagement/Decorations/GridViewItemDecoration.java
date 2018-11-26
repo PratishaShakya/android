@@ -1,4 +1,4 @@
-package com.susankya.wcbookstore.ItemDecorations;
+package susankyatech.com.consultancymanagement.Decorations;
 
 import android.content.Context;
 import android.content.res.TypedArray;

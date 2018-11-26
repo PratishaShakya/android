@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/nav_background"
@@ -12,26 +11,39 @@
         android:src="@drawable/nav_background"
         android:scaleType="fitXY"/>
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="@dimen/medium_padding"
         android:layout_marginLeft="@dimen/medium_padding"
         android:layout_marginRight="@dimen/medium_padding"
-        android:background="#fff"
-        android:padding="@dimen/small_margin"
-        android:src="@drawable/ic_college" />
+        app:civ_border_width="2dp"
+        app:civ_border_color="#fff"
+        android:scaleType="centerCrop"
+        android:src="@drawable/user" />
 
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:textColor="#fff"
-        android:layout_toRightOf="@id/icon"
-        android:textSize="20sp"
-        android:fontFamily="@font/nunito_semibold"
+        android:layout_below="@id/icon"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:text="Client Name"/>
+
+    <TextView
+        android:id="@+id/user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_below="@id/user_name"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:textSize="16sp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="xyz@gmail.com"/>
 
 </RelativeLayout>

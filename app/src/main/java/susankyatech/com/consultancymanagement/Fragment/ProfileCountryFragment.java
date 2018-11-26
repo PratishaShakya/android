@@ -186,13 +186,20 @@ public class ProfileCountryFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){
                     if (response.body() != null){
-                        countries = response.body().data.client.detail.countries;
+                        if (response.body().data.client.detail.countries != null){
+                            countries = response.body().data.client.detail.countries;
 
-                        countryListAdapter = new CountryListAdapter(countries);
-                        countryList.setAdapter(countryListAdapter);
-                        progressLayout.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        countryList.setVisibility(View.VISIBLE);
+                            countryListAdapter = new CountryListAdapter(countries);
+                            countryList.setAdapter(countryListAdapter);
+                            progressLayout.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            countryList.setVisibility(View.VISIBLE);
+                        } else {
+                            progressLayout.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            message.setVisibility(View.VISIBLE);
+                            message.setText("No Country found");
+                        }
                     }
                 }else {
                     try {

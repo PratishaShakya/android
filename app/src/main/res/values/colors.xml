@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">#247BA0</color>
     <color name="colorAccent">#757575</color>
 
     <color name="colorTransparentPrimary">#77008577</color>
@@ -15,14 +15,17 @@
     <color name="blue">#260057</color>
     <color name="white">#fff</color>
 
+    //message
+    <color name="messageBlue">#79ADDC</color>
+    <color name="messageCream">#F7F3E3</color>
 
     //login
-    <color name="login_background">#301864 </color>
+    <color name="login_background">#301864</color>
     <color name="login_btn_color">#008577</color>
     <color name="login_color">#00aaaa</color>
 
     //mapBox
-    <color name="mapboxWhite">#ffffff </color>
+    <color name="mapboxWhite">#ffffff</color>
     <color name="mapboxBlue">#4264fb</color>
     <color name="mapboxGrayLight">#c6d2e1</color>
 

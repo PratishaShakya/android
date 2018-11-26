@@ -182,13 +182,20 @@ public class ProfileCourseFragment extends Fragment {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.isSuccessful()){
                     if (response.body() != null){
-                        courses = response.body().data.client.detail.courses;
+                        if (response.body().data.client.detail.courses != null) {
+                            courses = response.body().data.client.detail.courses;
 
-                        courseListAdapter = new CourseListAdapter(courses);
-                        courseList.setAdapter(courseListAdapter);
-                        progressLayout.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        courseList.setVisibility(View.VISIBLE);
+                            courseListAdapter = new CourseListAdapter(courses);
+                            courseList.setAdapter(courseListAdapter);
+                            progressLayout.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            courseList.setVisibility(View.VISIBLE);
+                        } else {
+                            progressLayout.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            message.setVisibility(View.VISIBLE);
+                            message.setText("Course not found");
+                        }
                     }
                 }else {
                     try {

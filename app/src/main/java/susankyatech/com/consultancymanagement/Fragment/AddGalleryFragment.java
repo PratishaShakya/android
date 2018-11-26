@@ -61,7 +61,7 @@ import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocu
 public class AddGalleryFragment extends Fragment {
 
     @BindView(R.id.select_btn)
-    ImageButton mSelectBtn;
+    FancyButton mSelectBtn;
     @BindView(R.id.upload_list)
     RecyclerView uploadList;
     @BindView(R.id.confirm_upload_image)

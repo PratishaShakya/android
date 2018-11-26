@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:background="@drawable/appointment_background">
+
+        <RelativeLayout
+            android:id="@+id/appointment_date_time"
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:padding="20dp"
+            android:background="@color/blue">
+
+            <TextView
+                android:id="@+id/appointment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:text="Sept 12"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/appointment_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/appointment_date"
+                android:gravity="bottom"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:text="6:00 PM"
+                android:textColor="@color/white"
+                />
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp"
+            android:layout_toRightOf="@id/appointment_date_time"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/consultancyName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Consultancy Name"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:textColor="@color/blue"/>
+
+            <TextView
+                android:id="@+id/counselorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:text="Counsellor Name"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

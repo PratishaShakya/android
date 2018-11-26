@@ -1,7 +1,6 @@
 package susankyatech.com.consultancymanagement.Activity;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -14,11 +13,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +29,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -71,7 +68,6 @@ import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Fragment.AddGalleryFragment;
 import susankyatech.com.consultancymanagement.Fragment.ConsultancyProfileFragment;
-import susankyatech.com.consultancymanagement.Fragment.GalleryFragment;
 import susankyatech.com.consultancymanagement.Fragment.InterestedClientsFragment;
 import susankyatech.com.consultancymanagement.Fragment.MatchingClientsFragment;
 import susankyatech.com.consultancymanagement.Fragment.SearchFragment;
@@ -90,7 +86,7 @@ import static susankyatech.com.consultancymanagement.Generic.FileURI.isExternalS
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isGooglePhotosUri;
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocument;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     @BindView(R.id.navigation_view)
     NavigationView navigationView;
@@ -203,13 +199,16 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setTitle("Consultancy Manager");
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        navigationView.setItemIconTintList(null);
 
         progressDialog = new ProgressDialog(this);
 
@@ -217,13 +216,10 @@ public class MainActivity extends AppCompatActivity {
             dates.add(i);
         }
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                userMenuSelector(item);
-                return false;
-            }
-        });
+        navigationView.setNavigationItemSelectedListener(this);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
 
         if (App.db().getBoolean(Keys.IS_STUDENT)) {
@@ -253,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView navBg = navView.findViewById(R.id.nav_background);
             getNavBackground(navBg);
             TextView userName = navView.findViewById(R.id.user_name);
+            TextView userEmail = navView.findViewById(R.id.user_email);
             userLogo = navView.findViewById(R.id.client_logo);
             ImageView editLogo = navView.findViewById(R.id.add_logo);
 
@@ -274,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
             Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
             userName.setText(client.client_name);
+            userEmail.setText(data.email);
 
             if (getIntent() != null) {
                 fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
@@ -809,5 +807,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        userMenuSelector(item);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

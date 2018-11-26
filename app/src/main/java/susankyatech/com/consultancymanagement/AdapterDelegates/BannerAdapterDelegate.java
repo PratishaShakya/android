@@ -51,9 +51,6 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
 
     @Override
     protected void onBindViewHolder(@NonNull List<HomeItems> items, int position, @NonNull RecyclerView.ViewHolder holder, @NonNull List<Object> payloads) {
-
-        try
-        {
             BannerViewHolder vh = (BannerViewHolder) holder;
             BannerGrid bannerGrid = (BannerGrid) items.get(position);
 
@@ -80,14 +77,6 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
             vh.sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
             vh.sliderLayout.setCustomAnimation(new DescriptionAnimation());
             vh.sliderLayout.setDuration(4000);
-        }
-
-        catch (Throwable t)
-        {
-
-            Log.d("OOPS",t.toString());
-        }
-
     }
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {

@@ -21,18 +21,24 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <ImageButton
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/select_btn"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@id/main_heading"
-        android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/upload_btn" />
+        android:gravity="center"
+        android:layout_below="@id/main_heading"
+        android:layout_marginBottom="10dp"
+        fancy:fb_borderColor="@color/login_btn_color"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorPrimaryDark"
+        fancy:fb_focusColor="@color/login_btn_color"
+        fancy:fb_radius="@dimen/small_margin"
+        fancy:fb_text="Select Files to Upload"
+        fancy:fb_textColor="@color/white" />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/upload_list"

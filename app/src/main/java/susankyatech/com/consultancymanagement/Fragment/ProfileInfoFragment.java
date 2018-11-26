@@ -49,8 +49,6 @@ import susankyatech.com.consultancymanagement.R;
  */
 public class ProfileInfoFragment extends Fragment {
 
-    @BindView(R.id.profile_name)
-    TextView profileName;
     @BindView(R.id.profile_established_date)
     TextView establishedDate;
     @BindView(R.id.location)
@@ -255,12 +253,12 @@ public class ProfileInfoFragment extends Fragment {
 
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
-                        profileName.setText(client.client_name);
+
                         if (detail.achievements == null) {
                             descriptionTV.setText("");
                         } else {
 
-                            descriptionTV.setText(detail.achievements);
+                            descriptionTV.setText(Html.fromHtml(detail.achievements));
                         }
                         String services = "";
                         Log.d("asd", "onResponse: "+client.subjects);
@@ -275,7 +273,11 @@ public class ProfileInfoFragment extends Fragment {
                         servicesTV.setText(services);
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
-                        locationTV.setText(Html.fromHtml(detail.location));
+
+                        if (detail.location != null){
+                            locationTV.setText(detail.location);
+                        }
+
 
                         int lineCount = descriptionTV.getLineCount();
 
@@ -336,7 +338,6 @@ public class ProfileInfoFragment extends Fragment {
                         editInfo.setVisibility(View.VISIBLE);
                         client = response.body().data.client;
                         detail = response.body().data.client.detail;
-                        profileName.setText(client.client_name);
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
                         locationTV.setText(detail.location);
