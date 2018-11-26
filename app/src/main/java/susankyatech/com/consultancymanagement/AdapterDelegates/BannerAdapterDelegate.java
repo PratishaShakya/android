@@ -77,6 +77,7 @@ public class BannerAdapterDelegate extends AdapterDelegate<List<HomeItems>> {
             vh.sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
             vh.sliderLayout.setCustomAnimation(new DescriptionAnimation());
             vh.sliderLayout.setDuration(4000);
+
     }
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
