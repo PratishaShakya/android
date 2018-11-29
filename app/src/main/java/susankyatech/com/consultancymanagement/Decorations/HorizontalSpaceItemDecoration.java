@@ -17,6 +17,8 @@ public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
                                RecyclerView.State state) {
         if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
             outRect.right = horizontalSpaceHeight;
+        } else {
+            outRect.right = horizontalSpaceHeight;
         }
     }
 }
