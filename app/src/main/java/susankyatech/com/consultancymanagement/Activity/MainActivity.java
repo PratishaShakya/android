@@ -130,6 +130,127 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkAppRelease();
     }
 
+    private void init() {
+
+        setSupportActionBar(mToolbar);
+
+        getSupportActionBar().setTitle("Consultancy Finder");
+        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+
+        progressDialog = new ProgressDialog(this);
+
+        for (int i = todayYear; i > 1969; i--) {
+            dates.add(i);
+        }
+
+        callApi();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if (App.db().getBoolean(Keys.IS_STUDENT)) {
+            navigationView.inflateMenu(R.menu.navigation_menu_student);
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
+            data = App.db().getObject(FragmentKeys.DATA, Data.class);
+            Log.d("poi", "init: " + data);
+            View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
+            ImageView navBg = navView.findViewById(R.id.nav_background);
+            getNavBackground(navBg);
+
+            TextView userName = navView.findViewById(R.id.user_name);
+            TextView userEmail = navView.findViewById(R.id.user_email);
+
+            userName.setText(data.name);
+            userEmail.setText(data.email);
+
+            if (data.enquiry_details == null) {
+                getStudentFurtherDetails();
+            } else {
+                if (data.dob == null) {
+                    getDOB();
+                }
+            }
+        } else {
+            navigationView.inflateMenu(R.menu.navigation_menu_admin);
+
+            client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
+            View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
+            ImageView navBg = navView.findViewById(R.id.nav_background);
+            getNavBackground(navBg);
+            TextView userName = navView.findViewById(R.id.user_name);
+            userLogo = navView.findViewById(R.id.client_logo);
+            ImageView editLogo = navView.findViewById(R.id.add_logo);
+
+            editLogo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                        } else {
+                            openFilePicker();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+            Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
+            userName.setText(client.client_name);
+
+            if (getIntent() != null) {
+                fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
+                if (fragmentName == null) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
+                } else if (fragmentName.equals("AddGallery")) {
+                    AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
+                }
+            }
+        }
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+            return;
+        }
+    }
+
+    private void callApi() {
+        ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
+        clientAPI.getMatchingClient().enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()) {
+
+                } else {
+                    try {
+                        String err = response.errorBody().string();
+                        if (err.contains("Token has expired ")) {
+                            Toast.makeText(MainActivity.this, "we are logging out because token has been expired", Toast.LENGTH_LONG).show();
+                            App.logOut(MainActivity.this);
+                        }
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                    } catch (Exception e) {
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void checkAppRelease() {
         AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(this)
                 .setUpdateFrom(UpdateFrom.GOOGLE_PLAY)
@@ -195,98 +316,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void init() {
-
-        setSupportActionBar(mToolbar);
-
-        getSupportActionBar().setTitle("Consultancy Finder");
-        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
-
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        navigationView.setItemIconTintList(null);
-
-        progressDialog = new ProgressDialog(this);
-
-        for (int i = todayYear; i > 1969; i--) {
-            dates.add(i);
-        }
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-        if (App.db().getBoolean(Keys.IS_STUDENT)) {
-            navigationView.inflateMenu(R.menu.navigation_menu_student);
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
-            data = App.db().getObject(FragmentKeys.DATA, Data.class);
-            Log.d("poi", "init: " + data);
-            View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
-            ImageView navBg = navView.findViewById(R.id.nav_background);
-            getNavBackground(navBg);
-
-            TextView userName = navView.findViewById(R.id.user_name);
-            userName.setText(data.name);
-
-            if (data.enquiry_details == null) {
-                getStudentFurtherDetails();
-            } else {
-                if (data.dob == null) {
-                    getDOB();
-                }
-            }
-        } else {
-            navigationView.inflateMenu(R.menu.navigation_menu_admin);
-
-            client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-            View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
-            ImageView navBg = navView.findViewById(R.id.nav_background);
-            getNavBackground(navBg);
-            TextView userName = navView.findViewById(R.id.user_name);
-            TextView userEmail = navView.findViewById(R.id.user_email);
-            userLogo = navView.findViewById(R.id.client_logo);
-            ImageView editLogo = navView.findViewById(R.id.add_logo);
-
-            editLogo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
-                        } else {
-                            openFilePicker();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-
-            Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
-            userName.setText(client.client_name);
-            userEmail.setText(data.email);
-
-            if (getIntent() != null) {
-                fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
-                if (fragmentName == null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
-                } else if (fragmentName.equals("AddGallery")) {
-                    AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
-                }
-            }
-        }
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-            return;
-        }
-    }
-
-
     private void getNavBackground(ImageView navBg) {
         BannerAPI bannerAPI = App.consultancyRetrofit().create(BannerAPI.class);
         bannerAPI.getNavBanner().enqueue(new Callback<Login>() {
@@ -336,10 +365,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("asd", "onActivityResult: "+data);
+        Log.d("asd", "onActivityResult: " + data);
 
         if ((requestCode == RESULT_LOAD_IMAGE) && (resultCode == -1)) {
-            Log.d("asd", "onActivityResult0: "+data);
+            Log.d("asd", "onActivityResult0: " + data);
             String fileName = getPath(data.getData());
             file = new File(getPath(data.getData()));
             uploadLogo();
@@ -649,16 +678,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (TextUtils.isEmpty(studentSummary)) {
             summary.setError("Enter Summary");
             summary.requestFocus();
-        } else if (TextUtils.isEmpty(yrs)){
+        } else if (TextUtils.isEmpty(yrs)) {
             year.setError("Enter year");
             year.requestFocus();
-        } else if (TextUtils.isEmpty(mth)){
+        } else if (TextUtils.isEmpty(mth)) {
             month.setError("Enter month");
             month.requestFocus();
-        } else if (TextUtils.isEmpty(yrs)){
+        } else if (TextUtils.isEmpty(yrs)) {
             day.setError("Enter day");
             day.requestFocus();
-        } else  {
+        } else {
             String studentDOB = yrs + "-" + mth + "-" + days;
             String studentCourseCompleted = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
@@ -694,13 +723,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String mth = month.getText().toString();
         String days = day.getText().toString();
 
-        if (TextUtils.isEmpty(yrs)){
+        if (TextUtils.isEmpty(yrs)) {
             year.setError("Enter year");
             year.requestFocus();
-        } else if (TextUtils.isEmpty(mth)){
+        } else if (TextUtils.isEmpty(mth)) {
             month.setError("Enter month");
             month.requestFocus();
-        } else if (TextUtils.isEmpty(yrs)){
+        } else if (TextUtils.isEmpty(yrs)) {
             day.setError("Enter day");
             day.requestFocus();
         } else {

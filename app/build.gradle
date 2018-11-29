@@ -112,5 +112,8 @@ dependencies {
     //Firebase
     implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+
+//    //ShapeView
+//    implementation 'com.github.florent37:shapeofview:1.4.6'
 }
 apply plugin: 'com.google.gms.google-services'

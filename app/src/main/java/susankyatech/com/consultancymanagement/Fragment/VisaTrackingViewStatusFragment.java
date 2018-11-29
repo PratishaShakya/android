@@ -76,6 +76,8 @@ public class VisaTrackingViewStatusFragment extends Fragment {
         result = App.db().getObject(FragmentKeys.RESULT, Result.class);
         visa = result.visa;
 
+        recyclerView.setVisibility(View.GONE);
+
         getVisaInfo();
         statusList.add("lol");
         statusList.add("plus");

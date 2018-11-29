@@ -146,7 +146,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.notification_menu, menu);
+//        inflater.inflate(R.menu.notification_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -543,6 +543,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
                         openInquiry.setVisibility(View.VISIBLE);
+
+
 
                         clientList = response.body().data.clients;
                         consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());

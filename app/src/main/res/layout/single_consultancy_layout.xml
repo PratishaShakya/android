@@ -1,30 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
+
+    <!-- YOUR CONTENT -->
     <android.support.v7.widget.CardView
         android:id="@+id/consultancy_whole_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        fancy:cardElevation="0dp"
-        fancy:cardBackgroundColor="#fefefe">
+        fancy:cardBackgroundColor="#fefefe"
+        fancy:cardElevation="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+
             <ImageView
                 android:id="@+id/consultancy_logo"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_centerHorizontal="true"
                 android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="2dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/banner" />
+
+            <ImageButton
+                android:id="@+id/interest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="@dimen/small_margin"
+                android:background="#77111111"
+                />
+
 
             <TextView
                 android:id="@+id/consultancy_name"
@@ -32,13 +47,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/consultancy_logo"
                 android:layout_centerVertical="true"
-                android:padding="10dp"
                 android:background="#fff"
-                android:minLines="2"
-                android:gravity="center_vertical"
-                android:textAlignment="center"
-                android:text="Consultancy Name"
                 android:fontFamily="@font/nunito_semibold"
+                android:gravity="center_vertical"
+                android:minLines="2"
+                android:padding="10dp"
+                android:text="Consultancy Name"
+                android:textAlignment="center"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp" />
 
@@ -46,4 +61,4 @@
 
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</RelativeLayout>

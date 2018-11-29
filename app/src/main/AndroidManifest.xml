@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="susankyatech.com.consultancymanagement">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -45,9 +46,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="2761a6d4d61bb238726d7e4891de4dbb96d08b02" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2761a6d4d61bb238726d7e4891de4dbb96d08b02" />

@@ -42,6 +42,7 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -89,6 +90,13 @@ public class ConsultancyProfileFragment extends Fragment {
     RelativeLayout openInquiry;
     @BindView(R.id.relative1)
     RelativeLayout relativeLayout;
+    @BindView(R.id.consultancy_name)
+    TextView consultancyName;
+    @BindView(R.id.consultancy_logo)
+    CircleImageView consultancyLogo;
+    @BindView(R.id.consultancy_email)
+    TextView location;
+
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_WRITE_PERMISSION = 786;
@@ -195,7 +203,7 @@ public class ConsultancyProfileFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.chat_menu, menu);
+//        inflater.inflate(R.menu.chat_menu, menu);
         Log.d(TAG, "onCreateOptionsMenu: " + clientId);
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -403,7 +411,12 @@ public class ConsultancyProfileFragment extends Fragment {
                         editCoverPic.setVisibility(View.VISIBLE);
 
                         String imageUrl = response.body().data.client.detail.cover_photo;
+                        String logoUrl = response.body().data.client.logo;
                         Picasso.get().load(imageUrl).into(profileBanner);
+                        Picasso.get().load(logoUrl).into(consultancyLogo);
+
+                        consultancyName.setText(response.body().data.client.client_name);
+                        location.setText(response.body().data.client.detail.location);
 
                     }
                 } else {
@@ -436,10 +449,15 @@ public class ConsultancyProfileFragment extends Fragment {
                         sendInquiry.setVisibility(View.VISIBLE);
                         relativeLayout.setVisibility(View.VISIBLE);
 
-                        if (response.body().data.client.detail != null) {
 
+                        if (response.body().data.client.detail != null) {
                             String imageUrl = response.body().data.client.detail.cover_photo;
+                            String logoUrl = response.body().data.client.logo;
+
                             Picasso.get().load(imageUrl).into(profileBanner);
+                            Picasso.get().load(logoUrl).into(consultancyLogo);
+                            consultancyName.setText(response.body().data.client.client_name);
+                            location.setText(response.body().data.client.detail.location);
                         } else {
                             Picasso.get().load(R.drawable.banner).into(profileBanner);
                         }
@@ -450,6 +468,11 @@ public class ConsultancyProfileFragment extends Fragment {
 //                        }
                     }
 
+                }else {
+                    try {
+                        Log.d("client", "onResponse: error" + response.errorBody().string());
+                    } catch (Exception e) {
+                    }
                 }
             }
 
@@ -458,56 +481,6 @@ public class ConsultancyProfileFragment extends Fragment {
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 MDToast mdToast = MDToast.makeText(getActivity(), "There is no internet connection. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                 mdToast.show();
-            }
-        });
-    }
-
-    private void setUnInterestInConsultancy() {
-        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.unInterestedOnClient(clientId).enqueue(new Callback<Login>() {
-            @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        App.db().putBoolean(FragmentKeys.INTERESTED, false);
-//                        interest.setImageResource(R.drawable.ic_interest);
-                    }
-                } else {
-                    try {
-                        Log.d("interested", "onResponse: error" + response.errorBody().string());
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("interested", "onFailure:tala " + t);
-            }
-        });
-    }
-
-    private void setInterestInConsultancy() {
-        ClientInterestAPI clientInterestAPI = App.consultancyRetrofit().create(ClientInterestAPI.class);
-        clientInterestAPI.interestedOnClient(clientId, 1, 0, 0).enqueue(new Callback<Login>() {
-            @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        App.db().putBoolean(FragmentKeys.INTERESTED, true);
-//                        interest.setImageResource(R.drawable.ic_interested);
-                    }
-                } else {
-                    try {
-                        Log.d("interested", "onResponse: error" + response.errorBody().string());
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Login> call, Throwable t) {
-                Log.d("interested", "onFailure:tala " + t);
             }
         });
     }

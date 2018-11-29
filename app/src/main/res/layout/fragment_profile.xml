@@ -57,28 +57,48 @@
 
     </RelativeLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/consultancy_logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/user"
-        android:layout_marginTop="75dp" />
-
-    <TextView
-        android:id="@+id/profile_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/consultancy_logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:fontFamily="@font/nunito_semibold"
-        android:padding="10dp"
-        android:text="Consultancy Name"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        android:layout_below="@id/banner"
+        android:padding="@dimen/medium_padding"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/consultancy_logo"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@drawable/user" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/medium_padding"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/consultancy_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:text="Consultancy Name"/>
+
+            <TextView
+                android:id="@+id/consultancy_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:drawableLeft="@drawable/ic_address"
+                android:drawableTint="@color/black"
+                android:text="Consultancy Email Address"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/edit_coverPic"
@@ -96,7 +116,7 @@
         android:id="@+id/profile_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profile_name"
+        android:layout_below="@id/layout"
         app:tabGravity="fill"
         app:tabMode="fixed" />
 
@@ -150,7 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/blue"
+            android:background="@color/colorPrimaryDark"
             android:visibility="visible"
             android:padding="@dimen/medium_padding">
 

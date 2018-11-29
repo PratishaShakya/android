@@ -145,6 +145,9 @@ public class StudentProfileFragment extends Fragment {
             getStudentInfo();
         }
 
+        profilePic.setVisibility(View.GONE);
+        changePicture.setVisibility(View.GONE);
+
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
         for (int i = todayYear; i > 1969; i--) {

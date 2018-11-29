@@ -70,7 +70,7 @@
                     android:backgroundTint="@color/secondary_text"
                     android:drawableLeft="@drawable/ic_person_black_24dp"
                     android:drawablePadding="@dimen/small_margin"
-                    android:drawableTint="@color/login_color"
+                    android:drawableTint="@color/colorPrimaryDark"
                     android:gravity="center_vertical"
                     android:hint="@string/email"
                     android:imeOptions="actionNext"
@@ -90,7 +90,7 @@
                     android:backgroundTint="@color/secondary_text"
                     android:drawableLeft="@drawable/ic_lock_black_24dp"
                     android:drawablePadding="@dimen/small_margin"
-                    android:drawableTint="@color/login_color"
+                    android:drawableTint="@color/colorPrimaryDark"
                     android:gravity="center_vertical"
                     android:hint="@string/password"
                     android:imeOptions="actionGo"
@@ -110,13 +110,13 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:gravity="center"
                     android:textAllCaps="true"
-                    fancy:fb_borderColor="@color/login_btn_color"
+                    fancy:fb_borderColor="@color/colorPrimaryDark"
                     fancy:fb_borderWidth="1dp"
                     fancy:fb_defaultColor="@color/colorTransparent"
                     fancy:fb_focusColor="@color/login_btn_color"
                     fancy:fb_radius="@dimen/small_margin"
                     fancy:fb_text="@string/login"
-                    fancy:fb_textColor="@color/login_btn_color" />
+                    fancy:fb_textColor="@color/colorPrimaryDark" />
 
             </LinearLayout>
 

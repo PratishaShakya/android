@@ -42,7 +42,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StudentRegisterFragment extends Fragment {
+public class    StudentRegisterFragment extends Fragment {
 
     @BindView(R.id.fullName)
     EditText fullName;
