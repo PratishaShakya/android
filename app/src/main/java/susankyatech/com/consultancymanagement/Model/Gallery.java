@@ -9,6 +9,7 @@ public class Gallery {
     public int client_id;
     public String image;
     public List<File> galleries;
-    public boolean asd;
     public ArrayList<String> images;
+
+
 }

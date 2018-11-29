@@ -86,7 +86,7 @@ import static susankyatech.com.consultancymanagement.Generic.FileURI.isExternalS
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isGooglePhotosUri;
 import static susankyatech.com.consultancymanagement.Generic.FileURI.isMediaDocument;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.navigation_view)
     NavigationView navigationView;
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setTitle("Consultancy Manager");
+        getSupportActionBar().setTitle("Consultancy Finder");
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
 
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -217,10 +217,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
 
         if (App.db().getBoolean(Keys.IS_STUDENT)) {
             navigationView.inflateMenu(R.menu.navigation_menu_student);

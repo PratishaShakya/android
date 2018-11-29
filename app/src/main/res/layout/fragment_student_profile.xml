@@ -22,7 +22,7 @@
                 android:layout_marginTop="@dimen/medium_padding"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_user" />
+                android:src="@drawable/user" />
 
             <ImageView
                 android:id="@+id/change_picture"

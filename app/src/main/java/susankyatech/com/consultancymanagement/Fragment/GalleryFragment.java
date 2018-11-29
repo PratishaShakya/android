@@ -61,8 +61,6 @@ public class GalleryFragment extends Fragment {
 
     private int clientId;
 
-
-
     public GalleryFragment() {
         // Required empty public constructor
     }
@@ -173,7 +171,6 @@ public class GalleryFragment extends Fragment {
                             addGallery.setVisibility(View.VISIBLE);
                             cardView.setVisibility(View.GONE);
                         }
-
                         Log.d("asd", "onResponse: "+allGallery.size());
                         galleryListAdapter = new GalleryListAdapter(allGallery, images,getContext(), clientId);
                         galleryList.setAdapter(galleryListAdapter);

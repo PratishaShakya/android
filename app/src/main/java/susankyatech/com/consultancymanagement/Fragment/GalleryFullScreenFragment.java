@@ -22,12 +22,8 @@ import static android.content.ContentValues.TAG;
 
 public class GalleryFullScreenFragment extends Fragment {
 
-//    @BindView(R.id.full_screen_gallery)
-//    ImageView fullScreen;
     @BindView(R.id.galleryViewPager)
     ViewPager mSlidePager;
-
-
 
     private String galleryImage;
     private int adapterPosition;
@@ -57,7 +53,6 @@ public class GalleryFullScreenFragment extends Fragment {
             galleryList = getArguments().getStringArrayList("imageList");
             adapterPosition = getArguments().getInt("position");
         }
-//        Picasso.get().load(galleryImage).into(fullScreen);
 
         sliderAdapter = new ImageSliderAdapter(getActivity(), galleryList);
 

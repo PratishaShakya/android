@@ -139,7 +139,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         view = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Consultancy Manager");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Consultancy Finder");
         init();
         return view;
     }

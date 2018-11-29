@@ -71,8 +71,6 @@ public class ConsultancyProfileFragment extends Fragment {
     @BindView(R.id.profile_tabs)
     TabLayout tabLayout;
     public static ViewPager viewPager;
-//    @BindView(R.id.interest)
-//    ImageView interest;
     @BindView(R.id.profile_banner)
     ImageView profileBanner;
     @BindView(R.id.progressBarLayout)
@@ -162,17 +160,6 @@ public class ConsultancyProfileFragment extends Fragment {
                 fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
             }
         });
-
-//        interest.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (App.db().getBoolean(FragmentKeys.INTERESTED)) {
-//                    setUnInterestInConsultancy();
-//                } else {
-//                    setInterestInConsultancy();
-//                }
-//            }
-//        });
 
         editCoverPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -554,11 +541,6 @@ public class ConsultancyProfileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-//        setupViewPager(viewPager);
-//        tabLayout.setupWithViewPager(viewPager);
-//
-//        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     public static ConsultancyProfileFragment newInstance(int client_id, String client_name) {

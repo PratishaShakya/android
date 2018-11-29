@@ -1,4 +1,24 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     compileSdkVersion 28
@@ -45,7 +65,6 @@ dependencies {
     // (v2.0.0)
     implementation 'com.joanzapata.iconify:android-iconify-material-community:2.2.2'
     // (v1.4.57)
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
     // (v4.5)
     implementation 'com.joanzapata.iconify:android-iconify-material-community:2.2.2'
@@ -59,6 +78,9 @@ dependencies {
 
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+
     implementation 'com.valdesekamdem.library:md-toast:0.9.0'
     implementation 'com.android.support:design:28.0.0'
 
@@ -86,4 +108,9 @@ dependencies {
 
     //TimeLine
     implementation 'com.github.vipulasri:timelineview:1.0.6'
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
 }
+apply plugin: 'com.google.gms.google-services'
