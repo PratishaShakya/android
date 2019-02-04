@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -66,6 +67,7 @@ import susankyatech.com.consultancymanagement.API.BannerAPI;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Application.App;
+import susankyatech.com.consultancymanagement.Fragment.AboutFragment;
 import susankyatech.com.consultancymanagement.Fragment.AddGalleryFragment;
 import susankyatech.com.consultancymanagement.Fragment.ConsultancyProfileFragment;
 import susankyatech.com.consultancymanagement.Fragment.InterestedClientsFragment;
@@ -221,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             return;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.about_menu, menu);
+        return true;
+
     }
 
     private void callApi() {
@@ -579,6 +588,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
         toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+
         ArrayAdapter dateAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, dates);
         ArrayAdapter levelAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, qualificationList);
 
@@ -590,6 +600,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
+
+        String[] newDob = data.dob.split("-");
+        year.setText(newDob[0]);
+        month.setText(newDob[1]);
+        day.setText(newDob[2]);
 
         completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
@@ -659,15 +674,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
 
-        String studentQualification = qualification.getText().toString();
-        String studentSummary = summary.getText().toString();
-        final String studentName = userName.getText().toString();
-        final String studentEmail = userEmail.getText().toString();
-        final String studentAddress = userAddress.getText().toString();
-        final String studentPhone = userPhone.getText().toString();
-        String yrs = year.getText().toString();
-        String mth = month.getText().toString();
-        String days = day.getText().toString();
+        String studentQualification = qualification.getText().toString().trim();
+        String studentSummary = summary.getText().toString().trim();
+        final String studentName = userName.getText().toString().trim();
+        final String studentEmail = userEmail.getText().toString().trim();
+        final String studentAddress = userAddress.getText().toString().trim();
+        final String studentPhone = userPhone.getText().toString().trim();
+        String yrs = year.getText().toString().trim();
+        String mth = month.getText().toString().trim();
+        String days = day.getText().toString().trim();
 
 
         String testsAttended = getTestsString();
@@ -689,7 +704,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             day.requestFocus();
         } else {
             String studentDOB = yrs + "-" + mth + "-" + days;
-            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
+            String studentCourseCompleted = selectedLevel + "," + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
             enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
                     .enqueue(new Callback<Login>() {
@@ -785,6 +800,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
+        switch (item.getItemId()){
+            case R.id.about:
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new AboutFragment()).commit();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

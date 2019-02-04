@@ -123,6 +123,7 @@ public class OpenInquirySelectCountryFragment extends Fragment {
 
                                     Log.d("nbv", "onResponse: "+response.body().message);
                                     App.db().putObject(FragmentKeys.DATA, response.body().data);
+                                    App.hideKeyboard(getActivity());
                                     FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
                                     OpenInquiryProfileFragment openInquirySelectCountryFragment = new OpenInquiryProfileFragment();
                                     openInquirySelectCountryFragment.setArguments(bundle);

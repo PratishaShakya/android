@@ -257,14 +257,15 @@ public class ProfileInfoFragment extends Fragment {
                         if (detail.achievements == null) {
                             descriptionTV.setText("");
                         } else {
-
-                            descriptionTV.setText(Html.fromHtml(detail.achievements));
+                            String html = detail.achievements;
+                            html = html.replaceAll("<!--.*?-->", "");
+                            descriptionTV.setText(Html.fromHtml(html));
                         }
                         String services = "";
-                        Log.d("asd", "onResponse: "+client.subjects);
+                        Log.d("asd", "onResponse: " + client.subjects);
 
-                        for (int i = 0; i < client.subjects.size(); i++){
-                            if (i == client.subjects.size() -1){
+                        for (int i = 0; i < client.subjects.size(); i++) {
+                            if (i == client.subjects.size() - 1) {
                                 services += client.subjects.get(i).name;
                             } else {
                                 services += client.subjects.get(i).name + ", ";
@@ -274,32 +275,7 @@ public class ProfileInfoFragment extends Fragment {
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
 
-                        if (detail.location != null){
-                            locationTV.setText(detail.location);
-                        }
-
-
                         int lineCount = descriptionTV.getLineCount();
-
-                        if (descriptionTV.getText().toString().length() > 300) {
-                            descriptionTV.setText(Html.fromHtml(detail.achievements + "... Read more"));
-
-                        }
-                        descriptionTV.setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if (descriptionTV.getText().toString().length() > 300) {
-                                            descriptionTV.setMaxLines(1000);
-                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
-                                        } else {
-                                            descriptionTV.setMaxLines(3);
-                                            descriptionTV.setText(Html.fromHtml(detail.achievements));
-                                        }
-                                    }
-                                }
-                        );
                         Log.d("poi", "onResponse: " + lineCount);
                         makeTextViewResizable(descriptionTV, lineCount, "View More", true);
                     }
@@ -341,7 +317,9 @@ public class ProfileInfoFragment extends Fragment {
                         establishedDate.setText(detail.established);
                         phoneNoTV.setText(detail.phone);
                         locationTV.setText(detail.location);
-                        descriptionTV.setText(detail.achievements);
+                        if (detail.achievements != null) {
+                            descriptionTV.setText(detail.achievements);
+                        }
                         int lineCount = descriptionTV.getLineCount();
                         Log.d("poi", "onResponse: " + lineCount);
                         makeTextViewResizable(descriptionTV, lineCount, "View More", false);

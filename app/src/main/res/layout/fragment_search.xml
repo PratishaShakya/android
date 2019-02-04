@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     tools:context=".Fragment.SearchFragment">
 
     <LinearLayout
@@ -77,14 +76,14 @@
             android:id="@+id/search_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="#fff"
+            android:background="@color/colorPrimaryDark"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="#fff"
+                android:layout_margin="5dp">
 
                 <Spinner
                     android:id="@+id/search_options"
@@ -165,21 +164,20 @@
 
     <RelativeLayout
         android:id="@+id/open_inquiry"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/medium_padding"
         android:layout_marginBottom="@dimen/medium_padding"
         android:background="@drawable/circle_layout"
         android:elevation="3dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="-6dp">
+            android:layout_centerHorizontal="true">
 
             <ImageView
                 android:id="@+id/new_post"
@@ -202,6 +200,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

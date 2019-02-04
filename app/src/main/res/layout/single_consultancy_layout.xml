@@ -37,17 +37,26 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:padding="@dimen/small_margin"
+                android:src="@drawable/ic_interest"
+                android:elevation="3dp"
                 android:background="#77111111"
                 />
 
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="0.6dp"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/consultancy_logo"
+                android:background="@color/black"/>
 
             <TextView
                 android:id="@+id/consultancy_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/consultancy_logo"
+                android:layout_below="@id/line1"
                 android:layout_centerVertical="true"
-                android:background="#fff"
+                android:background="#77eeefff"
                 android:fontFamily="@font/nunito_semibold"
                 android:gravity="center_vertical"
                 android:minLines="2"

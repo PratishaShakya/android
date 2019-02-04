@@ -147,6 +147,7 @@ public class StudentProfileFragment extends Fragment {
 
         profilePic.setVisibility(View.GONE);
         changePicture.setVisibility(View.GONE);
+        uploadFile.setVisibility(View.GONE);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
@@ -438,14 +439,10 @@ public class StudentProfileFragment extends Fragment {
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
-        if (data.dob != null) {
-//            userDOB.setText(data.dob);
-
-        }
-
-
-
-
+        String[] newDob = data.dob.split("-");
+        year.setText(newDob[0]);
+        month.setText(newDob[1]);
+        day.setText(newDob[2]);
 
         String[] testsSplit = enquiryDetails.test_attended.split(",");
 
@@ -501,16 +498,16 @@ public class StudentProfileFragment extends Fragment {
     }
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
-        String studentQualification = qualification.getText().toString();
-        String studentSummary = summary.getText().toString();
-        final String studentName = userName.getText().toString();
-        final String studentEmail = userEmail.getText().toString();
-        final String studentAddress = userAddress.getText().toString();
-        final String studentPhone = userPhone.getText().toString();
-        String yrs = year.getText().toString();
-        String mth = month.getText().toString();
-        String days = day.getText().toString();
-        String testsAttended = getTestsString();
+        String studentQualification = qualification.getText().toString().trim();
+        String studentSummary = summary.getText().toString().trim();
+        final String studentName = userName.getText().toString().trim();
+        final String studentEmail = userEmail.getText().toString().trim();
+        final String studentAddress = userAddress.getText().toString().trim();
+        final String studentPhone = userPhone.getText().toString().trim();
+        String yrs = year.getText().toString().trim();
+        String mth = month.getText().toString().trim();
+        String days = day.getText().toString().trim();
+        String testsAttended = getTestsString().trim();
 
         if (TextUtils.isEmpty(studentSummary)) {
             summary.setError("Enter Summary");

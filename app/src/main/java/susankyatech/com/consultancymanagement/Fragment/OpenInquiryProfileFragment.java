@@ -56,7 +56,7 @@ public class OpenInquiryProfileFragment extends Fragment {
     @BindView(R.id.qualification)
     TextView qualificationTv;
     @BindView(R.id.complete_year)
-    TextView completeYear;
+    TextView completeYearTv;
     @BindView(R.id.address)
     TextView addressTv;
     @BindView(R.id.contact)
@@ -84,8 +84,8 @@ public class OpenInquiryProfileFragment extends Fragment {
     private Data data;
     private EnquiryDetails enquiryDetails;
 
-    private int selectedYear, mYear, mMonth, mDay;
-    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB;
+    private int selectedYear;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, userDOB, year, month, day;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB,toeflCB,greCB,pteCB,satCB;
 
@@ -116,9 +116,9 @@ public class OpenInquiryProfileFragment extends Fragment {
             clientId = getArguments().getInt("client_id");
             clientName = getArguments().getString("client_name");
         }
-        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
-        for (int i = todayYear; i > 1969; i--){
+        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = todayYear; i > 1969; i--) {
             dates.add(i);
         }
 
@@ -183,46 +183,36 @@ public class OpenInquiryProfileFragment extends Fragment {
         userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
         userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
         userDOB = materialDialog.getCustomView().findViewById(R.id.enquiry_dob);
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
         satCB=materialDialog.getCustomView().findViewById(R.id.cv_sat);
         ieltsCB=materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB=materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB=materialDialog.getCustomView().findViewById(R.id.cv_pte);
         toeflCB=materialDialog.getCustomView().findViewById(R.id.cv_tofel);
 
-        userDOB.setFocusable(false);
-
-        userDOB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get Current Date
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-                                userDOB.setText(year + "-" + (monthOfYear + 1) + "-" +dayOfMonth );
-
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-
-        ArrayAdapter dateAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,dates);
+        ArrayAdapter dateAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, dates);
         ArrayAdapter levelAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,qualificationList);
 
-        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        completedYear.setAdapter(dateAdapter);
         qualificationSpinner.setAdapter(levelAdapter);
+        completedYear.setAdapter(dateAdapter);
+
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -236,17 +226,6 @@ public class OpenInquiryProfileFragment extends Fragment {
             }
         });
 
-        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedLevel = qualificationList[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
         String datafromApi = enquiryDetails.qualification.get(0);
         for(int i=0; i < qualificationList.length; i++){
             if (qualificationList[i].equals(datafromApi)){
@@ -258,15 +237,16 @@ public class OpenInquiryProfileFragment extends Fragment {
         Log.d(TAG, "editStudentDetails: "+enquiryDetails.qualification.get(0));
         qualification.setText(enquiryDetails.qualification.get(1));
         summary.setText(enquiryDetails.summary);
-        completeYear.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
         userEmail.setText(data.email);
         userName.setText(data.name);
         userPhone.setText(data.phone);
         userAddress.setText(data.address);
-        if (data.dob != null){
-            userDOB.setText(data.dob);
-        }
+
+        String[] newDob = data.dob.split("-");
+        year.setText(newDob[0]);
+        month.setText(newDob[1]);
+        day.setText(newDob[2]);
 
         String[] testsSplit=enquiryDetails.test_attended.split(",");
 
@@ -325,14 +305,16 @@ public class OpenInquiryProfileFragment extends Fragment {
     }
 
     private void addFurtherDetails(final MaterialDialog materialDialog) {
-        String studentQualification = qualification.getText().toString();
-        String studentSummary = summary.getText().toString();
-        final String studentName = userName.getText().toString();
-        final String studentEmail = userEmail.getText().toString();
-        final String studentAddress = userAddress.getText().toString();
-        final String studentPhone = userPhone.getText().toString();
-        final String studentDOB = userDOB.getText().toString();
-        String testsAttended = getTestsString();
+        String studentQualification = qualification.getText().toString().trim();
+        String studentSummary = summary.getText().toString().trim();
+        final String studentName = userName.getText().toString().trim();
+        final String studentEmail = userEmail.getText().toString().trim();
+        final String studentAddress = userAddress.getText().toString().trim();
+        final String studentPhone = userPhone.getText().toString().trim();
+        String testsAttended = getTestsString().trim();
+        String yrs = year.getText().toString().trim();
+        String mth = month.getText().toString().trim();
+        String days = day.getText().toString().trim();
 
         if (TextUtils.isEmpty(studentQualification)){
             qualification.setError("Enter your qualification");
@@ -341,6 +323,7 @@ public class OpenInquiryProfileFragment extends Fragment {
             summary.setError("Enter your qualification");
             summary.requestFocus();
         } else {
+            String studentDOB = yrs + "-" + mth + "-" + days;
             String userQualification = selectedLevel + ", " + studentQualification;
             EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
             enquiryAPI.saveDetailsNew(userQualification, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
@@ -462,7 +445,7 @@ public class OpenInquiryProfileFragment extends Fragment {
     private void getStudentInfo() {
         data = App.db().getObject(FragmentKeys.DATA,Data.class);
         enquiryDetails = data.enquiry_details;
-        qualificationTv.setText(enquiryDetails.qualification.get(0) + ", " + enquiryDetails.qualification.get(1));
+        qualificationTv.setText(enquiryDetails.qualification.get(0) + "," + enquiryDetails.qualification.get(1));
         nameTv.setText(data.name);
         addressTv.setText(data.address);
         contactTv.setText(data.phone);
@@ -471,7 +454,7 @@ public class OpenInquiryProfileFragment extends Fragment {
         if (data.dob != null) {
             dobTv.setText(data.dob);
         }
-        completeYear.setText(enquiryDetails.completed_year);
+        completeYearTv.setText(enquiryDetails.completed_year);
         testAttendedTv.setText(enquiryDetails.test_attended);
     }
 

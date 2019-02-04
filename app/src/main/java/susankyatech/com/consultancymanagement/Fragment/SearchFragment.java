@@ -36,6 +36,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -107,9 +109,9 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     View view;
     private ClientAPI clientAPI;
 
-    private Context context;
+    private Context context = getContext();
 
-    private EditText qualification, summary;
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, year, month, day;
     private Spinner completedYear, qualificationSpinner;
     private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
 
@@ -383,9 +385,8 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 bannerItems.add(new BannerItem(bannerList.get(i).ad_image));
                             }
                         }
-
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        recyclerView.setAdapter(new HomeAdapter(getContext(), displayHomeItems(clientList)));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        recyclerView.setAdapter(new HomeAdapter(context, displayHomeItems(clientList)));
                     }
                 }
             }
@@ -411,11 +412,31 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
         summary = materialDialog.getCustomView().findViewById(R.id.about_you);
         qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
-        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
-        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
         satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
         greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
         pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
+
+        String[] newDob = data.dob.split("-");
+        year.setText(newDob[0]);
+        month.setText(newDob[1]);
+        day.setText(newDob[2]);
+
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
 
         completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -543,8 +564,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
                         openInquiry.setVisibility(View.VISIBLE);
-
-
 
                         clientList = response.body().data.clients;
                         consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());

@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,17 +29,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,10 +62,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
 import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
+import susankyatech.com.consultancymanagement.API.EnquiryAPI;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapters.ProfileViewPagerAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
 import susankyatech.com.consultancymanagement.Generic.FragmentKeys;
+import susankyatech.com.consultancymanagement.Generic.Keys;
+import susankyatech.com.consultancymanagement.Model.Data;
 import susankyatech.com.consultancymanagement.Model.Login;
 import susankyatech.com.consultancymanagement.R;
 
@@ -74,12 +88,6 @@ public class ConsultancyProfileFragment extends Fragment {
     public static ViewPager viewPager;
     @BindView(R.id.profile_banner)
     ImageView profileBanner;
-    @BindView(R.id.progressBarLayout)
-    View progressLayout;
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
-    @BindView(R.id.progressTV)
-    TextView progressTextView;
     @BindView(R.id.edit_coverPic)
     ImageView editCoverPic;
     @BindView(R.id.sendInquiry)
@@ -97,13 +105,23 @@ public class ConsultancyProfileFragment extends Fragment {
     @BindView(R.id.consultancy_email)
     TextView location;
 
+    private Data data;
+
+    private EditText qualification, summary, userName, userEmail, userAddress, userPhone, year, month, day;
+    private Spinner completedYear, qualificationSpinner;
+    private CheckBox ieltsCB, toeflCB, greCB, pteCB, satCB;
+
+    ArrayAdapter dateAdapter, levelAdapter;
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_WRITE_PERMISSION = 786;
 
-    private int clientId;
-    private String clientName;
+    private int clientId, selectedYear;
+    private String clientName, selected_options, selectedLevel;;
     public static int clientStaticID;
+
+    List<Integer> dates = new ArrayList<>();
+    String[] qualificationList = {"+2", "Bachelors", "Masters"};
 
     private File file;
     private ProgressDialog progressDialog;
@@ -125,8 +143,6 @@ public class ConsultancyProfileFragment extends Fragment {
     }
 
     private void init() {
-        progressLayout.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
         profileBanner.setVisibility(View.GONE);
         editCoverPic.setVisibility(View.GONE);
         openInquiry.setVisibility(View.GONE);
@@ -143,6 +159,17 @@ public class ConsultancyProfileFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.blue));
 
+        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        for (int i = todayYear; i > 1969; i--) {
+            dates.add(i);
+        }
+
+        dateAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, dates);
+        levelAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, qualificationList);
+
+        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         if (clientId == 0) {
             sendInquiry.setVisibility(View.GONE);
@@ -157,15 +184,12 @@ public class ConsultancyProfileFragment extends Fragment {
         sendInquiry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("client_id", clientId);
-                bundle.putString("client_name", clientName);
-
-                FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
-                openInquirySelectCountryFragment.setArguments(bundle);
-                fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
+                data = App.db().getObject(FragmentKeys.DATA, Data.class);
+                if (data.enquiry_details == null) {
+                    getStudentFurtherDetails();
+                } else {
+                    getEnquiry();
+                }
             }
         });
 
@@ -198,6 +222,156 @@ public class ConsultancyProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    private void getStudentFurtherDetails() {
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(getContext())
+                .title("Complete your Profile")
+                .customView(R.layout.fragment_course_enquiry, true)
+                .positiveText("Save Details")
+                .negativeText("Close")
+                .positiveColor(getResources().getColor(R.color.green))
+                .negativeColor(getResources().getColor(R.color.red))
+                .show();
+
+        qualification = materialDialog.getCustomView().findViewById(R.id.enquiry_level_completed);
+        completedYear = materialDialog.getCustomView().findViewById(R.id.enquiry_complete_year);
+        summary = materialDialog.getCustomView().findViewById(R.id.about_you);
+        qualificationSpinner = materialDialog.getCustomView().findViewById(R.id.qualification_spinner);
+        userName = materialDialog.getCustomView().findViewById(R.id.enquiry_name);
+        userAddress = materialDialog.getCustomView().findViewById(R.id.enquiry_address);
+        userEmail = materialDialog.getCustomView().findViewById(R.id.enquiry_email);
+        userPhone = materialDialog.getCustomView().findViewById(R.id.enquiry_phone);
+        year = materialDialog.getCustomView().findViewById(R.id.year);
+        month = materialDialog.getCustomView().findViewById(R.id.month);
+        day = materialDialog.getCustomView().findViewById(R.id.day);
+        satCB = materialDialog.getCustomView().findViewById(R.id.cv_sat);
+        ieltsCB = materialDialog.getCustomView().findViewById(R.id.cv_ielts);
+        greCB = materialDialog.getCustomView().findViewById(R.id.cv_gre);
+        pteCB = materialDialog.getCustomView().findViewById(R.id.cv_pte);
+        toeflCB = materialDialog.getCustomView().findViewById(R.id.cv_tofel);
+
+        userEmail.setText(data.email);
+        userName.setText(data.name);
+        userPhone.setText(data.phone);
+        userAddress.setText(data.address);
+
+        String[] newDob = data.dob.split("-");
+        year.setText(newDob[0]);
+        month.setText(newDob[1]);
+        day.setText(newDob[2]);
+
+        completedYear.setAdapter(dateAdapter);
+        qualificationSpinner.setAdapter(levelAdapter);
+
+        completedYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedYear = dates.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        qualificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLevel = qualificationList[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addFurtherDetails(materialDialog);
+
+            }
+        });
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
+    }
+
+    private void addFurtherDetails(final MaterialDialog materialDialog) {
+        String studentQualification = qualification.getText().toString();
+        String studentSummary = summary.getText().toString();
+        String testsAttended = getTestsString();
+
+        if (TextUtils.isEmpty(studentQualification)) {
+            qualification.setError("Enter your qualification");
+            qualification.requestFocus();
+        } else if (TextUtils.isEmpty(studentSummary)) {
+            summary.setError("Enter Summary");
+            summary.requestFocus();
+        } else {
+            String studentCourseCompleted = selectedLevel + ", " + studentQualification;
+            EnquiryAPI enquiryAPI = App.consultancyRetrofit().create(EnquiryAPI.class);
+            enquiryAPI.saveDetailsNew(studentCourseCompleted, studentSummary, App.db().getInt(Keys.USER_ID), selectedYear, testsAttended)
+                    .enqueue(new Callback<Login>() {
+                        @Override
+                        public void onResponse(Call<Login> call, Response<Login> response) {
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    materialDialog.dismiss();
+                                    App.db().putObject(FragmentKeys.DATA, response.body().data);
+                                    MDToast mdToast = MDToast.makeText(getContext(), "Your info is successfully saved!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
+                                    mdToast.show();
+                                }
+                            } else {
+                                try {
+                                    Log.d("client", "onResponse: error" + response.errorBody().string());
+                                    materialDialog.dismiss();
+                                    MDToast mdToast = MDToast.makeText(getContext(), "There was something wrong while saving your info. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                                    mdToast.show();
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Login> call, Throwable t) {
+
+                        }
+                    });
+        }
+    }
+
+    private String getTestsString() {
+        String tests = "";
+        if (toeflCB.isChecked())
+            tests += "TOEFL, ";
+        if (satCB.isChecked())
+            tests += "SAT, ";
+        if (greCB.isChecked())
+            tests += "GRE, ";
+        if (ieltsCB.isChecked())
+            tests += "IELTS, ";
+        if (pteCB.isChecked())
+            tests += "PTE";
+
+        return tests;
+    }
+
+    private void getEnquiry() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("client_id", clientId);
+        bundle.putString("client_name", clientName);
+
+        FragmentTransaction fragmentTransaction = ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction();
+        OpenInquirySelectCountryFragment openInquirySelectCountryFragment = new OpenInquirySelectCountryFragment();
+        openInquirySelectCountryFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.main_container, openInquirySelectCountryFragment).addToBackStack(null).commit();
     }
 
     @Override
@@ -405,8 +579,6 @@ public class ConsultancyProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         App.db().putObject(FragmentKeys.CLIENT, response.body().data.client);
-                        progressLayout.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
                         profileBanner.setVisibility(View.VISIBLE);
                         editCoverPic.setVisibility(View.VISIBLE);
 
@@ -443,8 +615,6 @@ public class ConsultancyProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
-                        progressLayout.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
                         profileBanner.setVisibility(View.VISIBLE);
                         sendInquiry.setVisibility(View.VISIBLE);
                         relativeLayout.setVisibility(View.VISIBLE);

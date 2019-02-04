@@ -141,6 +141,7 @@ public class StudentLoginFragment extends Fragment {
                             progressDialog.dismiss();
                             MDToast mdToast = MDToast.makeText(getActivity(), "There was something wrong with login. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS);
                             mdToast.show();
+                            password.setText("");
                         } catch (Exception e) {
                         }
                     }
@@ -150,6 +151,7 @@ public class StudentLoginFragment extends Fragment {
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
+                        password.setText("");
                     } catch (Exception e) {
                     }
 

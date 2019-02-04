@@ -122,8 +122,6 @@ public class VisaTrackingFragment extends Fragment {
                             VisaTrackingViewStatusFragment visaTrackingViewStatusFragment = new VisaTrackingViewStatusFragment();
                             fragmentTransaction.replace(R.id.main_container, visaTrackingViewStatusFragment).addToBackStack(null).commit();
                         }
-
-
                     }
                 }else {
                     try {

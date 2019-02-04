@@ -114,15 +114,15 @@ public class    StudentRegisterFragment extends Fragment {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userName = fullName.getText().toString();
-                String userEmail = email.getText().toString();
-                String userPhone = phone.getText().toString();
-                String userPassword = password.getText().toString();
-                String userRePassword = rePassword.getText().toString();
-                String userAddress = address.getText().toString();
-                String yrs = year.getText().toString();
-                String mth = month.getText().toString();
-                String mDay = day.getText().toString();
+                String userName = fullName.getText().toString().trim();
+                String userEmail = email.getText().toString().trim();
+                String userPhone = phone.getText().toString().trim();
+                String userPassword = password.getText().toString().trim();
+                String userRePassword = rePassword.getText().toString().trim();
+                String userAddress = address.getText().toString().trim();
+                String yrs = year.getText().toString().trim();
+                String mth = month.getText().toString().trim();
+                String mDay = day.getText().toString().trim();
 
 
                 if (TextUtils.isEmpty(userName)){

@@ -10,6 +10,4 @@ public class Gallery {
     public String image;
     public List<File> galleries;
     public ArrayList<String> images;
-
-
 }

@@ -123,15 +123,18 @@ public class AdminLoginFragment extends Fragment {
                             progressDialog.dismiss();
                             MDToast mdToast = MDToast.makeText(getActivity(), "There was something wrong with your login. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
                             mdToast.show();
+                            password.setText("");
                         } catch (Exception e) {
                         }
                     }
                 } else {
                     try {
                         progressDialog.dismiss();
+
                         Log.d("loginError", response.errorBody().string());
                         MDToast mdToast = MDToast.makeText(getActivity(), "Email address and password doesn't match. Please try again!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR);
                         mdToast.show();
+                        password.setText("");
                     } catch (Exception e) {
                     }
 
