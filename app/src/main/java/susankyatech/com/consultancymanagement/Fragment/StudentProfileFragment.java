@@ -562,7 +562,7 @@ public class StudentProfileFragment extends Fragment {
     private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog, String studentDOB) {
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, studentDOB)
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, App.db().getInt(Keys.USER_ID), studentDOB)
                 .enqueue(new Callback<Login>() {
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {

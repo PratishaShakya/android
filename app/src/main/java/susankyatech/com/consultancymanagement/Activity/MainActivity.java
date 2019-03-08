@@ -727,7 +727,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         @Override
                         public void onFailure(Call<Login> call, Throwable t) {
-
+                            Log.d(TAG, "onFailure: " + t.getMessage());
+                            MDToast mdToast = MDToast.makeText(MainActivity.this, "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                            mdToast.show();
                         }
                     });
         }
@@ -765,7 +767,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onFailure(Call<Login> call, Throwable t) {
-
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                    MDToast mdToast = MDToast.makeText(MainActivity.this, "There was problem trying to connect to network. Please try again later!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING);
+                    mdToast.show();
                 }
             });
         }
@@ -774,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void editStudentPrimaryInfo(String studentName, String studentEmail, String studentAddress, String studentPhone, final MaterialDialog materialDialog, String studentDOB) {
 
         ClientAPI clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
-        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, studentDOB)
+        clientAPI.changePrimaryInfo(studentEmail, studentName, studentAddress, studentPhone, App.db().getInt(Keys.USER_ID), studentDOB)
                 .enqueue(new Callback<Login>() {
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {

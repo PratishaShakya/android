@@ -105,7 +105,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
     @BindView(R.id.empty_img)
     ImageView empty;
 
-
     View view;
     private ClientAPI clientAPI;
 
@@ -272,7 +271,6 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                     recyclerView.setAdapter(consultancyListAdapter);
                 }
-
                 return false;
             }
         });

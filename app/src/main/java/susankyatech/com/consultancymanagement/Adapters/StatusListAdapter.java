@@ -39,7 +39,7 @@ public class StatusListAdapter extends RecyclerView.Adapter<StatusListAdapter.St
     @NonNull
     @Override
     public StatusListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(context).inflate(layout.item_timeline, viewGroup, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_timeline, viewGroup, false);
         return new StatusListViewHolder(view);
     }
 
@@ -49,11 +49,11 @@ public class StatusListAdapter extends RecyclerView.Adapter<StatusListAdapter.St
             Log.d("asd", "onBindViewHolder: "+i);
             for (int j = 0; j < i; j++){
                 Log.d("asd", "onBindViewHolder:i "+i);
-                holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(context, drawable.ic_marker_active, color.colorTransparentPrimary));
+                holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(context, R.drawable.ic_marker_active, R.color.colorTransparentPrimary));
             }
             holder.cardView.setCardBackgroundColor(Color.rgb(112,193,169));
             holder.mMessage.setTextColor(Color.WHITE);
-            holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(context, drawable.ic_marker_active, color.colorPrimary));
+            holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(context, drawable.ic_marker_active, R.color.colorPrimary));
         }else {
             holder.cardView.setCardBackgroundColor(Color.rgb(242,242,242));
             holder.mMessage.setTextColor(Color.BLACK);
