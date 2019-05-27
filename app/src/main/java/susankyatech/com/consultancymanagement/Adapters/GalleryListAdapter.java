@@ -1,6 +1,7 @@
 package susankyatech.com.consultancymanagement.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
@@ -54,7 +56,9 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
     public void onBindViewHolder(@NonNull final GalleryViewHolder holder, final int position) {
         final String image = galleryList.get(position).image;
 
-        Picasso.get().load(image).into(holder.galleryImage);
+//        Picasso.get().load(image).into(holder.galleryImage);
+        Uri uri = Uri.parse(image);
+        holder.galleryImage.setImageURI(uri);
 
         holder.galleryImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +129,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
 
         View mView;
         ImageView deleteImage;
-        ImageView galleryImage;
+        SimpleDraweeView galleryImage;
 
         public GalleryViewHolder(@NonNull View itemView) {
             super(itemView);

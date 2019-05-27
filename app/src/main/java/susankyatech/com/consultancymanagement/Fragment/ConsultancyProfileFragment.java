@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.squareup.picasso.Picasso;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
@@ -61,8 +62,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import susankyatech.com.consultancymanagement.API.ClientAPI;
-import susankyatech.com.consultancymanagement.API.ClientInterestAPI;
 import susankyatech.com.consultancymanagement.API.EnquiryAPI;
+import susankyatech.com.consultancymanagement.Activity.LoginActivity;
 import susankyatech.com.consultancymanagement.Activity.MainActivity;
 import susankyatech.com.consultancymanagement.Adapters.ProfileViewPagerAdapter;
 import susankyatech.com.consultancymanagement.Application.App;
@@ -87,7 +88,7 @@ public class ConsultancyProfileFragment extends Fragment {
     TabLayout tabLayout;
     public static ViewPager viewPager;
     @BindView(R.id.profile_banner)
-    ImageView profileBanner;
+    SimpleDraweeView profileBanner;
     @BindView(R.id.edit_coverPic)
     ImageView editCoverPic;
     @BindView(R.id.sendInquiry)
@@ -147,6 +148,8 @@ public class ConsultancyProfileFragment extends Fragment {
         editCoverPic.setVisibility(View.GONE);
         openInquiry.setVisibility(View.GONE);
 
+
+
         progressDialog = new ProgressDialog(getContext());
 
         if (getArguments() != null) {
@@ -184,12 +187,17 @@ public class ConsultancyProfileFragment extends Fragment {
         sendInquiry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                data = App.db().getObject(FragmentKeys.DATA, Data.class);
-                if (data.enquiry_details == null) {
-                    getStudentFurtherDetails();
+                if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                    data = App.db().getObject(FragmentKeys.DATA, Data.class);
+                    if (data.enquiry_details == null) {
+                        getStudentFurtherDetails();
+                    } else {
+                        getEnquiry();
+                    }
                 } else {
-                    getEnquiry();
+                    startActivity(new Intent(getContext(), LoginActivity.class));
                 }
+
             }
         });
 
@@ -583,8 +591,10 @@ public class ConsultancyProfileFragment extends Fragment {
                         editCoverPic.setVisibility(View.VISIBLE);
 
                         String imageUrl = response.body().data.client.detail.cover_photo;
+                        Uri uri = Uri.parse(imageUrl);
+                        profileBanner.setImageURI(imageUrl);
                         String logoUrl = response.body().data.client.logo;
-                        Picasso.get().load(imageUrl).into(profileBanner);
+//                        Picasso.get().load(imageUrl).into(profileBanner);
                         Picasso.get().load(logoUrl).into(consultancyLogo);
 
                         consultancyName.setText(response.body().data.client.client_name);
@@ -616,16 +626,27 @@ public class ConsultancyProfileFragment extends Fragment {
                     if (response.body() != null) {
                         App.db().putBoolean(FragmentKeys.INTERESTED, response.body().data.client.interested);
                         profileBanner.setVisibility(View.VISIBLE);
-                        sendInquiry.setVisibility(View.VISIBLE);
                         relativeLayout.setVisibility(View.VISIBLE);
 
 
                         if (response.body().data.client.detail != null) {
-                            String imageUrl = response.body().data.client.detail.cover_photo;
-                            String logoUrl = response.body().data.client.logo;
+                            if (response.body().data.client.detail.cover_photo != null) {
+                                String imageUrl = response.body().data.client.detail.cover_photo;
+                                Uri uri = Uri.parse(imageUrl);
+                                profileBanner.setImageURI(imageUrl);
+                            } else {
+                                Picasso.get().load(R.drawable.banner).into(profileBanner);
+                            }
 
-                            Picasso.get().load(imageUrl).into(profileBanner);
-                            Picasso.get().load(logoUrl).into(consultancyLogo);
+                            if (response.body().data.client.logo != null){
+                                String logoUrl = response.body().data.client.logo;
+                                Picasso.get().load(logoUrl).into(consultancyLogo);
+                            }
+
+
+
+//                            Picasso.get().load(imageUrl).into(profileBanner);
+
                             consultancyName.setText(response.body().data.client.client_name);
                             location.setText(response.body().data.client.detail.location);
                         } else {

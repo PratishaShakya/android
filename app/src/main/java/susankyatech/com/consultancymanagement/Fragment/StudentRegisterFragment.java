@@ -176,7 +176,7 @@ public class    StudentRegisterFragment extends Fragment {
 
     private void registerStudent(String userName, String userEmail, String userPhone, String userPassword, String userAddress, String userGender, String userDOB) {
         LoginAPI loginAPI = App.consultancyRetrofit().create(LoginAPI.class);
-        loginAPI.studentRegister(userName, userEmail, userPhone, userPassword, userAddress , userGender, userDOB).enqueue(new Callback<Login>() {
+        loginAPI.studentRegister(userName, userEmail, userPhone, userPassword, userAddress , userGender, userDOB, 1, 0).enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if (response.body() != null) {

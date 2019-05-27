@@ -14,7 +14,7 @@ public interface LoginAPI {
 
     @FormUrlEncoded
     @POST("students/login")
-    Call<Login> studentLogin(@Field("email")String userEmail, @Field("password")String password);
+    Call<Login> studentLogin(@Field("email")String userEmail, @Field("password")String password, @Field("client_id")int clientID);
 
     @FormUrlEncoded
     @POST("students/register")
@@ -24,5 +24,7 @@ public interface LoginAPI {
                                 @Field("password")String password,
                                 @Field("address")String userAddress,
                                 @Field("gender")String userGender,
-                                @Field("dob")String userDob);
+                                @Field("dob")String userDob,
+                                @Field("mobile")int mobile,
+                                @Field("client_id")int clientID);
 }

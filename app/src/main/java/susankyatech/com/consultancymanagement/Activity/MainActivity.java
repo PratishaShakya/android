@@ -139,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setTitle("Consultancy Finder");
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
 
+
+
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -156,18 +158,80 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (App.db().getBoolean(Keys.IS_STUDENT)) {
-            navigationView.inflateMenu(R.menu.navigation_menu_student);
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
+
+        if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+            if (App.db().getBoolean(Keys.IS_STUDENT)) {
+                openStudentDashboard();
+            } else {
+                navigationView.inflateMenu(R.menu.navigation_menu_admin);
+
+                client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
+                View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
+                ImageView navBg = navView.findViewById(R.id.nav_background);
+                getNavBackground(navBg);
+                TextView userName = navView.findViewById(R.id.user_name);
+                userLogo = navView.findViewById(R.id.client_logo);
+                ImageView editLogo = navView.findViewById(R.id.add_logo);
+
+                editLogo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                            } else {
+                                openFilePicker();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+                Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
+                userName.setText(client.client_name);
+
+                if (getIntent() != null) {
+                    fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
+                    if (fragmentName == null) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
+                    } else if (fragmentName.equals("AddGallery")) {
+                        AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
+                    }
+                }
+            }
+        } else {
+            openStudentDashboard();
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+            return;
+        }
+    }
+
+    private void openStudentDashboard() {
+        navigationView.inflateMenu(R.menu.navigation_menu_student);
+
+        MenuItem login = navigationView.getMenu().findItem(R.id.logout);
+
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SearchFragment()).commit();
+
+        View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
+        ImageView navBg = navView.findViewById(R.id.nav_background);
+        getNavBackground(navBg);
+
+        TextView userName = navView.findViewById(R.id.user_name);
+        TextView userEmail = navView.findViewById(R.id.user_email);
+
+
+        if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+            login.setTitle("Log Out");
             data = App.db().getObject(FragmentKeys.DATA, Data.class);
-            Log.d("poi", "init: " + data);
-            View navView = navigationView.inflateHeaderView(R.layout.nav_header_layout);
-            ImageView navBg = navView.findViewById(R.id.nav_background);
-            getNavBackground(navBg);
-
-            TextView userName = navView.findViewById(R.id.user_name);
-            TextView userEmail = navView.findViewById(R.id.user_email);
-
             userName.setText(data.name);
             userEmail.setText(data.email);
 
@@ -179,51 +243,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         } else {
-            navigationView.inflateMenu(R.menu.navigation_menu_admin);
-
-            client = App.db().getObject(FragmentKeys.CLIENT, Client.class);
-            View navView = navigationView.inflateHeaderView(R.layout.nav_header_admin);
-            ImageView navBg = navView.findViewById(R.id.nav_background);
-            getNavBackground(navBg);
-            TextView userName = navView.findViewById(R.id.user_name);
-            userLogo = navView.findViewById(R.id.client_logo);
-            ImageView editLogo = navView.findViewById(R.id.add_logo);
-
-            editLogo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
-                        } else {
-                            openFilePicker();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-
-            Picasso.get().load(client.logo).placeholder(R.drawable.banner).into(userLogo);
-            userName.setText(client.client_name);
-
-            if (getIntent() != null) {
-                fragmentName = getIntent().getStringExtra(FragmentKeys.FRAGMENTNAME);
-                if (fragmentName == null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new ConsultancyProfileFragment()).commit();
-                } else if (fragmentName.equals("AddGallery")) {
-                    AddGalleryFragment addGalleryFragment = new AddGalleryFragment();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, addGalleryFragment).commit();
-                }
-            }
+            login.setTitle("Log In");
+            userName.setText("Not Logged In");
+            userEmail.setText("Please Log In");
         }
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
-            return;
-        }
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -826,10 +853,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.student_profile:
-                if (data.enquiry_details == null) {
-                    getStudentFurtherDetails();
+                if (!App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                    goToLogin();
                 } else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new StudentProfileFragment()).commit();
+                    if (data.enquiry_details == null) {
+                        getStudentFurtherDetails();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new StudentProfileFragment()).commit();
+                    }
                 }
                 break;
 
@@ -838,24 +869,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.matched_client:
-                if (data.enquiry_details == null) {
-                    getStudentFurtherDetails();
+                if (!App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                    goToLogin();
                 } else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new MatchingClientsFragment()).commit();
+                    if (data.enquiry_details == null) {
+                        getStudentFurtherDetails();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new MatchingClientsFragment()).commit();
+                    }
                 }
 
                 break;
 
             case R.id.stared:
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new InterestedClientsFragment()).commit();
-
+                if (!App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                    goToLogin();
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new InterestedClientsFragment()).commit();
+                }
                 break;
 
             case R.id.logout:
-                App.logOut(this);
+                if (!App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                    goToLogin();
+                } else {
+                    App.logOut(this);
+                }
+
                 break;
         }
         drawerLayout.closeDrawers();
+    }
+
+    private void goToLogin() {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
     @Override

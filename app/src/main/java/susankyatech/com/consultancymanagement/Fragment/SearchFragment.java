@@ -173,6 +173,7 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
         progressLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
+
         clientAPI = App.consultancyRetrofit().create(ClientAPI.class);
 
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -285,6 +286,11 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                             if (response.body() != null) {
                                 clientList = response.body().data.clients;
                                 consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
+                                if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                                    openInquiry.setVisibility(View.VISIBLE);
+                                } else {
+                                    openInquiry.setVisibility(View.GONE);
+                                }
                                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                                 recyclerView.setAdapter(consultancyListAdapter);
                                 if (recyclerView.getItemDecorationCount() == 0) {
@@ -333,7 +339,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                                 progressLayout.setVisibility(View.GONE);
                                 progressBar.setVisibility(View.GONE);
                                 wholeLayout.setVisibility(View.VISIBLE);
-                                openInquiry.setVisibility(View.VISIBLE);
+                                if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                                    openInquiry.setVisibility(View.VISIBLE);
+                                } else {
+                                    openInquiry.setVisibility(View.GONE);
+                                }
+
 
                                 clientList = response.body().data.clients;
                                 consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());
@@ -561,7 +572,12 @@ public class SearchFragment extends Fragment implements MenuItem.OnMenuItemClick
                         progressLayout.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         wholeLayout.setVisibility(View.VISIBLE);
-                        openInquiry.setVisibility(View.VISIBLE);
+                        if (App.db().getBoolean(Keys.USER_LOGGED_IN)){
+                            openInquiry.setVisibility(View.VISIBLE);
+                        } else {
+                            openInquiry.setVisibility(View.GONE);
+                        }
+
 
                         clientList = response.body().data.clients;
                         consultancyListAdapter = new ConsultancyListAdapter(clientList, getContext());

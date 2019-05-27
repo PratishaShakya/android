@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.joanzapata.iconify.Iconify;
@@ -45,6 +46,7 @@ public class App extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         tinyDB = new TinyDB(this);
+        Fresco.initialize(this);
         Iconify
                 .with(new FontAwesomeModule())
                 .with(new MaterialCommunityModule())
