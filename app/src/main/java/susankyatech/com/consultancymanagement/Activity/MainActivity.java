@@ -243,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         } else {
+            login.setIcon(getResources().getDrawable(R.drawable.ic_enter));
             login.setTitle("Log In");
             userName.setText("Not Logged In");
             userEmail.setText("Please Log In");
